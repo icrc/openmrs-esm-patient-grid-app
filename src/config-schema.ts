@@ -1,3 +1,3 @@
 export const configSchema = {};
 
-export type Config = {};
+export type Config = Record<string, unknown>;

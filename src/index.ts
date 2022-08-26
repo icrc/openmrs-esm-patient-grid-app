@@ -1,7 +1,7 @@
 import { defineConfigSchema } from "@openmrs/esm-framework";
 import { configSchema } from "./config-schema";
 
-declare var __VERSION__: string;
+declare let __VERSION__: string;
 const version = __VERSION__;
 
 const importTranslation = require.context(

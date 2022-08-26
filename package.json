@@ -11,7 +11,7 @@
     "serve": "webpack serve --mode=development",
     "build": "webpack --mode production",
     "analyze": "webpack --mode=production --env.analyze=true",
-    "lint": "eslint \"src/**/*.ts\" \"src/**/*.tsx\" --fix --max-warnings=0 -c .eslintrc.js",
+    "lint": "eslint src --fix --max-warnings=0 -c .eslintrc.js",
     "prettier": "prettier --write \"src/**/*.{ts,tsx}\"",
     "typescript": "tsc",
     "test": "jest --config jest.config.json --passWithNoTests",
