@@ -18,7 +18,6 @@
     ],
     "resolveJsonModule": true,
     "noEmit": true,
-    "target": "esnext",
-    "strict": true
+    "target": "esnext"
   }
 }
