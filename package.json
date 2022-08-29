@@ -1,7 +1,7 @@
 {
   "name": "@icrc/esm-patient-grid-app",
   "version": "1.0.0",
-  "license": "MPL-2.0",
+  "license": "BSD-3-Clause",
   "description": "The microfrontend module providing the patient grid feature.",
   "browser": "dist/openmrs-esm-patient-grid-app.js",
   "main": "src/index.ts",
