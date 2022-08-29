@@ -17,7 +17,7 @@ const backendDependencies = {
 };
 
 function setupOpenMRS() {
-  const moduleName = "@openmrs/esm-patient-grid-app";
+  const moduleName = "@icrc/esm-patient-grid-app";
 
   defineConfigSchema(moduleName, configSchema);
 
