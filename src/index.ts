@@ -1,4 +1,4 @@
-import { defineConfigSchema } from "@openmrs/esm-framework";
+import { defineConfigSchema, getAsyncLifecycle } from "@openmrs/esm-framework";
 import { configSchema } from "./config-schema";
 
 declare let __VERSION__: string;
@@ -18,11 +18,20 @@ const backendDependencies = {
 
 function setupOpenMRS() {
   const moduleName = "@icrc/esm-patient-grid-app";
+  const options = {
+    featureName: "patient-grid-app",
+    moduleName,
+  };
 
   defineConfigSchema(moduleName, configSchema);
 
   return {
-    pages: [],
+    pages: [
+      {
+        load: getAsyncLifecycle(() => import("./Root"), options),
+        route: "patient-grids",
+      },
+    ],
     extensions: [],
   };
 }
