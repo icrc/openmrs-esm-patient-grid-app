@@ -17,7 +17,7 @@ export class RouteDescriptor<TParams extends Params | void> {
    * Interpolation leverages [`generatePath`](https://reactrouter.com/en/v6.3.0/api#generatepath).
    * @param params Parameters to be used for interpolating the associated router path.
    */
-  escape(params: TParams) {
+  interpolate(params: TParams) {
     return generatePath(this.path, params as Params);
   }
 }

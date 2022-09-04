@@ -1,3 +1,1 @@
-import PatientGridsOverview from "./PatientGridsOverview";
-
-export default PatientGridsOverview;
+export * from "./PatientGridsOverview";

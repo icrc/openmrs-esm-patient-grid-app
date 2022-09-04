@@ -1,0 +1,7 @@
+@use '@carbon/layout';
+@import "~@openmrs/esm-styleguide/src/vars";
+
+.headerContainer {
+  padding: layout.$spacing-05 0 layout.$spacing-05 layout.$spacing-05;
+  background-color: $ui-background;
+}

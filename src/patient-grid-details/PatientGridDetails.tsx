@@ -1,5 +1,5 @@
 import React from "react";
 
-export default function PatientGridDetails() {
+export function PatientGridDetails() {
   return <>Patient Grid Details Placeholder</>;
 }

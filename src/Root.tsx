@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import PatientGridDetails from "./patient-grid-details";
-import PatientGridsOverview from "./patient-grids-overview";
+import { PatientGridDetails } from "./patient-grid-details";
+import { PatientGridsOverview } from "./patient-grids-overview";
 import { routes } from "./routes";
 
 export default function Root() {

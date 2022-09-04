@@ -1,0 +1,12 @@
+@use '@carbon/layout';
+
+.headerContainer {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  row-gap: layout.$spacing-03;
+  align-items: center;
+}
+
+.subTitleContainer {
+  grid-column: auto / span 2;
+}

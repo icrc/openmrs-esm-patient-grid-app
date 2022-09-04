@@ -1,0 +1,6 @@
+@use '@carbon/layout';
+@use '@carbon/type';
+
+.title {
+  @include type.type-style('productive-heading-03');
+}
