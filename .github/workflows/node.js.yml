@@ -1,4 +1,4 @@
-name: openmrs-esm-patient-grid CI
+name: openmrs-esm-patientgrid CI
 
 on:
   push:
@@ -6,9 +6,6 @@ on:
   pull_request:
     branches: [main]
 
-#env:
-#  ESM_NAME: "@icrc/openmrs-esm-patient-grid"
-#  JS_NAME: "openmrs-esm-patient-grid.js"
 
 jobs:
   build:
