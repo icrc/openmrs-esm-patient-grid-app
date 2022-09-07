@@ -19,7 +19,23 @@ export function DeletePatientGridModal({
     mutate(
       { id: patientGridToDelete.uuid },
       {
-        onSuccess: () => setPatientGridToDelete(undefined),
+        onSuccess: () => {
+          showToast({
+            title: t(
+              "deletePatientGridSuccessToastTitle",
+              "List deleted successfully"
+            ),
+            description: t(
+              "deletePatientGridSuccessToastDescription",
+              'Successfully deleted the list "{name}".',
+              {
+                name: patientGridToDelete?.name,
+              }
+            ),
+          });
+
+          setPatientGridToDelete(undefined);
+        },
         onError: () =>
           showToast({
             title: t(
