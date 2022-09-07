@@ -1,0 +1,4 @@
+* -text
+
+# dont touch bash scripts so it doesnt mess up the shebang #!/bin/bash
+*.sh text eol=lf
