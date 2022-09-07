@@ -1,0 +1,21 @@
+.main {
+  display: flex;
+  align-items: stretch;
+}
+
+.mainContent {
+  flex: 1;
+}
+
+.sidePanelSpacer {
+  flex: 0 0 420px;
+}
+
+.sidePanelFloater {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 420px;
+  height: 100vh;
+}

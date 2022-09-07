@@ -7,7 +7,7 @@
   "main": "src/index.ts",
   "source": true,
   "scripts": {
-    "start": "openmrs develop --backend https://openmrs-dev-v2.test.icrc.org --add-cookie MRHSession=9bff1ef55da2074d9be76fa1bf505711",
+    "start": "openmrs develop",
     "serve": "webpack serve --mode=development",
     "build": "webpack --mode production",
     "analyze": "webpack --mode=production --env.analyze=true",

@@ -1,6 +1,7 @@
 import { useSession } from "@openmrs/esm-framework";
 import useSWR from "swr";
 import { mockApiCall } from "./mockUtils";
+import { useMutation } from "./useMutation";
 
 export interface PatientGridGet {
   uuid: string;
@@ -20,7 +21,7 @@ export interface PatientGridColumnGet {
   convertToAgeRange?: boolean;
 }
 
-export function usePatientGrids() {
+export function useGetAllPatientGrids() {
   const myUserUuid = useSession().user?.uuid;
   return useSWR("/ws/rest/v1/icrc/patientgrid", () =>
     mockApiCall<Array<PatientGridGet>>([
@@ -57,5 +58,22 @@ export function usePatientGrids() {
         columns: [],
       },
     ])
+  );
+}
+
+export function useDeletePatientGridMutation() {
+  const { mutate: mutateGetAllPatientGrids } = useGetAllPatientGrids();
+  return useMutation<{ id: string }>(
+    async ({ id }) => {
+      // TODO: Uncomment and replace with mock once resolved.
+      // await openmrsFetch(`/ws/rest/v1/icrc/patientgrid/${id}`, {
+      //   method: "DELETE",
+      // });
+      console.info(`Mock delete patient grid with ID ${id}.`);
+      return mockApiCall(id);
+    },
+    {
+      onSuccess: () => mutateGetAllPatientGrids(),
+    }
   );
 }

@@ -1,6 +1,6 @@
 import { useSession } from "@openmrs/esm-framework";
 import { useMemo } from "react";
-import { usePatientGrids } from "../api";
+import { useGetAllPatientGrids } from "../api";
 
 // TODO: "system" might be named wrongly.
 // -> Should be verified. This is supposed to be a list which is not owned by anyone
@@ -8,7 +8,7 @@ import { usePatientGrids } from "../api";
 export type PatientGridType = "my" | "shared" | "system";
 
 export function usePatientGridsWithInferredTypes() {
-  const patientGridsSwr = usePatientGrids();
+  const patientGridsSwr = useGetAllPatientGrids();
   const myUserUuid = useSession().user?.uuid;
   const data = useMemo(
     () =>

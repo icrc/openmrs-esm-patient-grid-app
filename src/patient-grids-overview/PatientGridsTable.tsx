@@ -15,10 +15,10 @@ import {
   OverflowMenuItem,
 } from "@carbon/react";
 import { useTranslation } from "react-i18next";
-import { Link as ReactRouterLink } from "react-router-dom";
+import { Link as ReactRouterLink, useNavigate } from "react-router-dom";
 import styles from "./PatientGridsTable.scss";
 import { routes } from "../routes";
-import { PatientGridGet, usePatientGrids } from "../api";
+import { PatientGridGet, useGetAllPatientGrids } from "../api";
 import { ErrorState } from "@openmrs/esm-framework";
 import {
   PatientGridType,
@@ -34,7 +34,9 @@ export interface PatientGridsTableProps {
 
 export function PatientGridsTable({ type }: PatientGridsTableProps) {
   const { t } = useTranslation();
-  const { data: patientGrids, error: patientGridsError } = usePatientGrids();
+  const navigate = useNavigate();
+  const { data: patientGrids, error: patientGridsError } =
+    useGetAllPatientGrids();
   const headers = useTableHeaders();
   const rows = useTableRows(type);
   const [patientGridToDelete, setPatientGridToDelete] = useState<
@@ -67,7 +69,12 @@ export function PatientGridsTable({ type }: PatientGridsTableProps) {
 
   return (
     <div>
-      <DataTable headers={headers} rows={rows} overflowMenuOnHover={false}>
+      <DataTable
+        headers={headers}
+        rows={rows}
+        overflowMenuOnHover={false}
+        filterRows={filterTableRows}
+      >
         {({
           rows,
           headers,
@@ -108,13 +115,25 @@ export function PatientGridsTable({ type }: PatientGridsTableProps) {
                 {rows?.map((row) => (
                   <TableRow {...getRowProps({ row })}>
                     {row.cells.map((cell) => (
-                      <TableCell key={cell.id}>{cell.value}</TableCell>
+                      <TableCell key={cell.id}>
+                        {cell.value.cellContent ?? cell.value}
+                      </TableCell>
                     ))}
                     <TableCell className="cds--table-column-menu">
                       <OverflowMenu size="sm">
                         <OverflowMenuItem
+                          itemText={t("patientGridViewRowMenuItem", "View")}
+                          onClick={() =>
+                            navigate(
+                              routes.patientGridDetails.interpolate({
+                                id: row.id,
+                              })
+                            )
+                          }
+                        />
+                        <OverflowMenuItem
                           isDelete
-                          itemText="Delete"
+                          itemText={t("patientGridDeleteRowMenuItem", "Delete")}
                           onClick={() =>
                             setPatientGridToDelete(
                               patientGrids.find(
@@ -173,18 +192,49 @@ function useTableRows(type: PatientGridViewType) {
 
     return gridsToDisplay.map((patientGrid) => {
       return {
-        __patientGrid: patientGrid,
         id: patientGrid.uuid,
-        name: (
-          <ReactRouterLink
-            to={routes.patientGridDetails.interpolate({ id: patientGrid.uuid })}
-          >
-            <Link>{patientGrid.name}</Link>
-          </ReactRouterLink>
-        ),
-        description: patientGrid.description,
-        type: typeDisplayStrings[patientGrid.type],
+        name: {
+          cellContent: (
+            <ReactRouterLink
+              to={routes.patientGridDetails.interpolate({
+                id: patientGrid.uuid,
+              })}
+            >
+              <Link>{patientGrid.name}</Link>
+            </ReactRouterLink>
+          ),
+          filterableString: patientGrid.name,
+        },
+        description: {
+          cellContent: patientGrid.description,
+          filterableString: patientGrid.description,
+        },
+        type: {
+          cellContent: typeDisplayStrings[patientGrid.type],
+          filterableString: typeDisplayStrings[patientGrid.type],
+        },
       };
     });
   }, [patientGrids, type, t]);
+}
+
+function filterTableRows({
+  rowIds,
+  headers,
+  cellsById,
+  inputValue,
+  getCellId,
+}) {
+  return rowIds.filter((rowId) =>
+    headers.some(({ key }) => {
+      const cellId = getCellId(rowId, key);
+      const value = cellsById[cellId].value;
+      const filterableValue =
+        value?.filterableString?.toString() ?? value?.toString() ?? "";
+      return filterableValue
+        .replace(/\s/g, "")
+        .toLowerCase()
+        .includes(inputValue.replace(/\s/g, "").toLowerCase());
+    })
+  );
 }

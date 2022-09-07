@@ -1,7 +1,8 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { Modal } from "@carbon/react";
-import { PatientGridGet } from "../api";
+import { PatientGridGet, useDeletePatientGridMutation } from "../api";
 import { useTranslation } from "react-i18next";
+import { showToast } from "@openmrs/esm-framework";
 
 export interface DeletePatientGridModalProps {
   patientGridToDelete?: PatientGridGet;
@@ -13,6 +14,29 @@ export function DeletePatientGridModal({
   setPatientGridToDelete,
 }: DeletePatientGridModalProps) {
   const { t } = useTranslation();
+  const { mutate, isLoading } = useDeletePatientGridMutation();
+  const submit = () => {
+    mutate(
+      { id: patientGridToDelete.uuid },
+      {
+        onSuccess: () => setPatientGridToDelete(undefined),
+        onError: () =>
+          showToast({
+            title: t(
+              "deletePatientGridErrorToastTitle",
+              "List deletion failed"
+            ),
+            description: t(
+              "deletePatientGridErrorToastDescription",
+              'Deleting the list "{name}" failed.',
+              {
+                name: patientGridToDelete?.name,
+              }
+            ),
+          }),
+      }
+    );
+  };
 
   return (
     <Modal
@@ -20,7 +44,14 @@ export function DeletePatientGridModal({
       danger
       modalHeading={t("deletePatientGridModalTitle", "Delete list")}
       primaryButtonText={t("deletePatientGridModalDelete", "Delete")}
-      secondaryButtonText={t("deletePatientGridModalCancel", "Cancel")}
+      secondaryButtonText={
+        isLoading
+          ? t("deletePatientGridModalClose", "Close")
+          : t("deletePatientGridModalCancel", "Cancel")
+      }
+      primaryButtonDisabled={isLoading}
+      onRequestSubmit={() => submit()}
+      onRequestClose={() => setPatientGridToDelete(undefined)}
     >
       <p>
         {t(
