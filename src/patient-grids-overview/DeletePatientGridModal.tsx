@@ -21,6 +21,7 @@ export function DeletePatientGridModal({
       {
         onSuccess: () => {
           showToast({
+            kind: "success",
             title: t(
               "deletePatientGridSuccessToastTitle",
               "List deleted successfully"
@@ -38,6 +39,7 @@ export function DeletePatientGridModal({
         },
         onError: () =>
           showToast({
+            kind: "error",
             title: t(
               "deletePatientGridErrorToastTitle",
               "List deletion failed"
