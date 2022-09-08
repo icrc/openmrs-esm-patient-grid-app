@@ -14,6 +14,12 @@ export function PatientGridBuilderSidePanel({
   const { currentPage, isAtLastPage, isStateValidForSubmission, state } =
     usePatientGridWizard();
 
+  const submit = () => {
+    // TODO: Perform real logic/mutations here.
+    console.info("Submitting new patient grid...", state);
+    onClose();
+  };
+
   return (
     <SidePanel
       title={t("newPatientGridSidePanelTitle", "New patient grid")}
@@ -22,7 +28,7 @@ export function PatientGridBuilderSidePanel({
           primaryButtonText={t("patientGridSidePanelCreate", "Create grid")}
           secondaryButtonText={t("patientGridSidePanelCancel", "Cancel")}
           onRequestClose={onClose}
-          onRequestSubmit={onClose}
+          onRequestSubmit={submit}
           primaryButtonDisabled={!isAtLastPage || !isStateValidForSubmission}
         />
       }
