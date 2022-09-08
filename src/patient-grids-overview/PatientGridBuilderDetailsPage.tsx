@@ -11,18 +11,32 @@ import {
 import { useTranslation } from "react-i18next";
 import { Hr } from "../components";
 import { PatientGridBuilderContinueButton } from "./PatientGridBuilderContinueButton";
+import { WizardPageProps } from "./usePatientGridWizard";
+import { PatientGridBuilderHeader } from "./PatientGridBuilderHeader";
 
-export function PatientGridBuilderDetailsPage() {
+export function PatientGridBuilderDetailsPage({
+  page,
+  pages,
+  goToNext,
+  goToPrevious,
+}: WizardPageProps) {
   const { t } = useTranslation();
 
   return (
     <Form>
       <Stack gap={6}>
+        <PatientGridBuilderHeader
+          page={page}
+          pages={pages}
+          goToPrevious={goToPrevious}
+          title={t("patientGridDetails", "Grid details")}
+        />
+
         <FormGroup>
           <Select
             defaultValue="placeholder"
             labelText={t(
-              "PatientGridDuplicateSelectLabel",
+              "patientGridDetailsDuplicateSelectLabel",
               "Base on / duplicate from existing patient grid"
             )}
           >
@@ -31,7 +45,7 @@ export function PatientGridBuilderDetailsPage() {
               hidden
               value="placeholder"
               text={t(
-                "PatientGridDuplicateSelectPlaceholder",
+                "patientGridDetailsDuplicateSelectPlaceholder",
                 "Select an existing grid (optional)"
               )}
             />
@@ -41,7 +55,9 @@ export function PatientGridBuilderDetailsPage() {
         <Hr />
 
         <FormGroup>
-          <TextInput labelText={t("PatientGridNameInputLabel", "Grid name")} />
+          <TextInput
+            labelText={t("patientGridDetailsNameInputLabel", "Grid name")}
+          />
         </FormGroup>
 
         <FormGroup>
@@ -49,16 +65,16 @@ export function PatientGridBuilderDetailsPage() {
             enableCounter
             maxCount={300}
             labelText={t(
-              "PatientGridDescriptionInputLabel",
+              "patientGridDetailsDescriptionInputLabel",
               "Describe the purpose of this grid in a few words"
             )}
           />
         </FormGroup>
 
         <Hr />
-        <PatientGridBuilderContinueButton>
+        <PatientGridBuilderContinueButton onClick={goToNext}>
           {t(
-            "PatientGridDescriptionContinueButton",
+            "patientGridDetailsContinueButton",
             "Continue by configuring grid sections"
           )}
         </PatientGridBuilderContinueButton>

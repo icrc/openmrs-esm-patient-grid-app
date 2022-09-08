@@ -4,7 +4,3 @@
 .contentContainer {
   padding: layout.$spacing-05;
 }
-
-.stepHeader {
-  @include type.type-style('heading-compact-02');
-}

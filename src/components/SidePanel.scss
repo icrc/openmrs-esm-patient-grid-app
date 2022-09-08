@@ -3,7 +3,8 @@
 @import '~@openmrs/esm-styleguide/src/vars';
 
 .sidePanel {
-  border: 1px solid $color-gray-30;
+  border: 0 solid $color-gray-30;
+  border-left-width: 1px;
   background-color: $ui-background;
   width: 100%;
   height: 100%;

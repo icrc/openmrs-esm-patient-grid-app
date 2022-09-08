@@ -1,0 +1,15 @@
+@use '@carbon/type';
+@use '@carbon/layout';
+
+.headerContainer {
+  display: flex;
+  align-items: center;
+}
+
+.backButton {
+  margin-right: layout.$spacing-02;
+}
+
+.stepHeader {
+  @include type.type-style('heading-compact-02');
+}
