@@ -1,7 +1,6 @@
 import React from "react";
 import {
   Form,
-  FormGroup,
   Select,
   SelectItem,
   Stack,
@@ -32,44 +31,41 @@ export function PatientGridBuilderDetailsPage({
           title={t("patientGridDetails", "Grid details")}
         />
 
-        <FormGroup>
-          <Select
-            defaultValue="placeholder"
-            labelText={t(
-              "patientGridDetailsDuplicateSelectLabel",
-              "Base on / duplicate from existing patient grid"
+        <Select
+          id="gridToDuplicate"
+          defaultValue="placeholder"
+          labelText={t(
+            "patientGridDetailsDuplicateSelectLabel",
+            "Base on / duplicate from existing patient grid"
+          )}
+        >
+          <SelectItem
+            disabled
+            hidden
+            value="placeholder"
+            text={t(
+              "patientGridDetailsDuplicateSelectPlaceholder",
+              "Select an existing grid (optional)"
             )}
-          >
-            <SelectItem
-              disabled
-              hidden
-              value="placeholder"
-              text={t(
-                "patientGridDetailsDuplicateSelectPlaceholder",
-                "Select an existing grid (optional)"
-              )}
-            />
-          </Select>
-        </FormGroup>
+          />
+        </Select>
 
         <Hr />
 
-        <FormGroup>
-          <TextInput
-            labelText={t("patientGridDetailsNameInputLabel", "Grid name")}
-          />
-        </FormGroup>
+        <TextInput
+          id="gridName"
+          labelText={t("patientGridDetailsNameInputLabel", "Grid name")}
+        />
 
-        <FormGroup>
-          <TextArea
-            enableCounter
-            maxCount={300}
-            labelText={t(
-              "patientGridDetailsDescriptionInputLabel",
-              "Describe the purpose of this grid in a few words"
-            )}
-          />
-        </FormGroup>
+        <TextArea
+          id="gridDescription"
+          enableCounter
+          maxCount={300}
+          labelText={t(
+            "patientGridDetailsDescriptionInputLabel",
+            "Describe the purpose of this grid in a few words"
+          )}
+        />
 
         <Hr />
         <PatientGridBuilderContinueButton onClick={goToNext}>

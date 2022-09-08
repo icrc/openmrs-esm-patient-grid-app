@@ -120,7 +120,10 @@ export function PatientGridsTable({ type }: PatientGridsTableProps) {
                       </TableCell>
                     ))}
                     <TableCell className="cds--table-column-menu">
-                      <OverflowMenu size="sm">
+                      <OverflowMenu
+                        size="sm"
+                        ariaLabel={t("patientGridRowLabel", "Actions")}
+                      >
                         <OverflowMenuItem
                           itemText={t("patientGridViewRowMenuItem", "View")}
                           onClick={() =>

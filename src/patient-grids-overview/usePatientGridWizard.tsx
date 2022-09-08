@@ -1,14 +1,13 @@
 import React, { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { GenderRepresentation } from "../api";
 import { PatientGridBuilderDetailsPage } from "./PatientGridBuilderDetailsPage";
 import { PatientGridBuilderFiltersPage } from "./PatientGridBuilderFiltersPage";
 import { PatientGridBuilderSectionsPage } from "./PatientGridBuilderSectionsPage";
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface PatientGridWizardState {
-  // TODO: This is to contain the values for submitting the new patient grid.
-  // This is ideally modeled as close as possible to the real object to be POSTed.
-  //
-  // The individual wizard pages fill the attributes of this object.
+  countryLocationId?: string;
+  structureLocationId?: string;
+  gender?: GenderRepresentation;
 }
 
 export interface WizardPageProps {

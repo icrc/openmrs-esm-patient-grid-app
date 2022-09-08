@@ -9,7 +9,11 @@ export function PatientGridTabs() {
 
   return (
     <Tabs activation="manual">
-      <TabList contained className={styles.tabList}>
+      <TabList
+        contained
+        className={styles.tabList}
+        aria-label={t("patientGridTabsLabel", "Patient grid tabs")}
+      >
         <Tab>{t("systemGridsTabLabel", "System grids")}</Tab>
         <Tab>{t("myGridsTabLabel", "My grids")}</Tab>
         <Tab>{t("allGridsTabLabel", "All grids")}</Tab>

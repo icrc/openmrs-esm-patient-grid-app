@@ -29,9 +29,9 @@ export function PatientGridBuilderSectionsPage({
             "Enable/Disable list sections"
           )}
         >
-          <Checkbox labelText="DEF"></Checkbox>
-          <Checkbox labelText="DEF"></Checkbox>
-          <Checkbox labelText="DEF"></Checkbox>
+          <Checkbox id="abc" labelText="DEF"></Checkbox>
+          <Checkbox id="def" labelText="DEF"></Checkbox>
+          <Checkbox id="ghi" labelText="DEF"></Checkbox>
         </FormGroup>
 
         <Hr />
