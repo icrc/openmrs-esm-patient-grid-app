@@ -6,11 +6,11 @@ import styles from "./PatientGridsOverviewHeader.scss";
 import { useTranslation } from "react-i18next";
 
 export interface PatientGridsOverviewHeaderProps {
-  onNewListClick?(): void;
+  onNewGridClick?(): void;
 }
 
 export function PatientGridsOverviewHeader({
-  onNewListClick,
+  onNewGridClick,
 }: PatientGridsOverviewHeaderProps) {
   const { t } = useTranslation();
 
@@ -18,7 +18,7 @@ export function PatientGridsOverviewHeader({
     <PageHeader
       title={
         <h1 className={styles.title}>
-          {t("patientGridsOverviewTitle", "Patient lists")}
+          {t("patientGridsOverviewTitle", "Patient grids")}
         </h1>
       }
       actions={
@@ -26,9 +26,9 @@ export function PatientGridsOverviewHeader({
           kind="ghost"
           size="sm"
           renderIcon={Add}
-          onClick={onNewListClick}
+          onClick={onNewGridClick}
         >
-          {t("newList", "New list")}
+          {t("newGrid", "New grid")}
         </Button>
       }
     />

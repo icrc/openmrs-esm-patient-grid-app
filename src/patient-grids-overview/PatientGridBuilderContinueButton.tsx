@@ -1,15 +1,15 @@
 import { Button } from "@carbon/react";
 import { ChevronRight } from "@carbon/react/icons";
 import React, { ReactNode } from "react";
-import styles from "./NewPatientGridWizardContinueButton.scss";
+import styles from "./PatientGridBuilderContinueButton.scss";
 
-interface NewPatientGridWizardContinueButtonProps {
+interface PatientGridBuilderContinueButtonProps {
   children?: ReactNode;
 }
 
-export function NewPatientGridWizardContinueButton({
+export function PatientGridBuilderContinueButton({
   children,
-}: NewPatientGridWizardContinueButtonProps) {
+}: PatientGridBuilderContinueButtonProps) {
   return (
     <div className={styles.container}>
       <Button kind="ghost" renderIcon={ChevronRight}>

@@ -2,23 +2,23 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { SidePanel, SidePanelProps } from "../components";
 import { ModalFooter, Stack } from "@carbon/react";
-import { NewPatientGridWizardDetailsPage } from "./NewPatientGridWizardDetailsPage";
-import styles from "./NewPatientGridSidePanel.scss";
+import { PatientGridBuilderDetailsPage } from "./PatientGridBuilderDetailsPage";
+import styles from "./PatientGridBuilderSidePanel.scss";
 
-export type NewPatientGridSidePanelProps = Pick<SidePanelProps, "onClose">;
+export type PatientGridBuilderSidePanelProps = Pick<SidePanelProps, "onClose">;
 
-export function NewPatientGridSidePanel({
+export function PatientGridBuilderSidePanel({
   onClose,
-}: NewPatientGridSidePanelProps) {
+}: PatientGridBuilderSidePanelProps) {
   const { t } = useTranslation();
 
   return (
     <SidePanel
-      title={t("newPatientListSidePanelTitle", "New patient list")}
+      title={t("newPatientGridSidePanelTitle", "New patient grid")}
       footer={
         <ModalFooter
-          primaryButtonText={t("newPatientGridSidePanelCreate", "Create list")}
-          secondaryButtonText={t("newPatientGridSidePanelCancel", "Cancel")}
+          primaryButtonText={t("PatientGridSidePanelCreate", "Create grid")}
+          secondaryButtonText={t("PatientGridSidePanelCancel", "Cancel")}
           onRequestClose={onClose}
           onRequestSubmit={onClose}
         />
@@ -29,12 +29,12 @@ export function NewPatientGridSidePanel({
         <Stack orientation="vertical" gap={6}>
           <h4 className={styles.stepHeader}>
             {t(
-              "newPatientGridSidePanelCurrentStep",
+              "PatientGridSidePanelCurrentStep",
               "Step {stepNum} of 3: {stepName}",
               { stepNum: "(tbd)", stepName: "(tbd)" }
             )}
           </h4>
-          <NewPatientGridWizardDetailsPage />
+          <PatientGridBuilderDetailsPage />
         </Stack>
       </section>
     </SidePanel>

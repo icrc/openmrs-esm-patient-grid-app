@@ -24,11 +24,11 @@ export function DeletePatientGridModal({
             kind: "success",
             title: t(
               "deletePatientGridSuccessToastTitle",
-              "List deleted successfully"
+              "Grid deleted successfully"
             ),
             description: t(
               "deletePatientGridSuccessToastDescription",
-              'Successfully deleted the list "{name}".',
+              'Successfully deleted the grid "{name}".',
               {
                 name: patientGridToDelete?.name,
               }
@@ -42,11 +42,11 @@ export function DeletePatientGridModal({
             kind: "error",
             title: t(
               "deletePatientGridErrorToastTitle",
-              "List deletion failed"
+              "Grid deletion failed"
             ),
             description: t(
               "deletePatientGridErrorToastDescription",
-              'Deleting the list "{name}" failed.',
+              'Deleting the grid "{name}" failed.',
               {
                 name: patientGridToDelete?.name,
               }
@@ -60,7 +60,7 @@ export function DeletePatientGridModal({
     <Modal
       open={!!patientGridToDelete}
       danger
-      modalHeading={t("deletePatientGridModalTitle", "Delete list")}
+      modalHeading={t("deletePatientGridModalTitle", "Delete grid")}
       primaryButtonText={t("deletePatientGridModalDelete", "Delete")}
       secondaryButtonText={
         isLoading
@@ -74,7 +74,7 @@ export function DeletePatientGridModal({
       <p>
         {t(
           "deletePatientGridModalBody",
-          'Are you sure that you want to delete the list "{name}"? This action cannot be undone.',
+          'Are you sure that you want to delete the grid "{name}"? This action cannot be undone.',
           { name: patientGridToDelete?.name }
         )}
       </p>

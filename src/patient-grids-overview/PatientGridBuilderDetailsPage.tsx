@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  Button,
   Form,
   FormGroup,
   Select,
@@ -9,12 +8,11 @@ import {
   TextArea,
   TextInput,
 } from "@carbon/react";
-import { ChevronRight } from "@carbon/react/icons";
 import { useTranslation } from "react-i18next";
 import { Hr } from "../components";
-import { NewPatientGridWizardContinueButton } from "./NewPatientGridWizardContinueButton";
+import { PatientGridBuilderContinueButton } from "./PatientGridBuilderContinueButton";
 
-export function NewPatientGridWizardDetailsPage() {
+export function PatientGridBuilderDetailsPage() {
   const { t } = useTranslation();
 
   return (
@@ -24,8 +22,8 @@ export function NewPatientGridWizardDetailsPage() {
           <Select
             defaultValue="placeholder"
             labelText={t(
-              "newPatientGridDuplicateSelectLabel",
-              "Base on / duplicate from existing patient list"
+              "PatientGridDuplicateSelectLabel",
+              "Base on / duplicate from existing patient grid"
             )}
           >
             <SelectItem
@@ -33,8 +31,8 @@ export function NewPatientGridWizardDetailsPage() {
               hidden
               value="placeholder"
               text={t(
-                "newPatientGridDuplicateSelectPlaceholder",
-                "Select an existing list (optional)"
+                "PatientGridDuplicateSelectPlaceholder",
+                "Select an existing grid (optional)"
               )}
             />
           </Select>
@@ -43,9 +41,7 @@ export function NewPatientGridWizardDetailsPage() {
         <Hr />
 
         <FormGroup>
-          <TextInput
-            labelText={t("newPatientGridNameInputLabel", "List name")}
-          />
+          <TextInput labelText={t("PatientGridNameInputLabel", "Grid name")} />
         </FormGroup>
 
         <FormGroup>
@@ -53,19 +49,19 @@ export function NewPatientGridWizardDetailsPage() {
             enableCounter
             maxCount={300}
             labelText={t(
-              "newPatientGridDescriptionInputLabel",
-              "Describe the purpose of this list in a few words"
+              "PatientGridDescriptionInputLabel",
+              "Describe the purpose of this grid in a few words"
             )}
           />
         </FormGroup>
 
         <Hr />
-        <NewPatientGridWizardContinueButton>
+        <PatientGridBuilderContinueButton>
           {t(
-            "newPatientGridDescriptionContinueButton",
-            "Continue by configuring list sections"
+            "PatientGridDescriptionContinueButton",
+            "Continue by configuring grid sections"
           )}
-        </NewPatientGridWizardContinueButton>
+        </PatientGridBuilderContinueButton>
       </Stack>
     </Form>
   );

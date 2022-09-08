@@ -26,7 +26,7 @@ import {
 } from "./usePatientGridsWithInferredTypes";
 import { DeletePatientGridModal } from "./DeletePatientGridModal";
 
-export type PatientGridViewType = "shared" | "my" | "all";
+export type PatientGridViewType = "system" | "my" | "all";
 
 export interface PatientGridsTableProps {
   type: PatientGridViewType;
@@ -90,11 +90,11 @@ export function PatientGridsTable({ type }: PatientGridsTableProps) {
                   size="sm"
                   placeholder={t(
                     "patientGridsFilterLabelAndPlaceholder",
-                    "Search these lists"
+                    "Search these grids"
                   )}
                   labelText={t(
                     "patientGridsFilterLabelAndPlaceholder",
-                    "Search these lists"
+                    "Search these grids"
                   )}
                   onChange={onInputChange}
                 />
@@ -164,12 +164,12 @@ function useTableHeaders() {
   const { t } = useTranslation();
   return useMemo(
     () => [
-      { key: "name", header: t("listNameTableHeader", "List name") },
+      { key: "name", header: t("gridNameTableHeader", "Grid name") },
       {
         key: "description",
         header: t("descriptionTableHeader", "Description"),
       },
-      { key: "type", header: t("listTypeTableHeader", "List type") },
+      { key: "type", header: t("gridTypeTableHeader", "Grid type") },
     ],
     [t]
   );
@@ -185,9 +185,9 @@ function useTableRows(type: PatientGridViewType) {
         ? patientGrids
         : patientGrids.filter((patientGrid) => patientGrid.type === type);
     const typeDisplayStrings: Record<PatientGridType, string> = {
-      my: t("myList", "My list"),
-      shared: t("sharedList", "Shared list"),
-      system: t("systemList", "System list"),
+      system: t("sharedGrid", "Shared grid"),
+      my: t("myGrid", "My grid"),
+      other: t("systemGrid", "Other's grid"),
     };
 
     return gridsToDisplay.map((patientGrid) => {

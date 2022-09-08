@@ -10,13 +10,13 @@ export function PatientGridTabs() {
   return (
     <Tabs activation="manual">
       <TabList contained className={styles.tabList}>
-        <Tab>{t("sharedListsTabLabel", "Shared lists")}</Tab>
-        <Tab>{t("myListsTabLabel", "My lists")}</Tab>
-        <Tab>{t("allListsTabLabel", "All lists")}</Tab>
+        <Tab>{t("systemGridsTabLabel", "System grids")}</Tab>
+        <Tab>{t("myGridsTabLabel", "My grids")}</Tab>
+        <Tab>{t("allGridsTabLabel", "All grids")}</Tab>
       </TabList>
       <TabPanels>
         <TabPanel>
-          <PatientGridsTable type="shared" />
+          <PatientGridsTable type="system" />
         </TabPanel>
         <TabPanel>
           <PatientGridsTable type="my" />

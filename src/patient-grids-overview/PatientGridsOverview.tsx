@@ -3,7 +3,7 @@ import styles from "./PatientGridsOverview.scss";
 import { PatientGridsOverviewHeader } from "./PatientGridsOverviewHeader";
 import { PatientGridTabs } from "./PatientGridsTabs";
 import { PageWithSidePanel } from "../components";
-import { NewPatientGridSidePanel } from "./NewPatientGridSidePanel";
+import { PatientGridBuilderSidePanel } from "./PatientGridBuilderSidePanel";
 
 export function PatientGridsOverview() {
   const [showSidePanel, setShowSidePanel] = useState(false);
@@ -11,13 +11,13 @@ export function PatientGridsOverview() {
   return (
     <PageWithSidePanel
       sidePanel={
-        <NewPatientGridSidePanel onClose={() => setShowSidePanel(false)} />
+        <PatientGridBuilderSidePanel onClose={() => setShowSidePanel(false)} />
       }
       showSidePanel={showSidePanel}
     >
       <div className={styles.headerContainer}>
         <PatientGridsOverviewHeader
-          onNewListClick={() => setShowSidePanel(true)}
+          onNewGridClick={() => setShowSidePanel(true)}
         />
       </div>
       <PatientGridTabs />

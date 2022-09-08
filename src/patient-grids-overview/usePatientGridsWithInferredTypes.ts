@@ -3,9 +3,9 @@ import { useMemo } from "react";
 import { useGetAllPatientGrids } from "../api";
 
 // TODO: "system" might be named wrongly.
-// -> Should be verified. This is supposed to be a list which is not owned by anyone
+// -> Should be verified. This is supposed to be a grid which is not owned by anyone
 //    and is thus only displayed in the "All" tab.
-export type PatientGridType = "my" | "shared" | "system";
+export type PatientGridType = "my" | "system" | "other";
 
 export function usePatientGridsWithInferredTypes() {
   const patientGridsSwr = useGetAllPatientGrids();
@@ -13,11 +13,13 @@ export function usePatientGridsWithInferredTypes() {
   const data = useMemo(
     () =>
       patientGridsSwr.data?.map((patientGrid) => {
-        let type: PatientGridType = "system";
+        let type: PatientGridType;
         if (patientGrid.owner === myUserUuid) {
           type = "my";
-        } else if (patientGrid.owner) {
-          type = "shared";
+        } else if (!patientGrid.owner) {
+          type = "system";
+        } else {
+          type = "other";
         }
 
         return {
