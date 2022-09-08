@@ -16,7 +16,7 @@ export function useGetAllStructureLocations(
 ) {
   return useFilteredLocations(
     countryLocationName
-      ? `?_tag=Visit Location&country=${countryLocationName}`
+      ? `?_tag=Visit Location&address-country=${countryLocationName}`
       : undefined
   );
 }
