@@ -23,7 +23,7 @@ export interface WizardPageProps {
 export function usePatientGridWizard() {
   const [state, setState] = useState<PatientGridWizardState>({});
   const [page, setPage] = useState(0);
-  const pages = useMemo(
+  const pageFactories = useMemo(
     () => [
       (props: WizardPageProps) => <PatientGridBuilderDetailsPage {...props} />,
       (props: WizardPageProps) => <PatientGridBuilderSectionsPage {...props} />,
@@ -34,11 +34,11 @@ export function usePatientGridWizard() {
 
   const currentPage = useMemo(
     () =>
-      pages[page]({
+      pageFactories[page]({
         state,
         setState,
         page,
-        pages: pages.length,
+        pages: pageFactories.length,
         goToNext() {
           setPage((page) => page + 1);
         },
@@ -46,7 +46,7 @@ export function usePatientGridWizard() {
           setPage((page) => page - 1);
         },
       }),
-    [state, page, pages]
+    [state, page, pageFactories]
   );
 
   const isStateValidForSubmission = useMemo(() => {
@@ -61,6 +61,6 @@ export function usePatientGridWizard() {
     state,
     isStateValidForSubmission,
     page,
-    isAtLastPage: page === pages.length - 1,
+    isAtLastPage: page === pageFactories.length - 1,
   };
 }
