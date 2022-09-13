@@ -1,5 +1,5 @@
 {
-  "name": "esm-patientgrid-app",
+  "name": "@icrc/esm-patientgrid-app",
   "version": "1.0.0",
   "license": "BSD-3-Clause",
   "description": "The microfrontend module providing the patient grid feature.",
@@ -36,7 +36,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/icrc/openmrs-esm-patientgrid.git"
+    "url": "https://github.com/icrc/openmrs-esm-patientgrid.git"
   },
   "homepage": "https://github.com/icrc/openmrs-esm-patientgrid",
   "bugs": {
