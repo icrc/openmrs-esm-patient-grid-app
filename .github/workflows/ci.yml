@@ -1,0 +1,52 @@
+name: openmrs-esm-patientgrid CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: "18.x"
+          registry-url: "https://npm.pkg.github.com"
+      - run: yarn install --immutable
+      - run: yarn verify
+      - run: yarn build
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: |
+            dist
+
+    pre_release:
+      runs-on: ubuntu-latest
+
+      needs: build
+
+      if: ${{ github.event_name == 'push' }}
+
+      steps:
+         - uses: actions/checkout@v2
+         - name: Download Artifacts
+           uses: actions/download-artifact@v2
+         - name: Use Node.js
+           uses: actions/setup-node@v1
+           with:
+             node-version: "18.x"
+             registry-url: "https://npm.pkg.github.com"
+         - run: npm install
+         - run: sed -i -e "s/\(\"version\":\\s\+\"\([0-9]\+\.\?\)\+\)/\1-pre.${{ github.run_number }}/" 'package.json'
+         - run: cat 'package.json'
+        # - run: npm publish --access public --tag next
+        #   env:
+        #     NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
