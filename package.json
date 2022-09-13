@@ -19,6 +19,9 @@
     "coverage": "yarn test -- --coverage ",
     "prepare": "husky install"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "husky": {
     "hooks": {
       "pre-commit": "pretty-quick --staged && yarn verify"
@@ -36,9 +39,6 @@
     "url": "git+https://github.com/icrc/openmrs-esm-patientgrid.git"
   },
   "homepage": "https://github.com/icrc/openmrs-esm-patientgrid",
-  "publishConfig": {
-    "access": "public"
-  },
   "bugs": {
     "url": "https://github.com/icrc/openmrs-esm-patientgrid/issues"
   },
