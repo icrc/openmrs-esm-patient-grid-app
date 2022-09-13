@@ -46,8 +46,7 @@ jobs:
          with:
            node-version: "18.x"
            registry-url: "https://npm.pkg.github.com"
-       - run: npm install
-       - run: yarn version "$(node -e "console.log(require('semver').inc(require('./package.json').version, 'patch'))")-pre.${{ github.run_number }}"
+       - run: sed -i -e "s/\(\"version\":\\s\+\"\([0-9]\+\.\?\)\+\)/\1-pre.${{ github.run_number }}/" 'package.json'
        - run: yarn build
        - run: cat 'package.json'
 #       - run: yarn npm publish --access public --tag next
