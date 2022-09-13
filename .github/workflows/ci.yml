@@ -51,7 +51,7 @@ jobs:
 #       - run: yarn plugin import version
        - run: npm version --no-git-tag-version "$(node -e "console.log(require('semver').inc(require('./package.json').version, 'patch'))")-pre.${{ github.run_number }}"
        - run: yarn build
-       - run: yarn npm publish --access public --tag next
+       - run: yarn npm publish
          env:
            NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #           required by yarn
