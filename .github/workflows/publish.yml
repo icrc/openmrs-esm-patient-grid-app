@@ -1,45 +1,17 @@
-name: openmrs-esm-patientgrid CI
+name: openmrs-esm-patientgrid Publish
+
 
 on:
   push:
-    branches: [main-tmp]
-  pull_request:
-    branches: [main-tmp]
-
+    branches:
+      - 'publish-package'
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18.x"
-          cache: 'yarn'
-          scope: '@icrc'
-      - run: yarn install --immutable
-      - run: yarn verify
-      - run: yarn build
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: dist
-          path: |
-            dist
-
-  pre_release:
-    runs-on: ubuntu-latest
-
-    needs: build
-
-    if: ${{ github.event_name == 'push' }}
 
     steps:
        - uses: actions/checkout@v3
-       - name: Download Artifacts
-         uses: actions/download-artifact@v3
        - name: Use Node.js
          uses: actions/setup-node@v3
          with:
@@ -47,6 +19,7 @@ jobs:
            registry-url: 'https://npm.pkg.github.com'
            cache: 'yarn'
        - run: yarn install --immutable
+       - run: yarn verify
 #         yarn 3 version is buggy and try to do some git tag but don't support the option --no-git-tag-version. So we use npm version
 #       - run: yarn plugin import version
        - run: npm version --no-git-tag-version "$(node -e "console.log(require('semver').inc(require('./package.json').version, 'patch'))")-pre.${{ github.run_number }}"
