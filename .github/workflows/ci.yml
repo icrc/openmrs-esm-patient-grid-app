@@ -2,9 +2,9 @@ name: openmrs-esm-patientgrid CI
 
 on:
   push:
-    branches: [main]
+    branches: [main-tmp]
   pull_request:
-    branches: [main]
+    branches: [main-tmp]
 
 
 jobs:
@@ -44,9 +44,9 @@ jobs:
          with:
            node-version: "18.x"
            registry-url: "https://npm.pkg.github.com"
-       - run: npm install
-       - run: sed -i -e "s/\(\"version\":\\s\+\"\([0-9]\+\.\?\)\+\)/\1-pre.${{ github.run_number }}/" 'package.json'
+       - run: yarn version "$(node -e "console.log(require('semver').inc(require('./package.json').version, 'patch'))")-pre.${{ github.run_number }}"
+       - run: yarn build
        - run: cat 'package.json'
-      # - run: npm publish --access public --tag next
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+#       - run: npm publish --access public --tag next
+#         env:
+#           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
