@@ -23,7 +23,7 @@ jobs:
       - run: yarn verify
       - run: yarn build
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: dist
           path: |
@@ -39,7 +39,7 @@ jobs:
     steps:
        - uses: actions/checkout@v3
        - name: Download Artifacts
-         uses: actions/download-artifact@v2
+         uses: actions/download-artifact@v3
        - name: Use Node.js
          uses: actions/setup-node@v3
          with:
@@ -55,3 +55,4 @@ jobs:
          env:
            NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
            YARN_NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+           YARN_NPM_REGISTRY_SERVER: "https://npm.pkg.github.com"
