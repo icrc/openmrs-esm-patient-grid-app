@@ -1731,58 +1731,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@icrc/esm-patientgrid-app@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "@icrc/esm-patientgrid-app@workspace:."
-  dependencies:
-    "@carbon/react": ^1.9.0
-    "@openmrs/esm-framework": next
-    "@swc/core": ^1.2.244
-    "@swc/jest": ^0.2.22
-    "@testing-library/dom": ^7.20.0
-    "@testing-library/jest-dom": ^5.16.5
-    "@testing-library/react": ^13.3.0
-    "@testing-library/user-event": ^14.4.3
-    "@types/jest": ^28.1.7
-    "@types/react-dom": ^18.0.6
-    "@types/react-router-dom": ^5.3.3
-    "@types/testing-library__jest-dom": ^5.14.5
-    "@types/webpack-env": ^1.16.0
-    "@typescript-eslint/parser": ^5.14.0
-    babel-eslint: ^10.1.0
-    babel-preset-minify: ^0.5.1
-    concurrently: ^6.2.0
-    eslint: ^8.20.0
-    eslint-config-prettier: ^8.3.0
-    eslint-config-react-app: ^7.0.1
-    eslint-config-ts-react-important-stuff: ^3.0.0
-    eslint-plugin-prettier: ^4.2.1
-    husky: ^8.0.1
-    identity-obj-proxy: ^3.0.0
-    jest: ^28.1.3
-    jest-cli: ^28.1.3
-    jest-environment-jsdom: ^28.1.3
-    openmrs: next
-    prettier: ^2.3.0
-    pretty-quick: ^3.1.0
-    react: ^18.2.0
-    react-dom: ^18.2.0
-    react-i18next: ^11.18.4
-    react-router-dom: ^6.3.0
-    swc-loader: ^0.2.3
-    swr: ^1.3.0
-    typescript: ^4.8.2
-    webpack: ^5.73.0
-  peerDependencies:
-    "@carbon/react": ^1.9.0
-    "@openmrs/esm-framework": "*"
-    react: 18.x
-    react-dom: 18.x
-    react-i18next: 11.x
-    react-router-dom: 6.3
-  languageName: unknown
-  linkType: soft
-
 "@istanbuljs/load-nyc-config@npm:^1.0.0":
   version: 1.1.0
   resolution: "@istanbuljs/load-nyc-config@npm:1.1.0"
@@ -7215,6 +7163,58 @@ __metadata:
   checksum: 2d84a7a2207138cdb250759b047fdb05a57fede7f87b7a039d9370edba7f26e23a873a208becfd4b2c9e4b5499029f3fc3b9318da3290e693d25c39084119c80
   languageName: node
   linkType: hard
+
+"esm-patientgrid-app@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "esm-patientgrid-app@workspace:."
+  dependencies:
+    "@carbon/react": ^1.9.0
+    "@openmrs/esm-framework": next
+    "@swc/core": ^1.2.244
+    "@swc/jest": ^0.2.22
+    "@testing-library/dom": ^7.20.0
+    "@testing-library/jest-dom": ^5.16.5
+    "@testing-library/react": ^13.3.0
+    "@testing-library/user-event": ^14.4.3
+    "@types/jest": ^28.1.7
+    "@types/react-dom": ^18.0.6
+    "@types/react-router-dom": ^5.3.3
+    "@types/testing-library__jest-dom": ^5.14.5
+    "@types/webpack-env": ^1.16.0
+    "@typescript-eslint/parser": ^5.14.0
+    babel-eslint: ^10.1.0
+    babel-preset-minify: ^0.5.1
+    concurrently: ^6.2.0
+    eslint: ^8.20.0
+    eslint-config-prettier: ^8.3.0
+    eslint-config-react-app: ^7.0.1
+    eslint-config-ts-react-important-stuff: ^3.0.0
+    eslint-plugin-prettier: ^4.2.1
+    husky: ^8.0.1
+    identity-obj-proxy: ^3.0.0
+    jest: ^28.1.3
+    jest-cli: ^28.1.3
+    jest-environment-jsdom: ^28.1.3
+    openmrs: next
+    prettier: ^2.3.0
+    pretty-quick: ^3.1.0
+    react: ^18.2.0
+    react-dom: ^18.2.0
+    react-i18next: ^11.18.4
+    react-router-dom: ^6.3.0
+    swc-loader: ^0.2.3
+    swr: ^1.3.0
+    typescript: ^4.8.2
+    webpack: ^5.73.0
+  peerDependencies:
+    "@carbon/react": ^1.9.0
+    "@openmrs/esm-framework": "*"
+    react: 18.x
+    react-dom: 18.x
+    react-i18next: 11.x
+    react-router-dom: 6.3
+  languageName: unknown
+  linkType: soft
 
 "espree@npm:^9.3.2, espree@npm:^9.3.3":
   version: 9.3.3
