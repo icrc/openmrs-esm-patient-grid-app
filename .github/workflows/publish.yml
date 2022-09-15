@@ -4,7 +4,7 @@ name: openmrs-esm-patientgrid Publish
 on:
   push:
     branches:
-      - 'publish-package'
+      - 'main'
 
 jobs:
   deploy:
