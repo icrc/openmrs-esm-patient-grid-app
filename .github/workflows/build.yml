@@ -1,4 +1,4 @@
-name: Build openmrs-esm-patientgrid
+name: Build
 
 on:
   push:

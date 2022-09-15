@@ -1,4 +1,4 @@
-name: openmrs-esm-patientgrid Release
+name: Release
 
 on:
   release:
