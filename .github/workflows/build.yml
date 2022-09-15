@@ -21,7 +21,6 @@ jobs:
         with:
           node-version: "18.x"
           cache: 'yarn'
-          scope: '@icrc'
       - run: yarn install --immutable
       - run: yarn verify
       - run: yarn build
