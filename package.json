@@ -43,7 +43,8 @@
     "url": "https://github.com/icrc/openmrs-esm-patientgrid/issues"
   },
   "resolutions": {
-    "ejs": "^3.1.7"
+    "ejs": "^3.1.7",
+    "jpeg-js": "^0.4.4"
   },
   "peerDependencies": {
     "@carbon/react": "^1.9.0",
