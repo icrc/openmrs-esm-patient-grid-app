@@ -24,30 +24,32 @@ jobs:
           git config user.name "GitHub Actions"
 
       - name: Yarn verify and publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          YARN_NPM_REGISTRY_SERVER: "https://npm.pkg.github.com"
         run: |
           yarn install --immutable
           yarn verify
           yarn build
           yarn npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          #           required by yarn
-          YARN_NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          YARN_NPM_REGISTRY_SERVER: "https://npm.pkg.github.com"
+
 
       - name: Git tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           CURRENT_PROJECT_VERSION=$(node -e "console.log(require('./package.json').version)")
           git tag "$CURRENT_PROJECT_VERSION"
           git push origin "$CURRENT_PROJECT_VERSION"
           gh release create $CURRENT_PROJECT_VERSION
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Move to next Version
         run: npm version --no-git-tag-version "$(node -e "console.log(require('semver').inc(require('./package.json').version, 'minor'))")"
 
       - name: Create Branch and PR for next Version preparation
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           CURRENT_PROJECT_VERSION=$(node -e "console.log(require('./package.json').version)")
           BRANCH_NAME="move-to-$CURRENT_PROJECT_VERSION"
@@ -56,5 +58,4 @@ jobs:
           git push origin "$BRANCH_NAME"
           gh pr create -B main -H $BRANCH_NAME --title "Update Version to $CURRENT_PROJECT_VERSION" --body 'Created by "Do Release" workflow'
           echo "Please, accept the PR: Update Version to $CURRENT_PROJECT_VERSION"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

@@ -3,7 +3,7 @@ name: Publish
 on:
   push:
     branches:
-      - 'check-deploy'
+      - 'main'
 
 jobs:
   build:
@@ -32,4 +32,4 @@ jobs:
           yarn verify
           npm version --no-git-tag-version "$(node -e "console.log(require('./package.json').version)")-pre.${{ github.run_number }}"
           yarn build
-#          yarn npm publish
+          yarn npm publish
