@@ -41,6 +41,8 @@ jobs:
            git tag "$CURRENT_PROJECT_VERSION"
            git push origin "$CURRENT_PROJECT_VERSION"
            gh release create $CURRENT_PROJECT_VERSION
+         env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
        - name: Move to next Version
          run: npm version --no-git-tag-version "$(node -e "console.log(require('semver').inc(require('./package.json').version, 'minor'))")"
