@@ -4,7 +4,7 @@ name: Publish on main
 on:
   push:
     branches:
-      - 'check-deploy'
+      - 'main'
 
 jobs:
   publish:
