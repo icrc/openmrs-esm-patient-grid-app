@@ -47,13 +47,13 @@ jobs:
          run: npm version --no-git-tag-version "$(node -e "console.log(require('semver').inc(require('./package.json').version, 'minor'))")"
 
        - name: Create Branch for next Snapshot Version
-           run: |
-             CURRENT_PROJECT_VERSION=$(node -e "console.log(require('./package.json').version)")
-             BRANCH_NAME="move-to-$CURRENT_PROJECT_VERSION"
-             git checkout -b "$BRANCH_NAME"
-             git commit -a -m "[skip ci] change version to new snapshot $CURRENT_PROJECT_VERSION"
-             git push origin "$BRANCH_NAME"
-             gh pr create -B main -H $BRANCH_NAME --title "Update Version to $CURRENT_PROJECT_VERSION" --body 'Created by "Do Release" workflow'
-             echo "Please, accept the PR: Update Version to $CURRENT_PROJECT_VERSION"
-           env:
-             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         run: |
+           CURRENT_PROJECT_VERSION=$(node -e "console.log(require('./package.json').version)")
+           BRANCH_NAME="move-to-$CURRENT_PROJECT_VERSION"
+           git checkout -b "$BRANCH_NAME"
+           git commit -a -m "[skip ci] change version to new snapshot $CURRENT_PROJECT_VERSION"
+           git push origin "$BRANCH_NAME"
+           gh pr create -B main -H $BRANCH_NAME --title "Update Version to $CURRENT_PROJECT_VERSION" --body 'Created by "Do Release" workflow'
+           echo "Please, accept the PR: Update Version to $CURRENT_PROJECT_VERSION"
+         env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
