@@ -25,13 +25,13 @@ jobs:
 
       - name: Yarn verify and build
         run: |
-        yarn install --immutable
-        yarn verify
-        #         yarn 3 version is buggy and try to do some git tag but don't support the option --no-git-tag-version. So we use npm version
-        #       We add -pre-XX as a suffix to package version
-        npm version --no-git-tag-version "$(node -e "console.log(require('./package.json').version)")-pre.${{ github.run_number }}"
-        yarn build
-        yarn npm publish
+          yarn install --immutable
+          yarn verify
+#         yarn 3 version is buggy and try to do some git tag but don't support the option --no-git-tag-version. So we use npm version
+#       We add -pre-XX as a suffix to package version
+          npm version --no-git-tag-version "$(node -e "console.log(require('./package.json').version)")-pre.${{ github.run_number }}"
+          yarn build
+          yarn npm publish
       env:
         NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         YARN_NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
