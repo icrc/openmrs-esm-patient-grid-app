@@ -13,13 +13,16 @@ jobs:
       contents: read
       packages: write
     steps:
-       - uses: actions/checkout@v3
-       - name: Use Node.js
+       - name: Checkout
+         uses: actions/checkout@v3
+
+       - name: Setup Node.js
          uses: actions/setup-node@v3
          with:
            node-version: "18.x"
            registry-url: 'https://npm.pkg.github.com'
            cache: 'yarn'
+
        - name: Yarn verify and build
          run: |
            yarn install --immutable
@@ -31,6 +34,5 @@ jobs:
            yarn npm publish
          env:
            NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#           required by yarn
            YARN_NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
            YARN_NPM_REGISTRY_SERVER: "https://npm.pkg.github.com"
