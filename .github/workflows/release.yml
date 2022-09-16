@@ -1,9 +1,8 @@
 name: Do Release
 
 on:
-  push:
-    branches:
-      - 'check-deploy'
+  workflow_dispatch:
+
 
 
 jobs:
