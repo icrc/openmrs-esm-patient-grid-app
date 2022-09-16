@@ -1,4 +1,4 @@
-name: Build openmrs-esm-patientgrid
+name: Build
 
 on:
   push:
@@ -21,7 +21,8 @@ jobs:
         with:
           node-version: "18.x"
           cache: 'yarn'
-          scope: '@icrc'
-      - run: yarn install --immutable
-      - run: yarn verify
-      - run: yarn build
+      - name: Yarn verify and build
+        run: |
+          yarn install --immutable
+          yarn verify
+          yarn build
