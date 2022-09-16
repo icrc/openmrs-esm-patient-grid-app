@@ -1,5 +1,4 @@
-name: Publish on main
-
+name: Publish
 
 on:
   push:
@@ -7,32 +6,30 @@ on:
       - 'main'
 
 jobs:
-  publish:
+  build:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
     steps:
       - name: Checkout
-       uses: actions/checkout@v3
+        uses: actions/checkout@v3
 
       - name: Setup Node.js
-       uses: actions/setup-node@v3
-       with:
-         node-version: "18.x"
-         registry-url: 'https://npm.pkg.github.com'
-         cache: 'yarn'
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18.x"
+          registry-url: 'https://npm.pkg.github.com'
+          cache: 'yarn'
 
-      - name: Yarn verify and build
-       run: |
-         yarn install --immutable
-         yarn verify
-      #         yarn 3 version is buggy and try to do some git tag but don't support the option --no-git-tag-version. So we use npm version
-      #       We add -pre-XX as a suffix to package version
-         npm version --no-git-tag-version "$(node -e "console.log(require('./package.json').version)")-pre.${{ github.run_number }}"
-         yarn build
-         yarn npm publish
-       env:
-         NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-         YARN_NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-         YARN_NPM_REGISTRY_SERVER: "https://npm.pkg.github.com"
+      - name: Yarn verify and publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          YARN_NPM_REGISTRY_SERVER: "https://npm.pkg.github.com"
+        run: |
+          yarn install --immutable
+          yarn verify
+          npm version --no-git-tag-version "$(node -e "console.log(require('./package.json').version)")-pre.${{ github.run_number }}"
+          yarn build
+          yarn npm publish
