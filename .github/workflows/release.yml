@@ -26,10 +26,12 @@ jobs:
          run: |
            git config user.email "actions@github.com"
            git config user.name "GitHub Actions"
-       - run: yarn install --immutable
-       - run: yarn verify
-       - run: yarn build
-       - run: yarn npm publish
+       - name: Yarn verify and publish
+         run: |
+           yarn install --immutable
+           yarn verify
+           yarn build
+           yarn npm publish
          env:
            NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #           required by yarn
@@ -38,15 +40,14 @@ jobs:
        - name: Git tag
          run: |
            CURRENT_PROJECT_VERSION=$(node -e "console.log(require('./package.json').version)")
-           git commit -a -m "[skip ci] release $CURRENT_PROJECT_VERSION"
            git tag "$CURRENT_PROJECT_VERSION"
            git push origin "$CURRENT_PROJECT_VERSION"
            gh release create $CURRENT_PROJECT_VERSION
 
-       - name: Move to next snapshot
+       - name: Move to next Version
          run: npm version --no-git-tag-version "$(node -e "console.log(require('semver').inc(require('./package.json').version, 'minor'))")"
 
-       - name: Create Branch for next Snapshot Version
+       - name: Create Branch and PR for next Version preparation
          run: |
            CURRENT_PROJECT_VERSION=$(node -e "console.log(require('./package.json').version)")
            BRANCH_NAME="move-to-$CURRENT_PROJECT_VERSION"
