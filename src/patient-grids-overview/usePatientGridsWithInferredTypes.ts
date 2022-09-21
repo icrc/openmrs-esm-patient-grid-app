@@ -1,11 +1,11 @@
-import { useSession } from "@openmrs/esm-framework";
-import { useMemo } from "react";
-import { useGetAllPatientGrids } from "../api";
+import { useSession } from '@openmrs/esm-framework';
+import { useMemo } from 'react';
+import { useGetAllPatientGrids } from '../api';
 
 // TODO: "system" might be named wrongly.
 // -> Should be verified. This is supposed to be a grid which is not owned by anyone
 //    and is thus only displayed in the "All" tab.
-export type PatientGridType = "my" | "system" | "other";
+export type PatientGridType = 'my' | 'system' | 'other';
 
 export function usePatientGridsWithInferredTypes() {
   const patientGridsSwr = useGetAllPatientGrids();
@@ -15,11 +15,11 @@ export function usePatientGridsWithInferredTypes() {
       patientGridsSwr.data?.map((patientGrid) => {
         let type: PatientGridType;
         if (patientGrid.owner === myUserUuid) {
-          type = "my";
+          type = 'my';
         } else if (!patientGrid.owner) {
-          type = "system";
+          type = 'system';
         } else {
-          type = "other";
+          type = 'other';
         }
 
         return {
@@ -27,7 +27,7 @@ export function usePatientGridsWithInferredTypes() {
           type,
         };
       }),
-    [patientGridsSwr.data, myUserUuid]
+    [patientGridsSwr.data, myUserUuid],
   );
 
   return {

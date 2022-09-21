@@ -1,13 +1,13 @@
-import { useMutation } from "./useMutation";
-import { act, renderHook } from "@testing-library/react";
-import { useState } from "react";
+import { useMutation } from './useMutation';
+import { act, renderHook } from '@testing-library/react';
+import { useState } from 'react';
 
 describe(useMutation, () => {
-  it("has correct result transitions", async () => {
+  it('has correct result transitions', async () => {
     const [getMutatePromise, res, rej, reset] = createControlledPromise();
     const { result } = renderHook(() => useMutation(() => getMutatePromise()));
 
-    expect(result.current.status).toBe("idle");
+    expect(result.current.status).toBe('idle');
     expect(result.current.isIdle).toBe(true);
     expect(result.current.isLoading).toBe(false);
     expect(result.current.isSuccess).toBe(false);
@@ -18,7 +18,7 @@ describe(useMutation, () => {
     await act(() => {
       result.current.mutate(null);
     });
-    expect(result.current.status).toBe("loading");
+    expect(result.current.status).toBe('loading');
     expect(result.current.isIdle).toBe(false);
     expect(result.current.isLoading).toBe(true);
     expect(result.current.isSuccess).toBe(false);
@@ -26,20 +26,20 @@ describe(useMutation, () => {
     expect(result.current.data).toBeUndefined();
     expect(result.current.error).toBeUndefined();
 
-    await act(() => res("result"));
-    expect(result.current.status).toBe("success");
+    await act(() => res('result'));
+    expect(result.current.status).toBe('success');
     expect(result.current.isIdle).toBe(false);
     expect(result.current.isLoading).toBe(false);
     expect(result.current.isSuccess).toBe(true);
     expect(result.current.isError).toBe(false);
-    expect(result.current.data).toBe("result");
+    expect(result.current.data).toBe('result');
     expect(result.current.error).toBeUndefined();
 
     reset();
     await act(() => {
       result.current.mutate(null);
     });
-    expect(result.current.status).toBe("loading");
+    expect(result.current.status).toBe('loading');
     expect(result.current.isIdle).toBe(false);
     expect(result.current.isLoading).toBe(true);
     expect(result.current.isSuccess).toBe(false);
@@ -47,17 +47,17 @@ describe(useMutation, () => {
     expect(result.current.data).toBeUndefined();
     expect(result.current.error).toBeUndefined();
 
-    await act(() => rej("error"));
-    expect(result.current.status).toBe("error");
+    await act(() => rej('error'));
+    expect(result.current.status).toBe('error');
     expect(result.current.isIdle).toBe(false);
     expect(result.current.isLoading).toBe(false);
     expect(result.current.isSuccess).toBe(false);
     expect(result.current.isError).toBe(true);
     expect(result.current.data).toBeUndefined();
-    expect(result.current.error).toBe("error");
+    expect(result.current.error).toBe('error');
   });
 
-  it("calls success and settled callbacks when mutation function resolves", async () => {
+  it('calls success and settled callbacks when mutation function resolves', async () => {
     const [getMutatePromise, res] = createControlledPromise();
     const mutationFn = jest.fn().mockImplementation(() => getMutatePromise());
     const useMutationOnSettled = jest.fn();
@@ -69,7 +69,7 @@ describe(useMutation, () => {
       useMutation(mutationFn, {
         onSuccess: useMutationOnSuccess,
         onSettled: useMutationOnSettled,
-      })
+      }),
     );
 
     await act(() => {
@@ -80,14 +80,14 @@ describe(useMutation, () => {
     });
     expect(mutationFn).toHaveBeenCalledTimes(1);
 
-    await act(() => res("result"));
+    await act(() => res('result'));
     expect(useMutationOnSettled).toHaveBeenCalled();
-    expect(useMutationOnSuccess).toHaveBeenCalledWith("result");
+    expect(useMutationOnSuccess).toHaveBeenCalledWith('result');
     expect(mutateOnSettled).toHaveBeenCalled();
-    expect(mutateOnSuccess).toHaveBeenCalledWith("result");
+    expect(mutateOnSuccess).toHaveBeenCalledWith('result');
   });
 
-  it("calls error and settled callbacks when mutation function rejects", async () => {
+  it('calls error and settled callbacks when mutation function rejects', async () => {
     const [getMutatePromise, , rej] = createControlledPromise();
     const mutationFn = jest.fn().mockImplementation(() => getMutatePromise());
     const useMutationOnSettled = jest.fn();
@@ -99,7 +99,7 @@ describe(useMutation, () => {
       useMutation(mutationFn, {
         onError: useMutationOnError,
         onSettled: useMutationOnSettled,
-      })
+      }),
     );
 
     await act(() => {
@@ -110,18 +110,16 @@ describe(useMutation, () => {
     });
     expect(mutationFn).toHaveBeenCalledTimes(1);
 
-    await act(() => rej("error"));
+    await act(() => rej('error'));
     expect(useMutationOnSettled).toHaveBeenCalled();
-    expect(useMutationOnError).toHaveBeenCalledWith("error");
+    expect(useMutationOnError).toHaveBeenCalledWith('error');
     expect(mutateOnSettled).toHaveBeenCalled();
-    expect(mutateOnError).toHaveBeenCalledWith("error");
+    expect(mutateOnError).toHaveBeenCalledWith('error');
   });
 
-  it("returns stable values even when inputs change", async () => {
+  it('returns stable values even when inputs change', async () => {
     const { result } = renderHook(() => {
-      const [mutationFn, setMutationFn] = useState(
-        () => () => Promise.resolve()
-      );
+      const [mutationFn, setMutationFn] = useState(() => () => Promise.resolve());
       const [options, setOptions] = useState({});
       const mutation = useMutation(mutationFn, options);
       return { mutation, setMutationFn, setOptions };

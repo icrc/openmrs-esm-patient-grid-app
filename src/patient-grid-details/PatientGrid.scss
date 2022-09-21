@@ -1,0 +1,57 @@
+@use '@carbon/layout';
+@import "~@openmrs/esm-styleguide/src/vars";
+
+.tableHeaderContainer {
+  display: flex;
+  justify-content: flex-end;
+  padding: layout.$spacing-06 layout.$spacing-05 0 layout.$spacing-05;
+
+  .tableSearchLayer {
+    width: 20%;
+    min-width: 12.5rem;
+  }
+}
+
+.relativeTablePositioner {
+  // This alignment/positioning ensures that only the table itself scrolls to the right (when it overflows).
+  position: relative;
+
+  .rawTableContainer {
+    background-color: #ededed;
+    overflow: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+}
+
+.table {
+  margin: 0 layout.$spacing-05 layout.$spacing-05 layout.$spacing-05;
+}
+
+.tableHeaderRow {
+  // This is not exactly pretty, but it's the easiest way to override Carbon's default style so that
+  // the colors adhere to the screen designs.
+  border: 0 solid #c4c4c4 !important;
+  border-bottom-width: 1px !important;
+  background-color: $ui-03 !important;
+  white-space: nowrap;
+
+  th {
+    background-color: $ui-03 !important;
+    color: $color-gray-70 !important;
+  }
+}
+
+.expandCell {
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+}
+
+.headerWithActions {
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+}

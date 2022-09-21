@@ -1,5 +1,5 @@
-import React, { ReactNode } from "react";
-import styles from "./PageWithSidePanel.scss";
+import React, { ReactNode } from 'react';
+import styles from './PageWithSidePanel.scss';
 
 export interface PageWithSidePanelProps {
   sidePanel?: ReactNode;
@@ -7,11 +7,7 @@ export interface PageWithSidePanelProps {
   children?: ReactNode;
 }
 
-export function PageWithSidePanel({
-  sidePanel,
-  showSidePanel,
-  children,
-}: PageWithSidePanelProps) {
+export function PageWithSidePanel({ sidePanel, showSidePanel, children }: PageWithSidePanelProps) {
   return (
     <div className={styles.main}>
       <div className={styles.mainContent}>{children}</div>

@@ -1,6 +1,6 @@
-import { openmrsFetch } from "@openmrs/esm-framework";
-import useSWR from "swr";
-import { FhirBundleResponse } from "./fhir";
+import { openmrsFetch } from '@openmrs/esm-framework';
+import useSWR from 'swr';
+import { FhirBundleResponse } from './fhir';
 
 export interface LocationGet {
   id: string;
@@ -8,16 +8,12 @@ export interface LocationGet {
 }
 
 export function useGetAllCountryLocations() {
-  return useFilteredLocations("?_tag=Country");
+  return useFilteredLocations('?_tag=Country');
 }
 
-export function useGetAllStructureLocations(
-  countryLocationName: string | undefined
-) {
+export function useGetAllStructureLocations(countryLocationName: string | undefined) {
   return useFilteredLocations(
-    countryLocationName
-      ? `?_tag=Visit Location&address-country=${countryLocationName}`
-      : undefined
+    countryLocationName ? `?_tag=Visit Location&address-country=${countryLocationName}` : undefined,
   );
 }
 
@@ -27,7 +23,7 @@ function useFilteredLocations(filter: string | undefined) {
 
   return useSWR(swrKeyProvider, (url) =>
     openmrsFetch<FhirBundleResponse<LocationGet>>(url).then(
-      (res) => res.data.entry?.map((entry) => entry.resource) ?? []
-    )
+      (res) => res.data.entry?.map((entry) => entry.resource) ?? [],
+    ),
   );
 }

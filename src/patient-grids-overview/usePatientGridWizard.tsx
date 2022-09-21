@@ -1,8 +1,8 @@
-import React, { Dispatch, SetStateAction, useMemo, useState } from "react";
-import { GenderRepresentation } from "../api";
-import { PatientGridBuilderDetailsPage } from "./PatientGridBuilderDetailsPage";
-import { PatientGridBuilderFiltersPage } from "./PatientGridBuilderFiltersPage";
-import { PatientGridBuilderSectionsPage } from "./PatientGridBuilderSectionsPage";
+import React, { Dispatch, SetStateAction, useMemo, useState } from 'react';
+import { GenderRepresentation } from '../api';
+import { PatientGridBuilderDetailsPage } from './PatientGridBuilderDetailsPage';
+import { PatientGridBuilderFiltersPage } from './PatientGridBuilderFiltersPage';
+import { PatientGridBuilderSectionsPage } from './PatientGridBuilderSectionsPage';
 
 export interface PatientGridWizardState {
   countryLocationId?: string;
@@ -28,7 +28,7 @@ export function usePatientGridWizard() {
       (props: WizardPageProps) => <PatientGridBuilderSectionsPage {...props} />,
       (props: WizardPageProps) => <PatientGridBuilderFiltersPage {...props} />,
     ],
-    []
+    [],
   );
 
   const currentPage = useMemo(
@@ -45,7 +45,7 @@ export function usePatientGridWizard() {
           setPage((page) => page - 1);
         },
       }),
-    [state, page, pageFactories]
+    [state, page, pageFactories],
   );
 
   const isStateValidForSubmission = useMemo(() => {

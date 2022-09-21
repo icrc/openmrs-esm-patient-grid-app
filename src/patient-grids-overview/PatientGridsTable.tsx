@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState } from 'react';
 import {
   DataTable,
   DataTableSkeleton,
@@ -13,20 +13,17 @@ import {
   Link,
   OverflowMenu,
   OverflowMenuItem,
-} from "@carbon/react";
-import { useTranslation } from "react-i18next";
-import { Link as ReactRouterLink, useNavigate } from "react-router-dom";
-import styles from "./PatientGridsTable.scss";
-import { routes } from "../routes";
-import { PatientGridGet, useGetAllPatientGrids } from "../api";
-import { ErrorState } from "@openmrs/esm-framework";
-import {
-  PatientGridType,
-  usePatientGridsWithInferredTypes,
-} from "./usePatientGridsWithInferredTypes";
-import { DeletePatientGridModal } from "./DeletePatientGridModal";
+} from '@carbon/react';
+import { useTranslation } from 'react-i18next';
+import { Link as ReactRouterLink, useNavigate } from 'react-router-dom';
+import styles from './PatientGridsTable.scss';
+import { routes } from '../routes';
+import { PatientGridGet, useGetAllPatientGrids } from '../api';
+import { ErrorState } from '@openmrs/esm-framework';
+import { PatientGridType, usePatientGridsWithInferredTypes } from './usePatientGridsWithInferredTypes';
+import { DeletePatientGridModal } from '../crosscutting-features';
 
-export type PatientGridViewType = "system" | "my" | "all";
+export type PatientGridViewType = 'system' | 'my' | 'all';
 
 export interface PatientGridsTableProps {
   type: PatientGridViewType;
@@ -35,67 +32,37 @@ export interface PatientGridsTableProps {
 export function PatientGridsTable({ type }: PatientGridsTableProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { data: patientGrids, error: patientGridsError } =
-    useGetAllPatientGrids();
+  const { data: patientGrids, error: patientGridsError } = useGetAllPatientGrids();
   const headers = useTableHeaders();
   const rows = useTableRows(type);
-  const [patientGridToDelete, setPatientGridToDelete] = useState<
-    PatientGridGet | undefined
-  >(undefined);
+  const [patientGridToDelete, setPatientGridToDelete] = useState<PatientGridGet | undefined>(undefined);
 
   if (patientGridsError && !patientGrids) {
     // TODO: This error state looks weird in the UI. It's better than having nothing, but
     // a designer should probably weigh in on this.
     return (
       <ErrorState
-        headerTitle={t(
-          "patientGridsFetchingFailed",
-          "Loading the patient grids failed"
-        )}
+        headerTitle={t('patientGridsFetchingFailed', 'Loading the patient grids failed')}
         error={patientGridsError}
       />
     );
   }
 
   if (!patientGrids) {
-    return (
-      <DataTableSkeleton
-        headers={headers}
-        showHeader={false}
-        showToolbar={false}
-      />
-    );
+    return <DataTableSkeleton headers={headers} showHeader={false} showToolbar={false} />;
   }
 
   return (
     <div>
-      <DataTable
-        headers={headers}
-        rows={rows}
-        overflowMenuOnHover={false}
-        filterRows={filterTableRows}
-      >
-        {({
-          rows,
-          headers,
-          getTableProps,
-          getHeaderProps,
-          getRowProps,
-          onInputChange,
-        }) => (
+      <DataTable headers={headers} rows={rows} overflowMenuOnHover={false} filterRows={filterTableRows}>
+        {({ rows, headers, getTableProps, getHeaderProps, getRowProps, onInputChange }) => (
           <>
             <div className={styles.tableHeaderContainer}>
               <Layer className={styles.tableSearchLayer}>
                 <Search
                   size="sm"
-                  placeholder={t(
-                    "patientGridsFilterLabelAndPlaceholder",
-                    "Search these grids"
-                  )}
-                  labelText={t(
-                    "patientGridsFilterLabelAndPlaceholder",
-                    "Search these grids"
-                  )}
+                  placeholder={t('patientGridsFilterLabelAndPlaceholder', 'Search these grids')}
+                  labelText={t('patientGridsFilterLabelAndPlaceholder', 'Search these grids')}
                   onChange={onInputChange}
                 />
               </Layer>
@@ -104,9 +71,7 @@ export function PatientGridsTable({ type }: PatientGridsTableProps) {
               <TableHead>
                 <TableRow>
                   {headers.map((header) => (
-                    <TableHeader {...getHeaderProps({ header })}>
-                      {header.header}
-                    </TableHeader>
+                    <TableHeader {...getHeaderProps({ header })}>{header.header}</TableHeader>
                   ))}
                   <TableHeader />
                 </TableRow>
@@ -115,34 +80,25 @@ export function PatientGridsTable({ type }: PatientGridsTableProps) {
                 {rows?.map((row) => (
                   <TableRow {...getRowProps({ row })}>
                     {row.cells.map((cell) => (
-                      <TableCell key={cell.id}>
-                        {cell.value.cellContent ?? cell.value}
-                      </TableCell>
+                      <TableCell key={cell.id}>{cell.value.cellContent ?? cell.value}</TableCell>
                     ))}
                     <TableCell className="cds--table-column-menu">
-                      <OverflowMenu
-                        size="sm"
-                        ariaLabel={t("patientGridRowLabel", "Actions")}
-                      >
+                      <OverflowMenu size="sm" ariaLabel={t('patientGridRowLabel', 'Actions')}>
                         <OverflowMenuItem
-                          itemText={t("patientGridViewRowMenuItem", "View")}
+                          itemText={t('patientGridViewRowMenuItem', 'View')}
                           onClick={() =>
                             navigate(
                               routes.patientGridDetails.interpolate({
                                 id: row.id,
-                              })
+                              }),
                             )
                           }
                         />
                         <OverflowMenuItem
                           isDelete
-                          itemText={t("patientGridDeleteRowMenuItem", "Delete")}
+                          itemText={t('patientGridDeleteRowMenuItem', 'Delete')}
                           onClick={() =>
-                            setPatientGridToDelete(
-                              patientGrids.find(
-                                (patientGrid) => patientGrid.uuid === row.id
-                              )
-                            )
+                            setPatientGridToDelete(patientGrids.find((patientGrid) => patientGrid.uuid === row.id))
                           }
                         />
                       </OverflowMenu>
@@ -167,14 +123,14 @@ function useTableHeaders() {
   const { t } = useTranslation();
   return useMemo(
     () => [
-      { key: "name", header: t("gridNameTableHeader", "Grid name") },
+      { key: 'name', header: t('gridNameTableHeader', 'Grid name') },
       {
-        key: "description",
-        header: t("descriptionTableHeader", "Description"),
+        key: 'description',
+        header: t('descriptionTableHeader', 'Description'),
       },
-      { key: "type", header: t("gridTypeTableHeader", "Grid type") },
+      { key: 'type', header: t('gridTypeTableHeader', 'Grid type') },
     ],
-    [t]
+    [t],
   );
 }
 
@@ -184,13 +140,11 @@ function useTableRows(type: PatientGridViewType) {
 
   return useMemo(() => {
     const gridsToDisplay =
-      type === "all"
-        ? patientGrids
-        : patientGrids.filter((patientGrid) => patientGrid.type === type);
+      type === 'all' ? patientGrids : patientGrids.filter((patientGrid) => patientGrid.type === type);
     const typeDisplayStrings: Record<PatientGridType, string> = {
-      system: t("sharedGrid", "Shared grid"),
-      my: t("myGrid", "My grid"),
-      other: t("systemGrid", "Other's grid"),
+      system: t('sharedGrid', 'Shared grid'),
+      my: t('myGrid', 'My grid'),
+      other: t('systemGrid', "Other's grid"),
     };
 
     return gridsToDisplay.map((patientGrid) => {
@@ -201,8 +155,7 @@ function useTableRows(type: PatientGridViewType) {
             <ReactRouterLink
               to={routes.patientGridDetails.interpolate({
                 id: patientGrid.uuid,
-              })}
-            >
+              })}>
               <Link>{patientGrid.name}</Link>
             </ReactRouterLink>
           ),
@@ -221,23 +174,13 @@ function useTableRows(type: PatientGridViewType) {
   }, [patientGrids, type, t]);
 }
 
-function filterTableRows({
-  rowIds,
-  headers,
-  cellsById,
-  inputValue,
-  getCellId,
-}) {
+function filterTableRows({ rowIds, headers, cellsById, inputValue, getCellId }) {
   return rowIds.filter((rowId) =>
     headers.some(({ key }) => {
       const cellId = getCellId(rowId, key);
       const value = cellsById[cellId].value;
-      const filterableValue =
-        value?.filterableString?.toString() ?? value?.toString() ?? "";
-      return filterableValue
-        .replace(/\s/g, "")
-        .toLowerCase()
-        .includes(inputValue.replace(/\s/g, "").toLowerCase());
-    })
+      const filterableValue = value?.filterableString?.toString() ?? value?.toString() ?? '';
+      return filterableValue.replace(/\s/g, '').toLowerCase().includes(inputValue.replace(/\s/g, '').toLowerCase());
+    }),
   );
 }

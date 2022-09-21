@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState } from 'react';
 
 /**
  * Represents an asynchronous mutation function which mutates arbitrary data.
@@ -16,7 +16,7 @@ export type MutationFn<TData, TArgs> = (args: TArgs) => Promise<TData>;
  * * `success`: The mutation successfully ran and provided a result.
  * * `error`: The mutation ran, but failed with an error.
  */
-export type MutationStatus = "idle" | "loading" | "success" | "error";
+export type MutationStatus = 'idle' | 'loading' | 'success' | 'error';
 
 /**
  * Represents the arguments which can be passed to the {@link useMutation} hook.
@@ -37,7 +37,7 @@ export type MutateFn<TArgs, TData, TError> = (
     onSuccess?(data: TData): void;
     onError?(error: TError): void;
     onSettled?(): void;
-  }
+  },
 ) => Promise<void>;
 
 /**
@@ -50,8 +50,8 @@ interface InternalMutationState<TData, TError> {
 }
 
 // Internal singleton states that can be reused accross multiple useMutation invocations.
-const idleState: InternalMutationState<any, any> = { status: "idle" };
-const loadingState: InternalMutationState<any, any> = { status: "loading" };
+const idleState: InternalMutationState<any, any> = { status: 'idle' };
+const loadingState: InternalMutationState<any, any> = { status: 'loading' };
 
 /**
  * A hook for running asynchronous data mutations.
@@ -66,11 +66,10 @@ const loadingState: InternalMutationState<any, any> = { status: "loading" };
  */
 export function useMutation<TArgs = unknown, TData = unknown, TError = Error>(
   mutationFn: MutationFn<TData, TArgs>,
-  options?: UseMutationArgs<TData, TError>
+  options?: UseMutationArgs<TData, TError>,
 ) {
   const stabilizedMutationDeps = useStabilized({ mutationFn, options });
-  const [state, setState] =
-    useState<InternalMutationState<TData, TError>>(idleState);
+  const [state, setState] = useState<InternalMutationState<TData, TError>>(idleState);
 
   const mutate = useCallback<MutateFn<TArgs, TData, TError>>(
     async (args, mutateOptions) => {
@@ -79,29 +78,29 @@ export function useMutation<TArgs = unknown, TData = unknown, TError = Error>(
       const [hasData, data, error] = await safeUnwrap(mutationFn(args));
 
       if (hasData) {
-        setState({ status: "success", data });
+        setState({ status: 'success', data });
         options?.onSuccess?.(data!);
         options?.onSettled?.();
         mutateOptions?.onSuccess?.(data!);
         mutateOptions?.onSettled?.();
       } else {
-        setState({ status: "error", error });
+        setState({ status: 'error', error });
         options?.onError?.(error);
         options?.onSettled?.();
         mutateOptions?.onError?.(error);
         mutateOptions?.onSettled?.();
       }
     },
-    [stabilizedMutationDeps]
+    [stabilizedMutationDeps],
   );
 
   return {
     ...state,
     mutate,
-    isIdle: state.status === "idle",
-    isLoading: state.status === "loading",
-    isSuccess: state.status === "success",
-    isError: state.status === "error",
+    isIdle: state.status === 'idle',
+    isLoading: state.status === 'loading',
+    isSuccess: state.status === 'success',
+    isError: state.status === 'error',
   };
 }
 

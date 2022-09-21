@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import { generatePath, Params } from "react-router";
+import { generatePath, Params } from 'react-router';
 
 /**
  * Provides convenience methods for accessing and escaping the routes and route paths used by the module.
@@ -24,11 +24,9 @@ export class RouteDescriptor<TParams extends Params | void> {
 
 export const routes = {
   /** The route for the page displaying the patient grid overview table. */
-  patientGridsOverview: new RouteDescriptor("/patient-grids"),
+  patientGridsOverview: new RouteDescriptor('/patient-grids'),
   /** The route for the page displaying the details (i.e. the report) of a single patient grid. */
-  patientGridDetails: new RouteDescriptor<PatientGridDetailsParams>(
-    "/patient-grids/:id"
-  ),
+  patientGridDetails: new RouteDescriptor<PatientGridDetailsParams>('/patient-grids/:id'),
 };
 
 export interface PatientGridDetailsParams extends Params {

@@ -1,0 +1,13 @@
+@use '@carbon/type';
+
+.filtersContainer {
+  align-items: center;
+}
+
+.filtersCaption {
+  @include type.type-style('heading-compact-01');
+}
+
+.filtersFallback {
+  @include type.type-style('body-compact-01');
+}

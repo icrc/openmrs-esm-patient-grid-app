@@ -1,8 +1,8 @@
-import React, { ReactNode } from "react";
-import { Header, HeaderName, HeaderGlobalBar, Button } from "@carbon/react";
-import { Close } from "@carbon/react/icons";
-import styles from "./SidePanel.scss";
-import { useTranslation } from "react-i18next";
+import React, { ReactNode } from 'react';
+import { Header, HeaderName, HeaderGlobalBar, Button } from '@carbon/react';
+import { Close } from '@carbon/react/icons';
+import styles from './SidePanel.scss';
+import { useTranslation } from 'react-i18next';
 
 export interface SidePanelProps {
   title?: ReactNode;
@@ -11,12 +11,7 @@ export interface SidePanelProps {
   onClose?(): void;
 }
 
-export function SidePanel({
-  title,
-  children,
-  footer,
-  onClose,
-}: SidePanelProps) {
+export function SidePanel({ title, children, footer, onClose }: SidePanelProps) {
   const { t } = useTranslation();
 
   return (
@@ -25,7 +20,7 @@ export function SidePanel({
         <HeaderName prefix="">{title}</HeaderName>
         <HeaderGlobalBar className={styles.headerGlobalBar}>
           <Button
-            iconDescription={t("sidePanelClose", "Close")}
+            iconDescription={t('sidePanelClose', 'Close')}
             hasIconOnly
             kind="ghost"
             onClick={onClose}
@@ -34,9 +29,7 @@ export function SidePanel({
           />
         </HeaderGlobalBar>
       </Header>
-      <section className={styles.sidePanelChildrenContainer}>
-        {children}
-      </section>
+      <section className={styles.sidePanelChildrenContainer}>{children}</section>
       <section>{footer}</section>
     </div>
   );
