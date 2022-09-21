@@ -14,7 +14,7 @@ const backendDependencies = {
 
 function setupOpenMRS() {
   const basePath = `${window.spaBase}/patient-grids`;
-  const moduleName = '@icrc/esm-patientgrid-app';
+  const moduleName = '@icrc/esm-patient-grid-app';
   const options = {
     featureName: 'patientgrid-app',
     moduleName,

@@ -1,6 +1,6 @@
 {
-  "name": "@icrc/esm-patientgrid-app",
-  "version": "1.0.0",
+  "name": "@icrc/openmrs-esm-patient-grid",
+  "version": "1.0.1",
   "license": "BSD-3-Clause",
   "description": "The microfrontend module providing the patient grid feature.",
   "browser": "dist/openmrs-esm-patientgrid-app.js",
@@ -19,6 +19,9 @@
     "coverage": "yarn test -- --coverage ",
     "prepare": "husky install"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "husky": {
     "hooks": {
       "pre-commit": "pretty-quick --staged && yarn verify"
@@ -33,14 +36,15 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/icrc/openmrs-esm-patientgrid.git"
+    "url": "https://github.com/icrc/openmrs-esm-patientgrid.git"
   },
   "homepage": "https://github.com/icrc/openmrs-esm-patientgrid",
-  "publishConfig": {
-    "access": "public"
-  },
   "bugs": {
     "url": "https://github.com/icrc/openmrs-esm-patientgrid/issues"
+  },
+  "resolutions": {
+    "ejs": "^3.1.7",
+    "jpeg-js": "^0.4.4"
   },
   "peerDependencies": {
     "@carbon/react": "^1.9.0",
