@@ -2,6 +2,7 @@
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
+  white-space: nowrap;
 }
 
 .actionsContainer {
@@ -10,4 +11,5 @@
 
 .subTitleContainer {
   grid-column: auto / span 2;
+  white-space: nowrap;
 }

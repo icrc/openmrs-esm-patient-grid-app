@@ -31,7 +31,7 @@ function setupOpenMRS() {
     {
       path: `${basePath}/:id`,
       title: (id) =>
-        openmrsFetch<PatientGridGet>(`/ws/rest/v1/icrc/patientgrid/${id}`)
+        openmrsFetch<PatientGridGet>(`/ws/rest/v1/patientgid/patientgrid/${id}`)
           .then(({ data }) => data?.description ?? 'Patient Grid')
           .catch(() => 'Patient Grid'),
       parent: basePath,

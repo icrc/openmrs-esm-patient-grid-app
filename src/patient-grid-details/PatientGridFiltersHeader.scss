@@ -4,6 +4,10 @@
   align-items: center;
 }
 
+.filterTag {
+  white-space: nowrap;
+}
+
 .filtersCaption {
   @include type.type-style('heading-compact-01');
 }

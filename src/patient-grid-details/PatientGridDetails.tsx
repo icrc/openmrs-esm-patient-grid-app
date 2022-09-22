@@ -10,6 +10,7 @@ import { DeletePatientGridModal, EditPatientGridModal } from '../crosscutting-fe
 import { PatientGridGet, useGetPatientGrid } from '../api';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PatientGridDetailsParams, routes } from '../routes';
+import { PatientGridReportLoadingIndicator } from './PatientGridReportLoadingIndicator';
 
 export function PatientGridDetails() {
   const navigate = useNavigate();
@@ -17,6 +18,11 @@ export function PatientGridDetails() {
   const [patientGridToEdit, setPatientGridToEdit] = useState<PatientGridGet | undefined>(undefined);
   const { id: patientGridId } = useParams<PatientGridDetailsParams>();
   const { data: patientGrid } = useGetPatientGrid(patientGridId);
+  const isPatientGridReportBeingGenerated = false; // TODO: Somehow set this value.
+
+  if (isPatientGridReportBeingGenerated) {
+    return <PatientGridReportLoadingIndicator />;
+  }
 
   return (
     <PageWithSidePanel>
