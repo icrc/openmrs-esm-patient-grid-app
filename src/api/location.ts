@@ -8,7 +8,7 @@ export interface LocationGet {
 }
 
 export function useGetAllCountryLocations() {
-  return useFilteredLocations('?_tag=Country');
+  return useFilteredLocations('?_count=100');
 }
 
 export function useGetAllStructureLocations(countryLocationName: string | undefined) {
@@ -19,9 +19,9 @@ export function useGetAllStructureLocations(countryLocationName: string | undefi
 
 function useFilteredLocations(filter: string | undefined) {
   const url = `/ws/fhir2/R4/Location${filter}`;
-  const swrKeyProvider = !filter ? null : url;
+  const swrKey = filter ? url : null;
 
-  return useSWR(swrKeyProvider, (url) =>
+  return useSWR(swrKey, (url) =>
     openmrsFetch<FhirBundleResponse<LocationGet>>(url).then(
       (res) => res.data.entry?.map((entry) => entry.resource) ?? [],
     ),

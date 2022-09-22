@@ -1,21 +1,22 @@
-import { useSession } from '@openmrs/esm-framework';
+import { OpenmrsResource, useSession } from '@openmrs/esm-framework';
 import useSWR from 'swr';
 import { mockApiCall } from './mockUtils';
 import { useMutation } from './useMutation';
 
-export interface PatientGridGet {
-  uuid: string;
+export interface PatientGridGet extends OpenmrsResource {
   name: string;
-  description: string;
-  owner?: string;
-  cohort: string;
+  description?: string;
+  retired: boolean;
+  owner?: OpenmrsResource;
+  cohort: OpenmrsResource;
   columns: Array<PatientGridColumnGet>;
 }
 
-export interface PatientGridColumnGet {
+export interface PatientGridColumnGet extends OpenmrsResource {
   name: string;
-  description: string;
+  description?: string;
   datatype: string;
+  type: string;
   concept?: string;
   encounterType?: string;
   convertToAgeRange?: boolean;
@@ -29,24 +30,27 @@ export function useGetAllPatientGrids() {
         uuid: '1',
         name: 'First grid',
         description: 'First grid description',
-        owner: myUserUuid,
-        cohort: '123',
+        owner: { uuid: myUserUuid },
+        cohort: { uuid: '123' },
+        retired: false,
         columns: [],
       },
       {
         uuid: '2',
         name: 'Second grid',
         description: 'Second grid description',
-        owner: '123',
-        cohort: '123',
+        owner: { uuid: '123' },
+        cohort: { uuid: '123' },
+        retired: false,
         columns: [],
       },
       {
         uuid: '3',
         name: 'Third grid',
         description: 'Third grid description',
-        owner: '456',
-        cohort: '123',
+        owner: { uuid: '456' },
+        cohort: { uuid: '123' },
+        retired: false,
         columns: [],
       },
       {
@@ -54,7 +58,8 @@ export function useGetAllPatientGrids() {
         name: 'Fourth grid',
         description: 'Fourth grid description',
         owner: undefined,
-        cohort: '123',
+        cohort: { uuid: '123' },
+        retired: false,
         columns: [],
       },
     ]),
@@ -62,13 +67,14 @@ export function useGetAllPatientGrids() {
 }
 
 export function useGetPatientGrid(id: string) {
-  return useSWR(`/ws/rest/v1/icrc/patientgrid/${id}`, () =>
+  return useSWR(`/ws/rest/v1/patientgrid/patientgrid/${id}`, () =>
     mockApiCall<PatientGridGet>({
       uuid: '1',
       name: 'Example grid',
       description: 'Example grid description',
-      owner: '123',
-      cohort: '123',
+      owner: { uuid: '123' },
+      cohort: { uuid: '123' },
+      retired: false,
       columns: [],
     }),
   );

@@ -14,7 +14,7 @@ export function usePatientGridsWithInferredTypes() {
     () =>
       patientGridsSwr.data?.map((patientGrid) => {
         let type: PatientGridType;
-        if (patientGrid.owner === myUserUuid) {
+        if (patientGrid.owner?.uuid === myUserUuid) {
           type = 'my';
         } else if (!patientGrid.owner) {
           type = 'system';
