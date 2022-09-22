@@ -1,6 +1,7 @@
 import { OpenmrsResource, useSession } from '@openmrs/esm-framework';
 import useSWR from 'swr';
 import { mockApiCall } from './mockUtils';
+import { PatientGridColumnGet } from './patientGridColumn';
 import { useMutation } from './useMutation';
 
 export interface PatientGridGet extends OpenmrsResource {
@@ -12,19 +13,9 @@ export interface PatientGridGet extends OpenmrsResource {
   columns: Array<PatientGridColumnGet>;
 }
 
-export interface PatientGridColumnGet extends OpenmrsResource {
-  name: string;
-  description?: string;
-  datatype: string;
-  type: string;
-  concept?: string;
-  encounterType?: string;
-  convertToAgeRange?: boolean;
-}
-
 export function useGetAllPatientGrids() {
   const myUserUuid = useSession().user?.uuid;
-  return useSWR('/ws/rest/v1/icrc/patientgrid', () =>
+  return useSWR('/ws/rest/v1/patientgrid/patientgrid', () =>
     mockApiCall<Array<PatientGridGet>>([
       {
         uuid: '1',

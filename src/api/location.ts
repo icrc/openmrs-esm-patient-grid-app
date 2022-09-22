@@ -8,7 +8,7 @@ export interface LocationGet {
 }
 
 export function useGetAllCountryLocations() {
-  return useFilteredLocations('?_count=100');
+  return useFilteredLocations('?_tag=Country');
 }
 
 export function useGetAllStructureLocations(countryLocationName: string | undefined) {
