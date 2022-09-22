@@ -1,5 +1,5 @@
 import { showToast } from '@openmrs/esm-framework';
-import React, { Dispatch, SetStateAction } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal, TextInput, TextArea, Stack } from '@carbon/react';
 import { PatientGridGet, useEditPatientGridMutation } from '../api';
@@ -11,6 +11,8 @@ export interface EditPatientGridModalProps {
 
 export function EditPatientGridModal({ patientGridToEdit, setPatientGridToEdit }: EditPatientGridModalProps) {
   const { t } = useTranslation();
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
   const { mutate, isLoading } = useEditPatientGridMutation();
   const submit = () => {
     mutate(
@@ -39,6 +41,13 @@ export function EditPatientGridModal({ patientGridToEdit, setPatientGridToEdit }
     );
   };
 
+  useEffect(() => {
+    if (patientGridToEdit) {
+      setName(patientGridToEdit.name);
+      setDescription(patientGridToEdit.description);
+    }
+  }, [patientGridToEdit]);
+
   return (
     <Modal
       open={!!patientGridToEdit}
@@ -52,12 +61,19 @@ export function EditPatientGridModal({ patientGridToEdit, setPatientGridToEdit }
       onRequestSubmit={() => submit()}
       onRequestClose={() => setPatientGridToEdit(undefined)}>
       <Stack gap={6}>
-        <TextInput id="gridName" labelText={t('editPatientGridModalNameInputLabel', 'Grid name')} />
+        <TextInput
+          id="gridName"
+          labelText={t('editPatientGridModalNameInputLabel', 'Grid name')}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
         <TextArea
           id="gridDescription"
           enableCounter
           maxCount={300}
           labelText={t('editPatientGridModalDescriptionInputLabel', 'Describe the purpose of this grid in a few words')}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
         />
       </Stack>
     </Modal>
