@@ -51,7 +51,6 @@ export function EditPatientGridModal({ patientGridToEdit, setPatientGridToEdit }
   return (
     <Modal
       open={!!patientGridToEdit}
-      danger
       modalHeading={t('editPatientGridModalTitle', 'Edit name / description')}
       primaryButtonText={t('editPatientGridModalSave', 'Save changes')}
       secondaryButtonText={
