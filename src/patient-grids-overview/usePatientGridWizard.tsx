@@ -1,13 +1,17 @@
 import React, { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import { GenderRepresentation } from '../api';
+import { FormGet } from '../api/forms';
 import { PatientGridBuilderDetailsPage } from './PatientGridBuilderDetailsPage';
 import { PatientGridBuilderFiltersPage } from './PatientGridBuilderFiltersPage';
 import { PatientGridBuilderSectionsPage } from './PatientGridBuilderSectionsPage';
 
 export interface PatientGridWizardState {
+  name?: string;
+  description?: string;
   countryLocationId?: string;
   structureLocationId?: string;
   gender?: GenderRepresentation;
+  selectedForms: Array<FormGet>;
 }
 
 export interface WizardPageProps {
@@ -20,7 +24,7 @@ export interface WizardPageProps {
 }
 
 export function usePatientGridWizard() {
-  const [state, setState] = useState<PatientGridWizardState>({});
+  const [state, setState] = useState<PatientGridWizardState>({ selectedForms: [] });
   const [page, setPage] = useState(0);
   const pageFactories = useMemo(
     () => [

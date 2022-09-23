@@ -33,3 +33,15 @@ interface PatientGridAgeColumnGet extends PatientGridBaseColumnGet {
 }
 
 export type PatientGridColumnGet = PatientGridNormalColumnGet | PatientGridObsColumnGet | PatientGridAgeColumnGet;
+export type PatientGridColumnType = PatientGridColumnGet['type'];
+
+export interface PatientGridColumnPost {
+  uuid?: string;
+  type?: PatientGridColumnType;
+  datatype?: PatientGridColumnDataType;
+  name?: string;
+  description?: string;
+  concept?: unknown; // TODO: Type
+  encounterType?: unknown; // TODO: Type
+  convertToAgeRange?: boolean;
+}

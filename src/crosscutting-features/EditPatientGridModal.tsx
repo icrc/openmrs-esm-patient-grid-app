@@ -13,10 +13,11 @@ export function EditPatientGridModal({ patientGridToEdit, setPatientGridToEdit }
   const { t } = useTranslation();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const isValidSubmissionResult = !!name.trim().length;
   const { mutate, isLoading } = useEditPatientGridMutation();
   const submit = () => {
     mutate(
-      { id: patientGridToEdit.uuid, body: undefined },
+      { id: patientGridToEdit.uuid, body: { name, description } },
       {
         onSuccess: () => {
           showToast({
@@ -56,7 +57,8 @@ export function EditPatientGridModal({ patientGridToEdit, setPatientGridToEdit }
       secondaryButtonText={
         isLoading ? t('editPatientGridModalClose', 'Close') : t('editPatientGridModalCancel', 'Cancel')
       }
-      primaryButtonDisabled={isLoading}
+      primaryButtonDisabled={isLoading || !isValidSubmissionResult}
+      shouldSubmitOnEnter={false}
       onRequestSubmit={() => submit()}
       onRequestClose={() => setPatientGridToEdit(undefined)}>
       <Stack gap={6}>

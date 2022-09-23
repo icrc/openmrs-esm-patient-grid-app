@@ -5,7 +5,7 @@ import { Hr } from '../components';
 import styles from './PatientGridBuilderFiltersPage.scss';
 import { WizardPageProps } from './usePatientGridWizard';
 import { PatientGridBuilderHeader } from './PatientGridBuilderHeader';
-import { useAllGenders, useGetAllCountryLocations, useGetAllStructureLocations } from '../api';
+import { useAllGenders, useGetAllAgeRanges, useGetAllCountryLocations, useGetAllStructureLocations } from '../api';
 
 export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state, setState }: WizardPageProps) {
   const { t } = useTranslation();
@@ -14,6 +14,7 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
     countryLocations?.find((location) => location.id === state.countryLocationId)?.name,
   );
   const genders = useAllGenders();
+  const { data: ageRanges } = useGetAllAgeRanges();
 
   return (
     <Form>
@@ -90,17 +91,27 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
           ))}
         </Select>
 
-        <Select
-          id="ageCategory"
-          defaultValue="placeholder"
-          labelText={t('patientGridDetailsAgeCategoryLabel', 'Age category')}>
-          <SelectItem
-            disabled
-            hidden
-            value="placeholder"
-            text={t('patientGridDetailsAgeCategoryPlaceholder', 'Age category')}
-          />
-        </Select>
+        {ageRanges ? (
+          <Select
+            id="ageCategory"
+            defaultValue="placeholder"
+            labelText={t('patientGridDetailsAgeCategoryLabel', 'Age category')}>
+            <SelectItem
+              disabled
+              hidden
+              value="placeholder"
+              text={t('patientGridDetailsAgeCategoryPlaceholder', 'Age category')}
+            />
+            {ageRanges.map((ageRange) => (
+              // TODO: It's not clear at the moment what the identifying/unique attribute of an age range is.
+              // They are unforunately lacking a unique ID. We'll have to wait until we know how filters are POSTed
+              // with a patient grid.
+              <SelectItem key={ageRange.label} value={ageRange.label} text={ageRange.display} />
+            ))}
+          </Select>
+        ) : (
+          <SelectSkeleton />
+        )}
       </Stack>
     </Form>
   );

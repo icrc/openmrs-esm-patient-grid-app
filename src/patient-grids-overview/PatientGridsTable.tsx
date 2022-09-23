@@ -37,8 +37,10 @@ export function PatientGridsTable({ type }: PatientGridsTableProps) {
   const rows = useTableRows(type);
   const [patientGridToDelete, setPatientGridToDelete] = useState<PatientGridGet | undefined>(undefined);
 
+  console.info('rows: ', rows);
+
   if (patientGridsError && !patientGrids) {
-    // TODO: This error state looks weird in the UI. It's better than having nothing, but
+    // TODO: This error state looks weird in the UI. I assume that it's better than having nothing, but
     // a designer should probably weigh in on this.
     return (
       <ErrorState
@@ -80,7 +82,9 @@ export function PatientGridsTable({ type }: PatientGridsTableProps) {
                 {rows?.map((row) => (
                   <TableRow {...getRowProps({ row })}>
                     {row.cells.map((cell) => (
-                      <TableCell key={cell.id}>{cell.value.cellContent ?? cell.value}</TableCell>
+                      <TableCell key={cell.id}>
+                        {typeof cell.value === 'object' ? cell.value.cellContent : cell.value}
+                      </TableCell>
                     ))}
                     <TableCell className="cds--table-column-menu">
                       <OverflowMenu size="sm" ariaLabel={t('patientGridRowLabel', 'Actions')}>
@@ -162,8 +166,8 @@ function useTableRows(type: PatientGridViewType) {
           filterableString: patientGrid.name,
         },
         description: {
-          cellContent: patientGrid.description,
-          filterableString: patientGrid.description,
+          cellContent: patientGrid.description || t('patientGridsDescriptionCellFallback', '--'),
+          filterableString: patientGrid.description || t('patientGridsDescriptionCellFallback', '--'),
         },
         type: {
           cellContent: typeDisplayStrings[patientGrid.type],

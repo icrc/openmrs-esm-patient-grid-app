@@ -1,13 +1,30 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Form, FormGroup, Checkbox, Stack } from '@carbon/react';
+import { Form, FormGroup, Checkbox, CheckboxSkeleton, Stack } from '@carbon/react';
 import { WizardPageProps } from './usePatientGridWizard';
 import { PatientGridBuilderHeader } from './PatientGridBuilderHeader';
 import { Hr } from '../components';
 import { PatientGridBuilderContinueButton } from './PatientGridBuilderContinueButton';
+import { useGetAllPublishedPrivilegeFilteredForms } from '../api/forms';
 
-export function PatientGridBuilderSectionsPage({ page, pages, goToNext, goToPrevious }: WizardPageProps) {
+export function PatientGridBuilderSectionsPage({
+  state,
+  setState,
+  page,
+  pages,
+  goToNext,
+  goToPrevious,
+}: WizardPageProps) {
   const { t } = useTranslation();
+  const { data: allForms } = useGetAllPublishedPrivilegeFilteredForms();
+  const canContinue = state.selectedForms.length > 0;
+
+  useEffect(() => {
+    // Auto-select all forms by default when they are loaded (unless, of course, there is already a custom selection).
+    if (allForms?.length && !state.selectedForms.length) {
+      setState((state) => ({ ...state, selectedForms: allForms }));
+    }
+  }, [state, setState, allForms]);
 
   return (
     <Form>
@@ -19,17 +36,36 @@ export function PatientGridBuilderSectionsPage({ page, pages, goToNext, goToPrev
           title={t('patientGridSections', 'Grid sections')}
         />
         <FormGroup legendText={t('patientGridSectionsLabel', 'Enable/Disable list sections')}>
-          <Checkbox id="a" labelText="Lorem"></Checkbox>
-          <Checkbox id="b" labelText="Ipsum"></Checkbox>
-          <Checkbox id="c" labelText="Dolor"></Checkbox>
-          <Checkbox id="d" labelText="Sit"></Checkbox>
-          <Checkbox id="e" labelText="Amit"></Checkbox>
-          <Checkbox id="f" labelText="Consetetur"></Checkbox>
+          {allForms ? (
+            allForms.map((form) => (
+              <Checkbox
+                key={form.uuid}
+                id={form.uuid}
+                labelText={form.display}
+                checked={state.selectedForms.some((selectedForm) => form.uuid === selectedForm.uuid)}
+                onChange={(_, { checked }) =>
+                  setState((state) => ({
+                    ...state,
+                    selectedForms: checked
+                      ? [...state.selectedForms, form]
+                      : state.selectedForms.filter((selectedForm) => selectedForm.uuid !== form.uuid),
+                  }))
+                }
+              />
+            ))
+          ) : (
+            <>
+              <CheckboxSkeleton />
+              <CheckboxSkeleton />
+              <CheckboxSkeleton />
+              <CheckboxSkeleton />
+              <CheckboxSkeleton />
+            </>
+          )}
         </FormGroup>
 
         <Hr />
-
-        <PatientGridBuilderContinueButton onClick={goToNext}>
+        <PatientGridBuilderContinueButton disabled={!canContinue} onClick={goToNext}>
           {t('patientGridSectionsContinueButton', 'Continue by configuring grid filters')}
         </PatientGridBuilderContinueButton>
       </Stack>

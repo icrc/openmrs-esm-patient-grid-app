@@ -1,6 +1,6 @@
 import { openmrsFetch } from '@openmrs/esm-framework';
 import useSWR from 'swr';
-import { FhirBundleResponse } from './fhir';
+import { FhirBundleResponse } from './shared';
 
 export interface LocationGet {
   id: string;
@@ -8,7 +8,7 @@ export interface LocationGet {
 }
 
 export function useGetAllCountryLocations() {
-  return useFilteredLocations('?_tag=Country');
+  return useFilteredLocations('?_tag=Country Location');
 }
 
 export function useGetAllStructureLocations(countryLocationName: string | undefined) {

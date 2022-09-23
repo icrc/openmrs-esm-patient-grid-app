@@ -6,8 +6,16 @@ import { PatientGridBuilderContinueButton } from './PatientGridBuilderContinueBu
 import { WizardPageProps } from './usePatientGridWizard';
 import { PatientGridBuilderHeader } from './PatientGridBuilderHeader';
 
-export function PatientGridBuilderDetailsPage({ page, pages, goToNext, goToPrevious }: WizardPageProps) {
+export function PatientGridBuilderDetailsPage({
+  state,
+  setState,
+  page,
+  pages,
+  goToNext,
+  goToPrevious,
+}: WizardPageProps) {
   const { t } = useTranslation();
+  const canContinue = !!state.name?.trim().length;
 
   return (
     <Form>
@@ -33,17 +41,24 @@ export function PatientGridBuilderDetailsPage({ page, pages, goToNext, goToPrevi
 
         <Hr />
 
-        <TextInput id="gridName" labelText={t('patientGridDetailsNameInputLabel', 'Grid name')} />
+        <TextInput
+          id="gridName"
+          labelText={t('patientGridDetailsNameInputLabel', 'Grid name')}
+          value={state.name ?? ''}
+          onChange={(e) => setState((state) => ({ ...state, name: e.target.value }))}
+        />
 
         <TextArea
           id="gridDescription"
           enableCounter
           maxCount={300}
           labelText={t('patientGridDetailsDescriptionInputLabel', 'Describe the purpose of this grid in a few words')}
+          value={state.description ?? ''}
+          onChange={(e) => setState((state) => ({ ...state, description: e.target.value }))}
         />
 
         <Hr />
-        <PatientGridBuilderContinueButton onClick={goToNext}>
+        <PatientGridBuilderContinueButton disabled={!canContinue} onClick={goToNext}>
           {t('patientGridDetailsContinueButton', 'Continue by configuring grid sections')}
         </PatientGridBuilderContinueButton>
       </Stack>

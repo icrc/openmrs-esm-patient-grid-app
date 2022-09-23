@@ -3,3 +3,7 @@ export interface FhirBundleResponse<T> {
     resource: T;
   }>;
 }
+
+export interface FetchAllResponse<T> {
+  results: Array<T>;
+}

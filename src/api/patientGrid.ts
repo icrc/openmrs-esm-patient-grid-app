@@ -1,7 +1,7 @@
-import { OpenmrsResource, useSession } from '@openmrs/esm-framework';
-import useSWR from 'swr';
-import { mockApiCall } from './mockUtils';
-import { PatientGridColumnGet } from './patientGridColumn';
+import { openmrsFetch, OpenmrsResource } from '@openmrs/esm-framework';
+import useSWR, { useSWRConfig } from 'swr';
+import { PatientGridColumnGet, PatientGridColumnPost } from './patientGridColumn';
+import { FetchAllResponse } from './shared';
 import { useMutation } from './useMutation';
 
 export interface PatientGridGet extends OpenmrsResource {
@@ -13,78 +13,56 @@ export interface PatientGridGet extends OpenmrsResource {
   columns: Array<PatientGridColumnGet>;
 }
 
+export interface PatientGridPost {
+  uuid?: string;
+  name?: string;
+  description?: string;
+  columns?: Array<PatientGridColumnPost>;
+  owner?: OpenmrsResource;
+}
+
 export function useGetAllPatientGrids() {
-  const myUserUuid = useSession().user?.uuid;
-  return useSWR('/ws/rest/v1/patientgrid/patientgrid', () =>
-    mockApiCall<Array<PatientGridGet>>([
-      {
-        uuid: '1',
-        name: 'First grid',
-        description: 'First grid description',
-        owner: { uuid: myUserUuid },
-        cohort: { uuid: '123' },
-        retired: false,
-        columns: [],
-      },
-      {
-        uuid: '2',
-        name: 'Second grid',
-        description: 'Second grid description',
-        owner: { uuid: '123' },
-        cohort: { uuid: '123' },
-        retired: false,
-        columns: [],
-      },
-      {
-        uuid: '3',
-        name: 'Third grid',
-        description: 'Third grid description',
-        owner: { uuid: '456' },
-        cohort: { uuid: '123' },
-        retired: false,
-        columns: [],
-      },
-      {
-        uuid: '4',
-        name: 'Fourth grid',
-        description: 'Fourth grid description',
-        owner: undefined,
-        cohort: { uuid: '123' },
-        retired: false,
-        columns: [],
-      },
-    ]),
+  return useSWR('/ws/rest/v1/patientgrid/patientgrid?v=full', (url) =>
+    openmrsFetch<FetchAllResponse<PatientGridGet>>(url).then(({ data }) => data.results),
   );
 }
 
 export function useGetPatientGrid(id: string) {
-  return useSWR(`/ws/rest/v1/patientgrid/patientgrid/${id}`, () =>
-    mockApiCall<PatientGridGet>({
-      uuid: '1',
-      name: 'Example grid',
-      description: 'Example grid description',
-      owner: { uuid: '123' },
-      cohort: { uuid: '123' },
-      retired: false,
-      columns: [],
-    }),
+  return useSWR(`/ws/rest/v1/patientgrid/patientgrid/${id}?v=full`, (url) =>
+    openmrsFetch<PatientGridGet>(url).then(({ data }) => data),
+  );
+}
+
+export function useCreatePatientGridMutation() {
+  const { mutate: mutateGetAllPatientGrids } = useGetAllPatientGrids();
+  return useMutation<{ body: PatientGridPost }>(
+    ({ body }) =>
+      openmrsFetch(`/ws/rest/v1/patientgrid/patientgrid`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body,
+      }),
+    {
+      onSuccess: () => mutateGetAllPatientGrids(),
+    },
   );
 }
 
 export function useEditPatientGridMutation() {
   const { mutate: mutateGetAllPatientGrids } = useGetAllPatientGrids();
-  return useMutation<{ id: string; body: unknown }>(
-    async ({ id, body }) => {
-      // TODO: Uncomment and replace with mock once resolved.
-      // await openmrsFetch(`/ws/rest/v1/icrc/patientgrid/${id}`, {
-      //   method: "POST",
-      //   body,
-      // });
-      console.info(`Mock edit patient grid with ID ${id} and body.`, body);
-      return mockApiCall(id);
-    },
+  const { mutate } = useSWRConfig();
+  return useMutation<{ id: string; body: PatientGridPost }, PatientGridGet>(
+    ({ id, body }) =>
+      openmrsFetch<PatientGridGet>(`/ws/rest/v1/patientgrid/patientgrid/${id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body,
+      }).then(({ data }) => data),
     {
-      onSuccess: () => mutateGetAllPatientGrids(),
+      onSuccess: ({ uuid }) => {
+        mutateGetAllPatientGrids();
+        mutate(`/ws/rest/v1/patientgrid/patientgrid/${uuid}?v=full`);
+      },
     },
   );
 }
@@ -92,14 +70,10 @@ export function useEditPatientGridMutation() {
 export function useDeletePatientGridMutation() {
   const { mutate: mutateGetAllPatientGrids } = useGetAllPatientGrids();
   return useMutation<{ id: string }>(
-    async ({ id }) => {
-      // TODO: Uncomment and replace with mock once resolved.
-      // await openmrsFetch(`/ws/rest/v1/icrc/patientgrid/${id}`, {
-      //   method: "DELETE",
-      // });
-      console.info(`Mock delete patient grid with ID ${id}.`);
-      return mockApiCall(id);
-    },
+    ({ id }) =>
+      openmrsFetch(`/ws/rest/v1/patientgrid/patientgrid/${id}`, {
+        method: 'DELETE',
+      }),
     {
       onSuccess: () => mutateGetAllPatientGrids(),
     },
