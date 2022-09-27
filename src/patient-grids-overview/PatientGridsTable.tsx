@@ -18,9 +18,8 @@ import { useTranslation } from 'react-i18next';
 import { Link as ReactRouterLink, useNavigate } from 'react-router-dom';
 import styles from './PatientGridsTable.scss';
 import { routes } from '../routes';
-import { PatientGridGet, useGetAllPatientGrids } from '../api';
+import { PatientGridGet, useGetAllPatientGrids, PatientGridType, usePatientGridsWithInferredTypes } from '../api';
 import { ErrorState } from '@openmrs/esm-framework';
-import { PatientGridType, usePatientGridsWithInferredTypes } from './usePatientGridsWithInferredTypes';
 import { DeletePatientGridModal } from '../crosscutting-features';
 
 export type PatientGridViewType = 'system' | 'my' | 'all';
@@ -36,8 +35,6 @@ export function PatientGridsTable({ type }: PatientGridsTableProps) {
   const headers = useTableHeaders();
   const rows = useTableRows(type);
   const [patientGridToDelete, setPatientGridToDelete] = useState<PatientGridGet | undefined>(undefined);
-
-  console.info('rows: ', rows);
 
   if (patientGridsError && !patientGrids) {
     // TODO: This error state looks weird in the UI. I assume that it's better than having nothing, but

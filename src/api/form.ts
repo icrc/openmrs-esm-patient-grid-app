@@ -12,6 +12,12 @@ export interface FormGet extends OpenmrsResource {
   build?: number;
   published: boolean;
   encounterType: EncounterTypeGet;
+  resources?: Array<FormResourceGet>;
+}
+
+export interface FormResourceGet extends OpenmrsResource {
+  name: string;
+  valueReference: string;
 }
 
 export function useGetAllForms() {
@@ -28,6 +34,7 @@ export function useGetAllPublishedPrivilegeFilteredForms() {
       (form) =>
         // TODO: Verify/Let someone review that this filter is doing the right thing.
         form.published &&
+        form.resources?.some((resource) => resource.name === 'JSON schema' && resource.valueReference) &&
         !/component/i.test(form.name) &&
         Boolean(userHasAccess(form.encounterType?.editPrivilege?.display, session?.user)),
     );

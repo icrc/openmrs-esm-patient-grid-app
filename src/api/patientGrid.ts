@@ -1,4 +1,5 @@
-import { openmrsFetch, OpenmrsResource } from '@openmrs/esm-framework';
+import { openmrsFetch, OpenmrsResource, useSession } from '@openmrs/esm-framework';
+import { useMemo } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 import { PatientGridColumnGet, PatientGridColumnPost } from './patientGridColumn';
 import { FetchAllResponse } from './shared';
@@ -20,6 +21,9 @@ export interface PatientGridPost {
   columns?: Array<PatientGridColumnPost>;
   owner?: OpenmrsResource;
 }
+
+/** Used on the frontend for placing a grid into a category. */
+export type PatientGridType = 'my' | 'system' | 'other';
 
 export function useGetAllPatientGrids() {
   return useSWR('/ws/rest/v1/patientgrid/patientgrid?v=full', (url) =>
@@ -78,4 +82,33 @@ export function useDeletePatientGridMutation() {
       onSuccess: () => mutateGetAllPatientGrids(),
     },
   );
+}
+
+export function usePatientGridsWithInferredTypes() {
+  const patientGridsSwr = useGetAllPatientGrids();
+  const myUserUuid = useSession().user?.uuid;
+  const data = useMemo(
+    () =>
+      patientGridsSwr.data?.map((patientGrid) => {
+        let type: PatientGridType;
+        if (patientGrid.owner?.uuid === myUserUuid) {
+          type = 'my';
+        } else if (!patientGrid.owner) {
+          type = 'system';
+        } else {
+          type = 'other';
+        }
+
+        return {
+          ...patientGrid,
+          type,
+        };
+      }),
+    [patientGridsSwr.data, myUserUuid],
+  );
+
+  return {
+    ...patientGridsSwr,
+    data,
+  };
 }

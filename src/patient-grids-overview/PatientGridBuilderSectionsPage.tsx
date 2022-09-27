@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Form, FormGroup, Checkbox, CheckboxSkeleton, Stack } from '@carbon/react';
 import { WizardPageProps } from './usePatientGridWizard';
 import { PatientGridBuilderHeader } from './PatientGridBuilderHeader';
 import { Hr } from '../components';
 import { PatientGridBuilderContinueButton } from './PatientGridBuilderContinueButton';
-import { useGetAllPublishedPrivilegeFilteredForms } from '../api/forms';
+import { useGetAllPublishedPrivilegeFilteredForms } from '../api';
 
 export function PatientGridBuilderSectionsPage({
   state,
@@ -17,14 +17,7 @@ export function PatientGridBuilderSectionsPage({
 }: WizardPageProps) {
   const { t } = useTranslation();
   const { data: allForms } = useGetAllPublishedPrivilegeFilteredForms();
-  const canContinue = state.selectedForms.length > 0;
-
-  useEffect(() => {
-    // Auto-select all forms by default when they are loaded (unless, of course, there is already a custom selection).
-    if (allForms?.length && !state.selectedForms.length) {
-      setState((state) => ({ ...state, selectedForms: allForms }));
-    }
-  }, [state, setState, allForms]);
+  const canContinue = state.selectedForms.length > 0 || state.generatePatientDetailsColumns; // TODO: Do you have to select at least one form?
 
   return (
     <Form>
@@ -36,6 +29,18 @@ export function PatientGridBuilderSectionsPage({
           title={t('patientGridSections', 'Grid sections')}
         />
         <FormGroup legendText={t('patientGridSectionsLabel', 'Enable/Disable list sections')}>
+          <Checkbox
+            id="generatePatientDetailsColumns"
+            labelText={t('patientgridSectionsPatientDetailsCheckboxLabel', 'Patient Details')}
+            checked={state.generatePatientDetailsColumns}
+            onChange={(_, { checked }) =>
+              setState((state) => ({
+                ...state,
+                generatePatientDetailsColumns: checked,
+              }))
+            }
+          />
+
           {allForms ? (
             allForms.map((form) => (
               <Checkbox

@@ -1,4 +1,7 @@
 export * from './ageRange';
+export * from './encounterType';
+export * from './form';
+export * from './formSchema';
 export * from './location';
 export * from './shared';
 export * from './gender';
