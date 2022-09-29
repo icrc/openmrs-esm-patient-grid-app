@@ -1,7 +1,5 @@
 import {
   Button,
-  ButtonSkeleton,
-  DataTableSkeleton,
   Search,
   Table,
   TableHead,
