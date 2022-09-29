@@ -1,4 +1,5 @@
 import { OpenmrsResource } from '@openmrs/esm-framework';
+import { PatientGridFilterPost } from './patientGridFilter';
 
 export type PatientGridColumnDataType =
   | 'NAME'
@@ -44,4 +45,5 @@ export interface PatientGridColumnPost {
   concept?: unknown; // TODO: Type
   encounterType?: unknown; // TODO: Type
   convertToAgeRange?: boolean;
+  filters?: Array<PatientGridFilterPost>;
 }

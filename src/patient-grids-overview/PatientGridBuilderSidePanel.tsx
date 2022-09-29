@@ -29,7 +29,7 @@ export function PatientGridBuilderSidePanel({ onClose }: PatientGridBuilderSideP
           });
           onClose();
         },
-        onError: (e) => {
+        onError: () => {
           showToast({
             kind: 'error',
             title: t('patientGridSidePanelErrorToastTitle', 'Grid creation failed'),

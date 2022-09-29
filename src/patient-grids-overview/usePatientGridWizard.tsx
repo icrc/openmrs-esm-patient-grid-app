@@ -1,12 +1,10 @@
 import React, { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react';
+import { GenderRepresentation, FormGet, getFormSchemas, PatientGridPost } from '../api';
 import {
-  GenderRepresentation,
-  FormGet,
-  FormSchema,
-  getFormSchemas,
-  PatientGridColumnPost,
-  PatientGridPost,
-} from '../api';
+  getFormSchemaReferenceUuid,
+  getPatientDetailsPatientGridColumnPostResources,
+  getPatientGridColumnPostResourcesForForms,
+} from '../crosscutting-features';
 import { PatientGridBuilderDetailsPage } from './PatientGridBuilderDetailsPage';
 import { PatientGridBuilderFiltersPage } from './PatientGridBuilderFiltersPage';
 import { PatientGridBuilderSectionsPage } from './PatientGridBuilderSectionsPage';
@@ -65,13 +63,24 @@ export function usePatientGridWizard() {
   );
 
   const isStateValidForSubmission = useMemo(() => {
-    // TODO: This should return whether "state" can be sent to the backend.
-    // -> Should return false if, for example, values are missing.
-    // -> Might potentially be covered via validation inside the respective pages. Let's keep it for now though.
-    return true;
-  }, []);
+    // TODO: Enhance with additional criteria.
+    return state.name?.trim().length && (state.generatePatientDetailsColumns || state.selectedForms.length);
+  }, [state]);
 
-  const createPostBody = useCallback(() => createPostBodyFromWizardState(state), [state]);
+  const createPostBody = useCallback(async () => {
+    const formSchemas = await getFormSchemas(state.selectedForms.map(getFormSchemaReferenceUuid));
+    const body: PatientGridPost = {
+      name: state.name,
+      description: state.description,
+      owner: undefined, // TODO: Should this be the current owner?
+      columns: [
+        ...getPatientDetailsPatientGridColumnPostResources(),
+        ...getPatientGridColumnPostResourcesForForms(state.selectedForms, formSchemas),
+      ],
+    };
+
+    return body;
+  }, [state]);
 
   return {
     currentPage,
@@ -81,84 +90,4 @@ export function usePatientGridWizard() {
     page,
     isAtLastPage: page === pageFactories.length - 1,
   };
-}
-
-export async function createPostBodyFromWizardState(input: PatientGridWizardState) {
-  const formSchemas = await getFormSchemas(
-    input.selectedForms.map(
-      (form) => form.resources.find((resource) => resource.name === 'JSON schema').valueReference,
-    ),
-  );
-
-  const body: PatientGridPost = {
-    name: input.name,
-    description: input.description,
-    owner: undefined, // TODO: Should this be the current owner?
-    columns: [
-      ...createPatientGridPatientDetailsColumns(),
-      ...createPatientGridPostFormColumns(input.selectedForms, formSchemas),
-    ],
-  };
-
-  return body;
-}
-
-function createPatientGridPatientDetailsColumns(): Array<PatientGridColumnPost> {
-  return [
-    {
-      name: 'patientDetails.name',
-      type: 'column',
-      datatype: 'NAME',
-    },
-    {
-      name: 'patientDetails.country',
-      type: 'column',
-      datatype: 'DATAFILTER_LOCATION',
-    },
-    {
-      name: 'patientDetails.structure',
-      type: 'column',
-      datatype: 'DATAFILTER_LOCATION',
-    },
-    {
-      name: 'patientDetails.gender',
-      type: 'column',
-      datatype: 'GENDER',
-    },
-    // TODO: Age category column.
-  ];
-}
-
-function createPatientGridPostFormColumns(forms: Array<FormGet>, formSchemas: Record<string, FormSchema>) {
-  const columns: Array<PatientGridColumnPost> = [];
-
-  for (const form of forms) {
-    const schemaId = form.resources.find((resource) => resource.name === 'JSON schema').valueReference;
-    const formSchema = formSchemas[schemaId];
-    if (!formSchema) {
-      continue;
-    }
-
-    // TODO: Each form needs an "encounterDatetime" column *if* there is a question of type "encounterDatetime"
-    // inside the form schema. That column should be added exactly here.
-    // Right now this is not supported by the backend, hence this TODO.
-
-    for (const page of formSchema.pages ?? []) {
-      for (const section of page.sections ?? []) {
-        for (const question of section.questions ?? []) {
-          if (question.type === 'obs' && question.questionOptions.concept && form.encounterType?.uuid) {
-            columns.push({
-              name: question.id,
-              type: 'obscolumn',
-              datatype: 'OBS',
-              concept: question.questionOptions.concept,
-              encounterType: form.encounterType.uuid,
-            });
-          }
-        }
-      }
-    }
-  }
-
-  return columns;
 }

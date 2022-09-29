@@ -34,8 +34,8 @@ export function PatientGrid() {
   const handleGlobalFilterChange = useMemo(() => debounce(setGlobalFilter, 300), []);
   const [sorting, setSorting] = useState<SortingState>([]);
   const table = useReactTable({
-    columns,
-    data,
+    columns: columns ?? [],
+    data: data ?? [],
     getCoreRowModel: getCoreRowModel(),
     onGlobalFilterChange: setGlobalFilter,
     onSortingChange: setSorting,
@@ -47,7 +47,7 @@ export function PatientGrid() {
     },
   });
   const headerGroups = table.getHeaderGroups();
-  const isLoading = false; // TODO: Set this once we're actually fetching data.
+  const isLoading = !columns || !data; // TODO: Set this once we're actually fetching data.
 
   return (
     <main>
@@ -142,6 +142,7 @@ export function PatientGrid() {
                       {row.getVisibleCells().map((cell) => (
                         <TableCell
                           key={cell.id}
+                          className={styles.tableCell}
                           onClick={() => {
                             // TODO: Open side panel which allows editing.
                           }}>

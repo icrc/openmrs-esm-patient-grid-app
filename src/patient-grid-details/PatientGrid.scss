@@ -44,6 +44,10 @@
   }
 }
 
+.tableCell {
+  white-space: nowrap;
+}
+
 .expandCell {
   white-space: nowrap;
   display: flex;

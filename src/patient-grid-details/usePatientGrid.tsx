@@ -1,97 +1,151 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo } from 'react';
-import { faker } from '@faker-js/faker';
 import { ColumnDef } from '@tanstack/react-table';
+import { useParams } from 'react-router-dom';
+import { PatientGridDetailsParams } from '../routes';
+import { PatientGridReportGet, useGetPatientGridReport } from '../api/patientGridReport';
+import { useFormSchemas, useGetAllPublishedPrivilegeFilteredForms } from '../api';
+import {
+  getFormSchemaReferenceUuid,
+  getFormSchemaQuestionColumnName,
+  patientDetailsNameColumnName,
+  patientDetailsCountryColumnName,
+  patientDetailsStructureColumnName,
+  patientDetailsGenderColumnName,
+  patientDetailsAgeCategoryColumnName,
+  getFormDateColumnName,
+} from '../crosscutting-features';
+import { useTranslation } from 'react-i18next';
 
-function getAccessors(columns: Array<any>, result = new Set<string>()) {
-  for (const column of columns) {
-    if (column.accessorKey) result.add(column.accessorKey);
-    getAccessors((column as any).columns ?? [], result);
-  }
-  return [...result];
+export function usePatientGrid() {
+  const { id } = useParams<PatientGridDetailsParams>();
+  const { data: report } = useGetPatientGridReport(id);
+  const columns = useColumns(report);
+  return { columns, data: report?.report };
 }
 
-const accessorFakers = {
-  name: () => faker.name.fullName(),
-  country: () => faker.name.jobArea(),
-  structure: () => faker.word.noun(),
-  gender: () => faker.helpers.arrayElement(['M', 'F', 'O', 'U']),
-  age: () => faker.random.numeric(2),
-  date: () => faker.date.recent().toLocaleDateString(),
-  practicionerAffiliation: () => faker.company.bsNoun(),
-  placeOfConsultation: () => faker.name.jobArea(),
-} as const;
-
-export function usePatientGrid(count = 100) {
-  const columns = useMemo<Array<ColumnDef<any>>>(
-    () => [
-      {
-        header: 'Healthcare user',
-        columns: [
-          {
-            header: 'Patient name',
-            accessorKey: 'name',
-          },
-          {
-            header: 'Country',
-            accessorKey: 'country',
-          },
-          {
-            header: 'Structure',
-            accessorKey: 'structure',
-          },
-          {
-            header: 'Gender',
-            accessorKey: 'gender',
-          },
-          {
-            header: 'Age category',
-            accessorKey: 'age',
-          },
-        ],
-      },
-      {
-        header: 'Latest admission form',
-        columns: [
-          {
-            header: 'Date',
-            accessorKey: 'date',
-          },
-          {
-            header: 'Consultation details',
-            columns: [
-              {
-                header: 'Practicioner affiliation',
-                accessorKey: 'practicionerAffiliation',
-              },
-              {
-                header: 'Place of consultation',
-                accessorKey: 'placeOfConsultation',
-              },
-            ],
-          },
-        ],
-      },
-    ],
-    [],
+export function useColumns(report?: PatientGridReportGet) {
+  const { t } = useTranslation();
+  const { data: forms } = useGetAllPublishedPrivilegeFilteredForms();
+  const { data: formSchemas } = useFormSchemas(
+    forms?.map((form) => form.resources.find((resource) => resource.name === 'JSON schema').valueReference),
   );
 
-  const data = useMemo(() => {
-    const accessors = getAccessors(columns);
-    const rows: Array<any> = [];
-
-    for (let i = 0; i < count; i++) {
-      const row = {};
-
-      for (const accessor of accessors) {
-        row[accessor] = accessorFakers[accessor]?.() ?? faker.random.word();
-      }
-
-      rows.push(row);
+  return useMemo(() => {
+    if (!report || !forms || !formSchemas) {
+      return undefined;
     }
 
-    return rows;
-  }, [columns, count]);
+    // The task of this memo is to filter out the columns that should actually be rendered in the grid.
+    // This is done by comparing all *possibly renderable* columns to the patient grid report.
+    // Each column that exists in the report is kept - all others are discarded.
+    //
+    // For determining whether a column should be displayed, we can grab any row from the report.
+    // All rows have the same attributes. Any row is therefore okay for checking whether a column
+    // should be displayed.
+    const reportRow = report?.report?.[0] ?? {};
+    const columns: Array<ColumnDef<any>> = [];
 
-  return { columns, data };
+    // Step 1: Construct the patient details columns.
+    // These are simply hardcoded, but should still only appear if they actually appear in the report.
+    const patientDetailsColumn = {
+      header: t('patientGridColumnHeaderPatientDetails', 'Healthcare user'),
+      columns: [],
+    };
+
+    if (patientDetailsNameColumnName in reportRow) {
+      patientDetailsColumn.columns.push({
+        header: t('patientGridColumnHeaderPatientName', 'Patient name'),
+        accessorKey: patientDetailsNameColumnName,
+      });
+    }
+
+    if (patientDetailsNameColumnName in reportRow) {
+      patientDetailsColumn.columns.push({
+        header: t('patientGridColumnHeaderCountry', 'Country'),
+        accessorKey: patientDetailsCountryColumnName,
+      });
+    }
+
+    if (patientDetailsNameColumnName in reportRow) {
+      patientDetailsColumn.columns.push({
+        header: t('patientGridColumnHeaderStructure', 'Structure'),
+        accessorKey: patientDetailsStructureColumnName,
+      });
+    }
+
+    if (patientDetailsNameColumnName in reportRow) {
+      patientDetailsColumn.columns.push({
+        header: t('patientGridColumnHeaderGender', 'Gender'),
+        accessorKey: patientDetailsGenderColumnName,
+      });
+    }
+
+    if (patientDetailsNameColumnName in reportRow) {
+      patientDetailsColumn.columns.push({
+        header: t('patientGridColumnHeaderAgeCategory', 'Age category'),
+        accessorKey: patientDetailsAgeCategoryColumnName,
+      });
+    }
+
+    if (patientDetailsColumn.columns.length) {
+      columns.push(patientDetailsColumn);
+    }
+
+    // Step 2: Construct the form columns.
+    // This is done by iterating through all forms (to generate/check all possible columns)
+    // and then only adding those to the result set that actually appear in the report.
+    for (const form of forms) {
+      const formSchema = formSchemas[getFormSchemaReferenceUuid(form)];
+      if (!formSchema) {
+        continue;
+      }
+
+      const formColumn = {
+        header: form.name,
+        columns: [
+          // Each form column group always has the "Date" column hard-coded.
+          {
+            header: t('patientGridColumnHeaderFormDate', 'Date'),
+            accessorKey: getFormDateColumnName(form),
+          },
+        ],
+      };
+
+      for (const page of formSchema.pages ?? []) {
+        for (const section of page.sections ?? []) {
+          const sectionColumn: ColumnDef<any> = {
+            header: section.label,
+            columns: [],
+          };
+
+          for (const question of section.questions ?? []) {
+            // It only makes sense to generate a question column if the corresponding question
+            // is contained in the report.
+            // Otherwise the column is skipped.
+            const requiredColumnName = getFormSchemaQuestionColumnName(form, question);
+            if (requiredColumnName in reportRow) {
+              sectionColumn.columns.push({
+                header: question.label ?? question.id, // TODO: i18n via form schema labels.
+                accessorKey: question.id,
+              });
+            }
+          }
+
+          // Only add the column for this specific section if there's at least 1 question column.
+          if (sectionColumn.columns.length) {
+            formColumn.columns.push(sectionColumn as any);
+          }
+        }
+      }
+
+      // Only add the entire form column if there is at least 1 section column.
+      // Checking for length > 1 because there is *always* 1 column (the "Date" column).
+      if (formColumn.columns.length > 1) {
+        columns.push(formColumn);
+      }
+    }
+
+    return columns;
+  }, [report, forms, formSchemas, t]);
 }

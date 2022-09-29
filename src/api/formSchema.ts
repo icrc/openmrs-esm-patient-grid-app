@@ -1,4 +1,5 @@
 import { openmrsFetch, OpenmrsResource } from '@openmrs/esm-framework';
+import useSWR from 'swr';
 
 // This file, among other things, defines the types of the various form schema parts.
 // The documentation may be helpful in that context: https://ampath-forms.vercel.app/docs/core-concepts/forms
@@ -67,4 +68,9 @@ export async function getFormSchemas(ids: Array<string>) {
     acc[id] = schema;
     return acc;
   }, {});
+}
+
+export function useFormSchemas(ids?: Array<string>) {
+  const keyProvider = () => (ids ? `formSchemas/${[...ids].sort().join(',')}` : null);
+  return useSWR(keyProvider, () => getFormSchemas(ids));
 }
