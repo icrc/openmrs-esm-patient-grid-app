@@ -1,5 +1,5 @@
-import { ExtensionSlot } from '@openmrs/esm-framework';
-import React, { useState } from 'react';
+import { ExtensionSlot, showToast } from '@openmrs/esm-framework';
+import React, { useEffect, useState } from 'react';
 import { Hr, PageWithSidePanel } from '../components';
 import { PatientGridDetailsHeader } from './PatientGridDetailsHeader';
 import { Stack } from '@carbon/react';
@@ -11,16 +11,29 @@ import { PatientGridGet, useGetPatientGrid } from '../api';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PatientGridDetailsParams, routes } from '../routes';
 import { PatientGridReportLoadingIndicator } from './PatientGridReportLoadingIndicator';
+import { usePatientGrid } from './usePatientGrid';
+import { useTranslation } from 'react-i18next';
 
 export function PatientGridDetails() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [patientGridToDelete, setPatientGridToDelete] = useState<PatientGridGet | undefined>(undefined);
   const [patientGridToEdit, setPatientGridToEdit] = useState<PatientGridGet | undefined>(undefined);
   const { id: patientGridId } = useParams<PatientGridDetailsParams>();
   const { data: patientGrid } = useGetPatientGrid(patientGridId);
-  const isPatientGridReportBeingGenerated = false; // TODO: Somehow set this value.
+  const { data, isValidating, error } = usePatientGrid();
 
-  if (isPatientGridReportBeingGenerated) {
+  useEffect(() => {
+    if (error) {
+      showToast({
+        title: t('patientGridErrorToastTitle', 'Patient grid loading failed'),
+        description: t('patientGridErrorToastDescription', 'There was an error while loading the patient grid.'),
+        kind: 'error',
+      });
+    }
+  }, [t, error]);
+
+  if (isValidating) {
     return <PatientGridReportLoadingIndicator />;
   }
 
@@ -43,7 +56,7 @@ export function PatientGridDetails() {
         </div>
 
         <div className={styles.gridContainer}>
-          <PatientGrid />
+          <PatientGrid columns={data?.columns ?? []} data={data.data?.report ?? []} />
         </div>
       </Stack>
 

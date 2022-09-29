@@ -7,3 +7,4 @@ export * from './shared';
 export * from './gender';
 export * from './patientGrid';
 export * from './patientGridColumn';
+export * from './useMergedSwr';
