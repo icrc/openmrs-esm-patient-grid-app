@@ -24,7 +24,7 @@ import {
 import styles from './PatientGrid.scss';
 import { useTranslation } from 'react-i18next';
 import debounce from 'lodash-es/debounce';
-import { PatientGridFilterHeaderButton } from './PatientGridFilterHeaderButton';
+import { PatientGridColumnFiltersButton } from './PatientGridColumnFiltersButton';
 
 export interface PatientGridProps {
   columns: Array<ColumnDef<unknown, unknown>>;
@@ -105,7 +105,7 @@ export function PatientGrid({ columns, data }: PatientGridProps) {
                                 iconDescription={t('patientGridSortColumnDescription', 'Sort')}
                                 onClick={header.column.getToggleSortingHandler()}
                               />
-                              <PatientGridFilterHeaderButton
+                              <PatientGridColumnFiltersButton
                                 columnDisplayName={header.column.columnDef.header?.toString() ?? ''}
                               />
                             </>
