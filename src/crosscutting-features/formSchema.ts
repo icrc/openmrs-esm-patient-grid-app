@@ -145,10 +145,6 @@ export function getUnlabeledConceptIdentifiersFromSchema(formSchema: FormSchema)
   const results = new Set<string>();
   const walkQuestions = (questions: Array<FormSchemaQuestion>) => {
     for (const question of questions) {
-      if (typeof question.concept === 'string') {
-        results.add(question.concept);
-      }
-
       if (typeof question.questionOptions?.concept === 'string') {
         results.add(question.questionOptions.concept);
       }
