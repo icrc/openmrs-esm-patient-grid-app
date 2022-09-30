@@ -20,6 +20,7 @@ import {
   getSortedRowModel,
   getFilteredRowModel,
   ColumnDef,
+  getFacetedUniqueValues,
 } from '@tanstack/react-table';
 import styles from './PatientGrid.scss';
 import { useTranslation } from 'react-i18next';
@@ -44,6 +45,7 @@ export function PatientGrid({ columns, data }: PatientGridProps) {
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
     state: {
       sorting,
       globalFilter,
@@ -107,6 +109,7 @@ export function PatientGrid({ columns, data }: PatientGridProps) {
                               />
                               <PatientGridColumnFiltersButton
                                 columnDisplayName={header.column.columnDef.header?.toString() ?? ''}
+                                column={header.column}
                               />
                             </>
                           )}

@@ -3,16 +3,43 @@
 @import '~@openmrs/esm-styleguide/src/vars';
 
 .popoverContent {
+  // Otherwise the buttons don't fit into the popover.
+  max-width: 500px !important;
+
   background-color: $ui-01;
-  padding: layout.$spacing-03;
-  width: 400px;
-  max-height: 200px;
-  overflow: auto;
+  overflow: hidden;
+}
+
+.popoverContentAligner {
+  max-height: 250px;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  grid-template-columns: 1fr;
 }
 
 .popoverTitle {
   @include type.type-style('helper-text-01');
+  padding: layout.$spacing-03;
   white-space: nowrap;
   text-overflow: ellipsis;
   color: $text-02;
+}
+
+.noFiltersAvailable {
+  @include type.type-style('helper-text-02');
+}
+
+.mainContentContainer {
+  padding: 0 layout.$spacing-03 layout.$spacing-03 layout.$spacing-03;
+  overflow: auto;
+}
+
+.buttonSet {
+  display: flex;
+  justify-content: stretch;
+}
+
+.popoverButton {
+  width: initial !important;
+  flex-grow: 1;
 }
