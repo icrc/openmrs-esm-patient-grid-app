@@ -24,6 +24,7 @@ import {
 import styles from './PatientGrid.scss';
 import { useTranslation } from 'react-i18next';
 import debounce from 'lodash-es/debounce';
+import { PatientGridFilterHeaderButton } from './PatientGridFilterHeaderButton';
 
 export interface PatientGridProps {
   columns: Array<ColumnDef<unknown, unknown>>;
@@ -89,20 +90,25 @@ export function PatientGrid({ columns, data }: PatientGridProps) {
                           {flexRender(header.column.columnDef.header, header.getContext())}
 
                           {headerGroupIndex === headerGroups.length - 1 && (
-                            <Button
-                              hasIconOnly
-                              renderIcon={
-                                header.column.getIsSorted() !== false
-                                  ? header.column.getIsSorted() === 'desc'
-                                    ? ArrowDown
-                                    : ArrowUp
-                                  : ChevronSort
-                              }
-                              size="sm"
-                              kind="ghost"
-                              iconDescription={t('patientGridSortColumnDescription', 'Sort')}
-                              onClick={header.column.getToggleSortingHandler()}
-                            />
+                            <>
+                              <Button
+                                hasIconOnly
+                                renderIcon={
+                                  header.column.getIsSorted() !== false
+                                    ? header.column.getIsSorted() === 'desc'
+                                      ? ArrowDown
+                                      : ArrowUp
+                                    : ChevronSort
+                                }
+                                size="sm"
+                                kind="ghost"
+                                iconDescription={t('patientGridSortColumnDescription', 'Sort')}
+                                onClick={header.column.getToggleSortingHandler()}
+                              />
+                              <PatientGridFilterHeaderButton
+                                columnDisplayName={header.column.columnDef.header?.toString() ?? ''}
+                              />
+                            </>
                           )}
                         </div>
                       )}

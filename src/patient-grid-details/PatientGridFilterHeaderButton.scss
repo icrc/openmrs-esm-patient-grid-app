@@ -1,0 +1,18 @@
+@use '@carbon/layout';
+@use '@carbon/type';
+@import '~@openmrs/esm-styleguide/src/vars';
+
+.popoverContent {
+  background-color: $ui-01;
+  padding: layout.$spacing-03;
+  width: 400px;
+  max-height: 200px;
+  overflow: auto;
+}
+
+.popoverTitle {
+  @include type.type-style('helper-text-01');
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: $text-02;
+}
