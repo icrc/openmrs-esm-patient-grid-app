@@ -21,7 +21,7 @@ export function PatientGridDetails() {
   const [patientGridToEdit, setPatientGridToEdit] = useState<PatientGridGet | undefined>(undefined);
   const { id: patientGridId } = useParams<PatientGridDetailsParams>();
   const { data: patientGrid } = useGetPatientGrid(patientGridId);
-  const { data, isValidating, error } = usePatientGrid(patientGridId);
+  const { data, error } = usePatientGrid(patientGridId);
 
   useEffect(() => {
     if (error) {
@@ -33,7 +33,7 @@ export function PatientGridDetails() {
     }
   }, [t, error]);
 
-  if (isValidating) {
+  if (!data) {
     return <PatientGridReportLoadingIndicator />;
   }
 
@@ -52,7 +52,7 @@ export function PatientGridDetails() {
         <Hr />
 
         <div className={styles.headerContainer}>
-          <PatientGridFiltersHeader />
+          <PatientGridFiltersHeader patientGridId={patientGridId} />
         </div>
 
         <div className={styles.gridContainer}>

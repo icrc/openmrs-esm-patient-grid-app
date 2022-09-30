@@ -50,8 +50,6 @@ export function PatientGrid({ columns, data }: PatientGridProps) {
   });
   const headerGroups = table.getHeaderGroups();
 
-  console.info(data);
-
   return (
     <main>
       <section className={styles.tableHeaderContainer}>

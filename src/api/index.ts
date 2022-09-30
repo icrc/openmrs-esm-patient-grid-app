@@ -1,4 +1,5 @@
 export * from './ageRange';
+export * from './concept';
 export * from './encounterType';
 export * from './form';
 export * from './formSchema';

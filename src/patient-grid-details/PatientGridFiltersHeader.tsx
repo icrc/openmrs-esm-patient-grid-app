@@ -1,28 +1,37 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Stack, ButtonSkeleton } from '@carbon/react';
 import styles from './PatientGridFiltersHeader.scss';
 import { CloseableTag } from '../components';
+import { useGetPatientGridFilter } from '../api/patientGridFilter';
+import { useColumnNameToHeaderLabelMap } from '../crosscutting-features';
 
-export function PatientGridFiltersHeader() {
+export interface PatientGridFiltersHeaderProps {
+  patientGridId: string;
+}
+
+export function PatientGridFiltersHeader({ patientGridId }: PatientGridFiltersHeaderProps) {
   const { t } = useTranslation();
-  const filters = useMemo(() => ['Mocked filter 1', 'Mocked filter 2'], []); // TODO: Use real data.
+  const { data: columnNameToHeaderLabelMap } = useColumnNameToHeaderLabelMap();
+  const { data: filters } = useGetPatientGridFilter(patientGridId);
 
   return (
     <Stack as="section" orientation="horizontal" gap={4} className={styles.filtersContainer}>
       <span className={styles.filtersCaption}>{t('patientGridFiltersHeaderFilterCaption', 'Filters:')}</span>
 
-      {filters?.length ? (
+      {filters?.length && columnNameToHeaderLabelMap ? (
         filters.map((filter) => (
           <CloseableTag
+            key={filter.uuid}
             className={styles.filterTag}
             size="md"
             type="gray"
             iconDescription={t('patientGridFiltersHeaderRemoveFilter', 'Remove filter')}>
-            {filter}
+            {columnNameToHeaderLabelMap[filter.column.display] ?? filter.column.display ?? filter.display}:{' '}
+            {filter.operand}
           </CloseableTag>
         ))
-      ) : filters ? (
+      ) : filters && columnNameToHeaderLabelMap ? (
         <span className={styles.filtersFallback}>{t('patientGridFiltersHeaderNoFiltersFallback', '--')}</span>
       ) : (
         <>

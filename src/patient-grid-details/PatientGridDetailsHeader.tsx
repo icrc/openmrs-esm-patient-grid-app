@@ -42,7 +42,7 @@ export function PatientGridDetailsHeader({ onEditClick, onDeleteClick }: Patient
             <Button kind="ghost" size="md" renderIcon={Save}>
               {t('patientGridDetailsHeaderSaveChanges', 'Save changes')}
             </Button>
-            <OverflowMenu size="md" flipped>
+            <OverflowMenu ariaLabel={t('patientGridDetailsHeaderActionsLabel', 'Actions')} size="md" flipped>
               <OverflowMenuItem
                 itemText={t('patientGridDetailsHeaderEditNameDescriptionMenuItem', 'Edit name / description')}
                 onClick={onEditClick}

@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ColumnDef } from '@tanstack/react-table';
 import {
-  FormSchema,
   useFormSchemas,
   useGetAllPublishedPrivilegeFilteredForms,
   useMergedSwr,
@@ -18,11 +17,9 @@ import {
   patientDetailsGenderColumnName,
   patientDetailsAgeCategoryColumnName,
   getFormDateColumnName,
-  getUnlabeledConceptIdentifiersFromSchema,
+  useColumnNameToHeaderLabelMap,
 } from '../crosscutting-features';
 import { useTranslation } from 'react-i18next';
-import { useGetBulkConceptsByReferences } from '../api/concept';
-import { useMemo } from 'react';
 
 /**
  * The central hook fetching and manipulating the data that is required for rendering a patient grid.
@@ -52,13 +49,13 @@ function useColumns(report?: PatientGridReportGet) {
   const formSchemasSwr = useFormSchemas(
     formsSwr.data?.map((form) => form.resources.find((resource) => resource.name === 'JSON schema').valueReference),
   );
-  const formLabelConceptsSwr = useConceptLabelsOfFormSchemas(formSchemasSwr.data);
+  const columnNameToHeaderLabelMapSwr = useColumnNameToHeaderLabelMap();
 
   return useMergedSwr(
     () => {
       const { data: forms } = formsSwr;
       const { data: formSchemas } = formSchemasSwr;
-      const { data: formLabelConcepts } = formLabelConceptsSwr;
+      const { data: columnNameToHeaderLabelMap } = columnNameToHeaderLabelMapSwr;
 
       // The task of this memo is to filter out the columns that should actually be rendered in the grid.
       // This is done by comparing all *possibly renderable* columns to the patient grid report.
@@ -79,35 +76,35 @@ function useColumns(report?: PatientGridReportGet) {
 
       if (patientDetailsNameColumnName in reportRow) {
         patientDetailsColumn.columns.push({
-          header: t('patientGridColumnHeaderPatientName', 'Patient name'),
+          header: columnNameToHeaderLabelMap[patientDetailsNameColumnName],
           accessorKey: patientDetailsNameColumnName,
         });
       }
 
       if (patientDetailsNameColumnName in reportRow) {
         patientDetailsColumn.columns.push({
-          header: t('patientGridColumnHeaderCountry', 'Country'),
+          header: columnNameToHeaderLabelMap[patientDetailsCountryColumnName],
           accessorKey: patientDetailsCountryColumnName,
         });
       }
 
       if (patientDetailsNameColumnName in reportRow) {
         patientDetailsColumn.columns.push({
-          header: t('patientGridColumnHeaderStructure', 'Structure'),
+          header: columnNameToHeaderLabelMap[patientDetailsStructureColumnName],
           accessorKey: patientDetailsStructureColumnName,
         });
       }
 
       if (patientDetailsNameColumnName in reportRow) {
         patientDetailsColumn.columns.push({
-          header: t('patientGridColumnHeaderGender', 'Gender'),
+          header: columnNameToHeaderLabelMap[patientDetailsGenderColumnName],
           accessorKey: patientDetailsGenderColumnName,
         });
       }
 
       if (patientDetailsNameColumnName in reportRow) {
         patientDetailsColumn.columns.push({
-          header: t('patientGridColumnHeaderAgeCategory', 'Age category'),
+          header: columnNameToHeaderLabelMap[patientDetailsAgeCategoryColumnName],
           accessorKey: patientDetailsAgeCategoryColumnName,
         });
       }
@@ -125,13 +122,14 @@ function useColumns(report?: PatientGridReportGet) {
           continue;
         }
 
+        const formDateColumnName = getFormDateColumnName(form);
         const formColumn = {
           header: form.name,
           columns: [
-            // Each form column group always has the "Date" column hard-coded.
+            // Each form column group always has the "Date" column.
             {
-              header: t('patientGridColumnHeaderFormDate', 'Date'),
-              accessorKey: getFormDateColumnName(form),
+              header: columnNameToHeaderLabelMap[formDateColumnName],
+              accessorKey: formDateColumnName,
             },
           ],
         };
@@ -147,13 +145,13 @@ function useColumns(report?: PatientGridReportGet) {
               // It only makes sense to generate a question column if the corresponding question
               // is contained in the report.
               // Otherwise the column is skipped.
-              const requiredColumnName = getFormSchemaQuestionColumnName(form, question);
-              if (requiredColumnName in reportRow) {
+              const questionColumnName = getFormSchemaQuestionColumnName(form, question);
+              if (questionColumnName in reportRow) {
                 sectionColumn.columns.push({
                   // Questions may be localized via concept labels.
                   // Those are already prefetched, but if they don't exist, fallback to values inside the schema itself
                   // to display *something*.
-                  header: formLabelConcepts[question.questionOptions.concept]?.display ?? question.label ?? question.id,
+                  header: columnNameToHeaderLabelMap[questionColumnName] ?? question.label ?? question.id,
                   accessorKey: getFormSchemaQuestionColumnName(form, question),
                 });
               }
@@ -175,23 +173,9 @@ function useColumns(report?: PatientGridReportGet) {
 
       return columns;
     },
-    [formsSwr, formSchemasSwr, formLabelConceptsSwr],
+    [formsSwr, formSchemasSwr, columnNameToHeaderLabelMapSwr],
     [t, report],
   );
-}
-
-/**
- * Given a set of multiple form schemas, returns the flattened concept labels of all referenced
- * concepts inside that form schema.
- * @param formSchemas A lookup of the form schemas. This structure is returned by {@link useFormSchemas}.
- */
-function useConceptLabelsOfFormSchemas(formSchemas: Record<string, FormSchema> = {}) {
-  const formLabelConceptIds = useMemo(
-    () =>
-      Object.values(formSchemas ?? {}).flatMap((formSchema) => getUnlabeledConceptIdentifiersFromSchema(formSchema)),
-    [formSchemas],
-  );
-  return useGetBulkConceptsByReferences(formLabelConceptIds);
 }
 
 /**
