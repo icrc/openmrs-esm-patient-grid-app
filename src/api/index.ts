@@ -8,5 +8,6 @@ export * from './shared';
 export * from './gender';
 export * from './patientGrid';
 export * from './patientGridColumn';
+export * from './patientGridFilter';
 export * from './patientGridReport';
 export * from './useMergedSwr';

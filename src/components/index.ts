@@ -1,4 +1,3 @@
-export * from './CloseableTag';
 export * from './Hr';
 export * from './PageHeader';
 export * from './PageWithSidePanel';
