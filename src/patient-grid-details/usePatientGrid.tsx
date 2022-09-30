@@ -211,7 +211,7 @@ function mapReportEntriesToGridData(reportColumns: Array<PatientGridReportColumn
         result[key] = '';
       } else if (typeof value === 'object') {
         // The cell is an obs.
-        result[key] = value.value;
+        result[key] = `${value.value}`;
       } else {
         // Anything else (e.g. numbers) is just optimistically converted to a string.
         result[key] = `${value}`;

@@ -22,16 +22,16 @@ export function useGetBulkConceptsByReferences(referenceIds: Array<string>) {
     // probably be added.
     // The question is how? esm-form-entry doesn't have this parameter either.
 
-    // We don't want the entire thing to fail only because a few concepts cannot be found.
-    return (
-      await Promise.all(
-        urlsToRequest.map((url) =>
-          openmrsFetch<FetchAllResponse<ConceptGet>>(url)
-            .then(({ data }) => data.results)
-            .catch<undefined>(() => undefined),
-        ),
-      )
-    )
+    // We don't want the entire thing to fail only because a few concepts cannot be found. -> Swallow errors.
+    const results = await Promise.all(
+      urlsToRequest.map((url) =>
+        openmrsFetch<FetchAllResponse<ConceptGet>>(url)
+          .then(({ data }) => data.results)
+          .catch<undefined>(() => undefined),
+      ),
+    );
+
+    return results
       .filter(Boolean)
       .flatMap((x) => x)
       .reduce<Record<string, ConceptGet>>((acc, concept) => {
