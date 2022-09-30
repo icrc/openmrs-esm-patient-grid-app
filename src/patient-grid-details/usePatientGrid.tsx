@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ColumnDef } from '@tanstack/react-table';
-import { useParams } from 'react-router-dom';
-import { PatientGridDetailsParams } from '../routes';
-import { PatientGridReportGet, useGetPatientGridReport } from '../api/patientGridReport';
-import { useFormSchemas, useGetAllPublishedPrivilegeFilteredForms, useMergedSwr } from '../api';
+import { PatientGridReportColumnGet, PatientGridReportGet, useGetPatientGridReport } from '../api/patientGridReport';
+import { FormSchema, useFormSchemas, useGetAllPublishedPrivilegeFilteredForms, useMergedSwr } from '../api';
 import {
   getFormSchemaReferenceUuid,
   getFormSchemaQuestionColumnName,
@@ -13,31 +11,47 @@ import {
   patientDetailsGenderColumnName,
   patientDetailsAgeCategoryColumnName,
   getFormDateColumnName,
+  getUnlabeledConceptIdentifiersFromSchema,
 } from '../crosscutting-features';
 import { useTranslation } from 'react-i18next';
+import { useGetBulkConceptsByReferences } from '../api/concept';
+import { useMemo } from 'react';
 
-export function usePatientGrid() {
-  const { id } = useParams<PatientGridDetailsParams>();
+/**
+ * The central hook fetching and manipulating the data that is required for rendering a patient grid.
+ * @param id The ID of the patient grid report for which data should be returned.
+ * @returns The columns and data to be forwarded to the `useReactTable` hook that renders the actual patient grid.
+ */
+export function usePatientGrid(id: string) {
   const reportSwr = useGetPatientGridReport(id);
   const columnsSwr = useColumns(reportSwr.data);
-  return useMergedSwr(() => ({ columns: columnsSwr.data, data: reportSwr.data }), [reportSwr, columnsSwr]);
+  return useMergedSwr(
+    () => ({
+      columns: columnsSwr.data,
+      data: mapReportEntriesToGridData(reportSwr.data.report),
+    }),
+    [reportSwr, columnsSwr],
+  );
 }
 
-export function useColumns(report?: PatientGridReportGet) {
+/**
+ * Generates the {@link ColumnDef} instances required for rendering the patient grid of a specific report.
+ * Internally,
+ * @param report The patient grid report for which the grid's columns should be generated.
+ */
+function useColumns(report?: PatientGridReportGet) {
   const { t } = useTranslation();
   const formsSwr = useGetAllPublishedPrivilegeFilteredForms();
   const formSchemasSwr = useFormSchemas(
     formsSwr.data?.map((form) => form.resources.find((resource) => resource.name === 'JSON schema').valueReference),
   );
+  const formLabelConceptsSwr = useConceptLabelsOfFormSchemas(formSchemasSwr.data);
 
   return useMergedSwr(
     () => {
       const { data: forms } = formsSwr;
       const { data: formSchemas } = formSchemasSwr;
-
-      if (!report || !forms || !formSchemas) {
-        return undefined;
-      }
+      const { data: formLabelConcepts } = formLabelConceptsSwr;
 
       // The task of this memo is to filter out the columns that should actually be rendered in the grid.
       // This is done by comparing all *possibly renderable* columns to the patient grid report.
@@ -129,8 +143,11 @@ export function useColumns(report?: PatientGridReportGet) {
               const requiredColumnName = getFormSchemaQuestionColumnName(form, question);
               if (requiredColumnName in reportRow) {
                 sectionColumn.columns.push({
-                  header: question.label ?? question.id, // TODO: i18n via form schema labels.
-                  accessorKey: question.id,
+                  // Questions may be localized via concept labels.
+                  // Those are already prefetched, but if they don't exist, fallback to values inside the schema itself
+                  // to display *something*.
+                  header: formLabelConcepts[question.questionOptions.concept]?.display ?? question.label ?? question.id,
+                  accessorKey: getFormSchemaQuestionColumnName(form, question),
                 });
               }
             }
@@ -151,7 +168,49 @@ export function useColumns(report?: PatientGridReportGet) {
 
       return columns;
     },
-    [formsSwr, formSchemasSwr],
+    [formsSwr, formSchemasSwr, formLabelConceptsSwr],
     [t, report],
   );
+}
+
+/**
+ * Given a set of multiple form schemas, returns the flattened concept labels of all referenced
+ * concepts inside that form schema.
+ * @param formSchemas A lookup of the form schemas. This structure is returned by {@link useFormSchemas}.
+ */
+function useConceptLabelsOfFormSchemas(formSchemas: Record<string, FormSchema> = {}) {
+  const formLabelConceptIds = useMemo(
+    () =>
+      Object.values(formSchemas ?? {}).flatMap((formSchema) => getUnlabeledConceptIdentifiersFromSchema(formSchema)),
+    [formSchemas],
+  );
+  return useGetBulkConceptsByReferences(formLabelConceptIds);
+}
+
+/**
+ * Maps the results of a patient grid report to the shape expected by `react-table`.
+ * Essentially converts `obs` to `strings`.
+ */
+function mapReportEntriesToGridData(reportColumns: Array<PatientGridReportColumnGet>) {
+  return reportColumns.map((column) => {
+    const result: Record<string, unknown> = {};
+
+    for (const [key, value] of Object.entries(column)) {
+      if (typeof value === 'string') {
+        // The cell is already a raw string.
+        result[key] = value;
+      } else if (value === null || value === undefined) {
+        // The cell is null/undefined. -> Use empty strings here to enable filtering/sorting.
+        result[key] = '';
+      } else if (typeof value === 'object') {
+        // The cell is an obs.
+        result[key] = value.value;
+      } else {
+        // Anything else (e.g. numbers) is just optimistically converted to a string.
+        result[key] = `${value}`;
+      }
+    }
+
+    return result;
+  });
 }

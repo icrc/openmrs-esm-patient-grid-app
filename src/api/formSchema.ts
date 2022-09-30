@@ -38,6 +38,8 @@ export interface FormSchemaQuestion {
   type: string;
   questionOptions: QuestionOption;
   questionInfo?: string;
+  questions?: Array<FormSchemaQuestion>;
+  concept?: string; // TODO: Can a question have a concept (reference)? esm-form-entry lists this, but I couldn't find any real-world schema with this.
   required?: boolean;
   hide?: boolean;
 }

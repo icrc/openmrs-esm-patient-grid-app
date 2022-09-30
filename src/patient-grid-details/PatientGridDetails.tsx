@@ -21,7 +21,7 @@ export function PatientGridDetails() {
   const [patientGridToEdit, setPatientGridToEdit] = useState<PatientGridGet | undefined>(undefined);
   const { id: patientGridId } = useParams<PatientGridDetailsParams>();
   const { data: patientGrid } = useGetPatientGrid(patientGridId);
-  const { data, isValidating, error } = usePatientGrid();
+  const { data, isValidating, error } = usePatientGrid(patientGridId);
 
   useEffect(() => {
     if (error) {
@@ -56,7 +56,7 @@ export function PatientGridDetails() {
         </div>
 
         <div className={styles.gridContainer}>
-          <PatientGrid columns={data?.columns ?? []} data={data.data?.report ?? []} />
+          <PatientGrid columns={data?.columns ?? []} data={data?.data ?? []} />
         </div>
       </Stack>
 

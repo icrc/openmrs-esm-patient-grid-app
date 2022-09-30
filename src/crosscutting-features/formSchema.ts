@@ -135,3 +135,41 @@ export function getPatientGridColumnPostResourcesForForms(
     }));
   });
 }
+
+/**
+ * Returns the UUIDs of concepts that can be extracted from the form schema for the purpose of i18n.
+ * This is borrowed from https://github.com/openmrs/openmrs-esm-patient-chart/blob/a29fed2bad3ea6c10f0b2dd4f154e5f558c56d11/packages/esm-form-entry-app/src/app/form-schema/form-schema.service.ts#L182
+ * @param formSchema The form schema for which the concepts should be extracted.
+ */
+export function getUnlabeledConceptIdentifiersFromSchema(formSchema: FormSchema): Array<string> {
+  const results = new Set<string>();
+  const walkQuestions = (questions: Array<FormSchemaQuestion>) => {
+    for (const question of questions) {
+      if (typeof question.concept === 'string') {
+        results.add(question.concept);
+      }
+
+      if (typeof question.questionOptions?.concept === 'string') {
+        results.add(question.questionOptions.concept);
+      }
+
+      for (const answer of question.questionOptions?.answers ?? []) {
+        if (typeof answer.concept === 'string') {
+          results.add(answer.concept);
+        }
+      }
+
+      if (Array.isArray(question.questions)) {
+        walkQuestions(question.questions);
+      }
+    }
+  };
+
+  for (const page of formSchema.pages ?? []) {
+    for (const section of page.sections ?? []) {
+      walkQuestions(section.questions ?? []);
+    }
+  }
+
+  return [...results];
+}
