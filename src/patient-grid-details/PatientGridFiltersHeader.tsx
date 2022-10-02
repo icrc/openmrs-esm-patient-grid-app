@@ -2,9 +2,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Stack, ButtonSkeleton, Tag } from '@carbon/react';
 import styles from './PatientGridFiltersHeader.scss';
-import { useColumnNameToHeaderLabelMap } from '../crosscutting-features';
 import { PatientGridFilterGet, useDeletePatientGridFilterMutation, useGetAllPatientGridFilters } from '../api';
 import { showToast } from '@openmrs/esm-framework';
+import { useColumnNameToHeaderLabelMap } from '../grid-utils';
 
 export interface PatientGridFiltersHeaderProps {
   patientGridId: string;

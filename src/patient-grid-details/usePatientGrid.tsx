@@ -18,7 +18,7 @@ import {
   patientDetailsAgeCategoryColumnName,
   getFormDateColumnName,
   useColumnNameToHeaderLabelMap,
-} from '../crosscutting-features';
+} from '../grid-utils';
 import { useTranslation } from 'react-i18next';
 
 /**

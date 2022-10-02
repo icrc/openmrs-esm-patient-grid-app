@@ -4,7 +4,7 @@ import {
   getFormSchemaReferenceUuid,
   getPatientDetailsPatientGridColumnPostResources,
   getPatientGridColumnPostResourcesForForms,
-} from '../crosscutting-features';
+} from '../grid-utils';
 import { PatientGridBuilderDetailsPage } from './PatientGridBuilderDetailsPage';
 import { PatientGridBuilderFiltersPage } from './PatientGridBuilderFiltersPage';
 import { PatientGridBuilderSectionsPage } from './PatientGridBuilderSectionsPage';
