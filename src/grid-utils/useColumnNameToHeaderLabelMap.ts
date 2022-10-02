@@ -23,6 +23,17 @@ import {
 } from './formSchema';
 
 /**
+ * A dictionary which maps the unique name of a patient grid column resource to a display string
+ * which is the column header/label that should be displayed to the user in the UI.
+ *
+ * This map is not guaranteed to be exhaustive. It can happen that a column's name is not contained.
+ * (For example, if the column's display name is supposed to be retrieved via a concept referenced
+ * by a form schema, but that concept doesn't exist.) In such cases, a fallback must be manually
+ * provided.
+ */
+export type ColumnNameToHeaderLabelMap = Record<string, string>;
+
+/**
  * Returns a map which allows to easy retrieval of the patient grid column labels that should be displayed to the user.
  * The map is keyed by the unique name of the column.
  * The map is supposed to contain labels for all columns which:
@@ -33,7 +44,7 @@ import {
  * in the backend. In such cases, a fallback must be manually provided by the user.
  * @returns A map which maps unique column names to the labels that should be displayed to the user.
  */
-export function useColumnNameToHeaderLabelMap(): SWRResponse<Record<string, string>> {
+export function useColumnNameToHeaderLabelMap(): SWRResponse<ColumnNameToHeaderLabelMap> {
   const { t } = useTranslation();
   const formsSwr = useGetAllPublishedPrivilegeFilteredForms();
   const formSchemasSwr = useFormSchemas(
@@ -53,7 +64,7 @@ export function useColumnNameToHeaderLabelMap(): SWRResponse<Record<string, stri
       const { data: forms } = formsSwr;
       const { data: formSchemas } = formSchemasSwr;
       const { data: formLabelConcepts } = formLabelConceptsSwr;
-      const result: Record<string, string> = {
+      const result: ColumnNameToHeaderLabelMap = {
         // Hardcoded names which always have the same key.
         [patientDetailsNameColumnName]: t('patientGridColumnHeaderPatientName', 'Patient name'),
         [patientDetailsCountryColumnName]: t('patientGridColumnHeaderCountry', 'Country'),

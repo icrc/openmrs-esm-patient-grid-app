@@ -1,25 +1,26 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { ColumnDef } from '@tanstack/react-table';
+import { GroupColumnDef } from '@tanstack/react-table';
 import {
   useFormSchemas,
   useGetAllPublishedPrivilegeFilteredForms,
   useMergedSwr,
   PatientGridReportColumnGet,
-  PatientGridReportGet,
   useGetPatientGridReport,
+  FormGet,
+  FormSchema,
+  PatientGridReportGet,
 } from '../api';
 import {
   getFormSchemaReferenceUuid,
-  getFormSchemaQuestionColumnName,
   patientDetailsNameColumnName,
   patientDetailsCountryColumnName,
   patientDetailsStructureColumnName,
   patientDetailsGenderColumnName,
   patientDetailsAgeCategoryColumnName,
-  getFormDateColumnName,
   useColumnNameToHeaderLabelMap,
+  getReactTableColumnDefForForm,
+  ColumnNameToHeaderLabelMap,
 } from '../grid-utils';
-import { useTranslation } from 'react-i18next';
+import { TFunction, useTranslation } from 'react-i18next';
 
 /**
  * The central hook fetching and manipulating the data that is required for rendering a patient grid.
@@ -27,24 +28,8 @@ import { useTranslation } from 'react-i18next';
  * @returns The columns and data to be forwarded to the `useReactTable` hook that renders the actual patient grid.
  */
 export function usePatientGrid(id: string) {
-  const reportSwr = useGetPatientGridReport(id);
-  const columnsSwr = useColumns(reportSwr.data);
-  return useMergedSwr(
-    () => ({
-      columns: columnsSwr.data,
-      data: mapReportEntriesToGridData(reportSwr.data.report),
-    }),
-    [reportSwr, columnsSwr],
-  );
-}
-
-/**
- * Generates the {@link ColumnDef} instances required for rendering the patient grid of a specific report.
- * Internally,
- * @param report The patient grid report for which the grid's columns should be generated.
- */
-function useColumns(report?: PatientGridReportGet) {
   const { t } = useTranslation();
+  const reportSwr = useGetPatientGridReport(id);
   const formsSwr = useGetAllPublishedPrivilegeFilteredForms();
   const formSchemasSwr = useFormSchemas(
     formsSwr.data?.map((form) => form.resources.find((resource) => resource.name === 'JSON schema').valueReference),
@@ -56,128 +41,107 @@ function useColumns(report?: PatientGridReportGet) {
       const { data: forms } = formsSwr;
       const { data: formSchemas } = formSchemasSwr;
       const { data: columnNameToHeaderLabelMap } = columnNameToHeaderLabelMapSwr;
-
-      // The task of this memo is to filter out the columns that should actually be rendered in the grid.
-      // This is done by comparing all *possibly renderable* columns to the patient grid report.
-      // Each column that exists in the report is kept - all others are discarded.
-      //
-      // For determining whether a column should be displayed, we can grab any row from the report.
-      // All rows have the same attributes. Any row is therefore okay for checking whether a column
-      // should be displayed.
-      const reportRow = report?.report?.[0] ?? {};
-      const columns: Array<ColumnDef<unknown, unknown>> = [];
-
-      // Step 1: Construct the patient details columns.
-      // These are simply hardcoded, but should still only appear if they actually appear in the report.
-      const patientDetailsColumn = {
-        header: t('patientGridColumnHeaderPatientDetails', 'Healthcare user'),
-        columns: [],
-      };
-
-      if (patientDetailsNameColumnName in reportRow) {
-        patientDetailsColumn.columns.push({
-          header: columnNameToHeaderLabelMap[patientDetailsNameColumnName],
-          accessorKey: patientDetailsNameColumnName,
-        });
-      }
-
-      if (patientDetailsNameColumnName in reportRow) {
-        patientDetailsColumn.columns.push({
-          header: columnNameToHeaderLabelMap[patientDetailsCountryColumnName],
-          accessorKey: patientDetailsCountryColumnName,
-        });
-      }
-
-      if (patientDetailsNameColumnName in reportRow) {
-        patientDetailsColumn.columns.push({
-          header: columnNameToHeaderLabelMap[patientDetailsStructureColumnName],
-          accessorKey: patientDetailsStructureColumnName,
-        });
-      }
-
-      if (patientDetailsNameColumnName in reportRow) {
-        patientDetailsColumn.columns.push({
-          header: columnNameToHeaderLabelMap[patientDetailsGenderColumnName],
-          accessorKey: patientDetailsGenderColumnName,
-        });
-      }
-
-      if (patientDetailsNameColumnName in reportRow) {
-        patientDetailsColumn.columns.push({
-          header: columnNameToHeaderLabelMap[patientDetailsAgeCategoryColumnName],
-          accessorKey: patientDetailsAgeCategoryColumnName,
-        });
-      }
-
-      if (patientDetailsColumn.columns.length) {
-        columns.push(patientDetailsColumn);
-      }
-
-      // Step 2: Construct the form columns.
-      // This is done by iterating through all forms (to generate/check all possible columns)
-      // and then only adding those to the result set that actually appear in the report.
-      for (const form of forms) {
-        const formSchema = formSchemas[getFormSchemaReferenceUuid(form)];
-        if (!formSchema) {
-          continue;
-        }
-
-        const formDateColumnName = getFormDateColumnName(form);
-        const formColumn = {
-          header: form.name,
-          columns: [
-            // Each form column group always has the "Date" column.
-            {
-              header: columnNameToHeaderLabelMap[formDateColumnName],
-              accessorKey: formDateColumnName,
-            },
-          ],
-        };
-
-        for (const page of formSchema.pages ?? []) {
-          for (const section of page.sections ?? []) {
-            const sectionColumn: ColumnDef<any> = {
-              header: section.label,
-              columns: [],
-            };
-
-            for (const question of section.questions ?? []) {
-              // It only makes sense to generate a question column if the corresponding question
-              // is contained in the report.
-              // Otherwise the column is skipped.
-              const questionColumnName = getFormSchemaQuestionColumnName(form, question);
-              if (questionColumnName in reportRow) {
-                sectionColumn.columns.push({
-                  // Questions may be localized via concept labels.
-                  // Those are already prefetched, but if they don't exist, fallback to values inside the schema itself
-                  // to display *something*.
-                  header: columnNameToHeaderLabelMap[questionColumnName] ?? question.label ?? question.id,
-                  accessorKey: getFormSchemaQuestionColumnName(form, question),
-                });
-              }
-            }
-
-            // Only add the column for this specific section if there's at least 1 question column.
-            if (sectionColumn.columns.length) {
-              formColumn.columns.push(sectionColumn as any);
-            }
-          }
-        }
-
-        // Only add the entire form column if there is at least 1 section column.
-        // Checking for length > 1 because there is *always* 1 column (the "Date" column).
-        if (formColumn.columns.length > 1) {
-          columns.push(formColumn);
-        }
-      }
-
-      return columns;
+      const { data: report } = reportSwr;
+      const columns = getColumns(forms, formSchemas, columnNameToHeaderLabelMap, report, t);
+      const data = mapReportEntriesToGridData(report.report);
+      return { columns, data };
     },
-    [formsSwr, formSchemasSwr, columnNameToHeaderLabelMapSwr],
-    [t, report],
+    [formsSwr, formSchemasSwr, columnNameToHeaderLabelMapSwr, reportSwr],
+    [t],
   );
 }
 
+function getColumns(
+  forms: Array<FormGet>,
+  formSchemas: Record<string, FormSchema>,
+  columnNameToHeaderLabelMap: ColumnNameToHeaderLabelMap,
+  report: PatientGridReportGet,
+  t: TFunction,
+) {
+  // The task of this memo is to filter out the columns that should actually be rendered in the grid.
+  // This is done by comparing all *possibly renderable* columns to the patient grid report.
+  // Each column that exists in the report is kept - all others are discarded.
+  //
+  // For determining whether a column should be displayed, we can grab any row from the report.
+  // All rows have the same attributes. Any row is therefore okay for checking whether a column
+  // should be displayed.
+  const reportRow = report?.report?.[0] ?? {};
+  const columnNamesToInclude = Object.keys(reportRow);
+  const columns: Array<GroupColumnDef<unknown, unknown>> = [];
+
+  // Step 1: Construct the patient details columns.
+  // These are simply hardcoded, but should still only appear if they are present in the report.
+  const patientDetailsColumn = {
+    header: t('patientGridColumnHeaderPatientDetails', 'Healthcare user'),
+    columns: [],
+  };
+
+  if (columnNamesToInclude.includes(patientDetailsNameColumnName)) {
+    patientDetailsColumn.columns.push({
+      header: columnNameToHeaderLabelMap[patientDetailsNameColumnName],
+      accessorKey: patientDetailsNameColumnName,
+    });
+  }
+
+  if (columnNamesToInclude.includes(patientDetailsNameColumnName)) {
+    patientDetailsColumn.columns.push({
+      header: columnNameToHeaderLabelMap[patientDetailsCountryColumnName],
+      accessorKey: patientDetailsCountryColumnName,
+    });
+  }
+
+  if (columnNamesToInclude.includes(patientDetailsNameColumnName)) {
+    patientDetailsColumn.columns.push({
+      header: columnNameToHeaderLabelMap[patientDetailsStructureColumnName],
+      accessorKey: patientDetailsStructureColumnName,
+    });
+  }
+
+  if (columnNamesToInclude.includes(patientDetailsNameColumnName)) {
+    patientDetailsColumn.columns.push({
+      header: columnNameToHeaderLabelMap[patientDetailsGenderColumnName],
+      accessorKey: patientDetailsGenderColumnName,
+    });
+  }
+
+  if (columnNamesToInclude.includes(patientDetailsNameColumnName)) {
+    patientDetailsColumn.columns.push({
+      header: columnNameToHeaderLabelMap[patientDetailsAgeCategoryColumnName],
+      accessorKey: patientDetailsAgeCategoryColumnName,
+    });
+  }
+
+  if (patientDetailsColumn.columns.length) {
+    columns.push(patientDetailsColumn);
+  }
+
+  // Step 2: Construct the form columns.
+  // This is done by iterating through all forms (to generate/check all possible columns)
+  // and then only adding those to the result set that actually appear in the report.
+  for (const form of forms) {
+    const formSchema = formSchemas[getFormSchemaReferenceUuid(form)];
+    if (!formSchema) {
+      continue;
+    }
+
+    const formColumn = getReactTableColumnDefForForm(
+      form,
+      formSchema,
+      columnNameToHeaderLabelMap,
+      columnNamesToInclude,
+    );
+
+    // Only add the entire form column if there is at least 1 section column.
+    // Checking for length > 1 because there is *always* 1 column (the "Date" column).
+    if (formColumn.columns.length > 1) {
+      columns.push(formColumn);
+    }
+  }
+
+  return columns;
+}
+
+/**
 /**
  * Maps the results of a patient grid report to the shape expected by `react-table`.
  * Essentially converts `obs` to `strings`.
@@ -200,6 +164,7 @@ function mapReportEntriesToGridData(reportColumns: Array<PatientGridReportColumn
         // Anything else (e.g. numbers) is just optimistically converted to a string.
         result[key] = `${value}`;
       }
+      // TODO: What about other obs values? (Could there be UUIDs? Probably...)
     }
 
     return result;
