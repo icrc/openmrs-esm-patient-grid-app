@@ -21,6 +21,7 @@ import {
   ColumnNameToHeaderLabelMap,
 } from '../grid-utils';
 import { TFunction, useTranslation } from 'react-i18next';
+import { getAllReportColumnNames } from '../grid-utils/report';
 
 /**
  * The central hook fetching and manipulating the data that is required for rendering a patient grid.
@@ -65,8 +66,7 @@ function getColumns(
   // For determining whether a column should be displayed, we can grab any row from the report.
   // All rows have the same attributes. Any row is therefore okay for checking whether a column
   // should be displayed.
-  const reportRow = report?.report?.[0] ?? {};
-  const columnNamesToInclude = Object.keys(reportRow);
+  const columnNamesToInclude = getAllReportColumnNames(report);
   const columns: Array<GroupColumnDef<unknown, unknown>> = [];
 
   // Step 1: Construct the patient details columns.
