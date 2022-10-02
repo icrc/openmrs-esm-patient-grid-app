@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import styles from './PatientGridsOverview.scss';
+import styles from './PatientGridsOverviewPage.scss';
 import { PatientGridsOverviewHeader } from './PatientGridsOverviewHeader';
 import { PatientGridTabs } from './PatientGridsTabs';
 import { PageWithSidePanel } from '../components';
 import { PatientGridBuilderSidePanel } from './PatientGridBuilderSidePanel';
 
-export function PatientGridsOverview() {
+export function PatientGridsOverviewPage() {
   const [showSidePanel, setShowSidePanel] = useState(false);
 
   return (

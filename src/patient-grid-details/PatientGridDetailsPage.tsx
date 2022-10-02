@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { Hr, PageWithSidePanel } from '../components';
 import { PatientGridDetailsHeader } from './PatientGridDetailsHeader';
 import { Stack } from '@carbon/react';
-import styles from './PatientGridDetails.scss';
 import { PatientGridFiltersHeader } from './PatientGridFiltersHeader';
 import { PatientGrid } from './PatientGrid';
 import { DeletePatientGridModal, EditPatientGridModal } from '../crosscutting-features';
@@ -13,8 +12,9 @@ import { PatientGridDetailsParams, routes } from '../routes';
 import { PatientGridReportLoadingIndicator } from './PatientGridReportLoadingIndicator';
 import { usePatientGrid } from './usePatientGrid';
 import { useTranslation } from 'react-i18next';
+import styles from './PatientGridDetailsPage.scss';
 
-export function PatientGridDetails() {
+export function PatientGridDetailsPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [patientGridToDelete, setPatientGridToDelete] = useState<PatientGridGet | undefined>(undefined);

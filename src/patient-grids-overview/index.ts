@@ -1,1 +1,1 @@
-export * from './PatientGridsOverview';
+export * from './PatientGridsOverviewPage';
