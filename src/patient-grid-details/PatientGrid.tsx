@@ -26,10 +26,12 @@ import styles from './PatientGrid.scss';
 import { useTranslation } from 'react-i18next';
 import debounce from 'lodash-es/debounce';
 import { PatientGridColumnFiltersButton } from './PatientGridColumnFiltersButton';
+import { HistoricEncountersTabs } from './HistoricEncountersTabs';
+import { PatientGridDataRow } from './usePatientGrid';
 
 export interface PatientGridProps {
-  columns: Array<ColumnDef<unknown, unknown>>;
-  data: Array<unknown>;
+  columns: Array<ColumnDef<PatientGridDataRow, unknown>>;
+  data: Array<PatientGridDataRow>;
 }
 
 export function PatientGrid({ columns, data }: PatientGridProps) {
@@ -37,7 +39,7 @@ export function PatientGrid({ columns, data }: PatientGridProps) {
   const [globalFilter, setGlobalFilter] = useState('');
   const handleGlobalFilterChange = useMemo(() => debounce(setGlobalFilter, 300), []);
   const [sorting, setSorting] = useState<SortingState>([]);
-  const table = useReactTable({
+  const table = useReactTable<PatientGridDataRow>({
     columns,
     data,
     getCoreRowModel: getCoreRowModel(),
@@ -152,7 +154,7 @@ export function PatientGrid({ columns, data }: PatientGridProps) {
                   </TableRow>
                   {row.getIsExpanded() && (
                     <TableExpandedRow colSpan="100%">
-                      <h1>TODO: Inner Form Grid Goes here</h1>
+                      <HistoricEncountersTabs report={row.original.__report} reportRow={row.original.__reportRow} />
                     </TableExpandedRow>
                   )}
                 </Fragment>

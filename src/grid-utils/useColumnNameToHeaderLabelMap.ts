@@ -6,6 +6,7 @@ import {
   useFormSchemas,
   useGetBulkConceptsByReferences,
   useMergedSwr,
+  useFormSchemasOfForms,
 } from '../api';
 import {
   patientDetailsNameColumnName,
@@ -47,9 +48,7 @@ export type ColumnNameToHeaderLabelMap = Record<string, string>;
 export function useColumnNameToHeaderLabelMap(): SWRResponse<ColumnNameToHeaderLabelMap> {
   const { t } = useTranslation();
   const formsSwr = useGetAllPublishedPrivilegeFilteredForms();
-  const formSchemasSwr = useFormSchemas(
-    formsSwr.data?.map((form) => form.resources.find((resource) => resource.name === 'JSON schema').valueReference),
-  );
+  const formSchemasSwr = useFormSchemasOfForms(formsSwr.data);
   const formLabelConceptIds = useMemo(
     () =>
       Object.values(formSchemasSwr.data ?? {}).flatMap((formSchema) =>

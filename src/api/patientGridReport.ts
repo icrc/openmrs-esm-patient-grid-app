@@ -4,11 +4,10 @@ import { FetchAllResponse } from './shared';
 
 export interface PatientGridReportGet {
   patientGrid: OpenmrsResource;
-  report: Array<PatientGridReportColumnGet>;
+  report: Array<PatientGridReportRowGet>;
 }
 
-export interface PatientGridReportColumnGet
-  extends Record<string, undefined | null | string | PatientGridReportObsGet> {
+export interface PatientGridReportRowGet extends Record<string, undefined | null | string | PatientGridReportObsGet> {
   uuid: string;
 }
 

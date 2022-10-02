@@ -1,4 +1,4 @@
-import { ColumnDef, GroupColumnDef } from '@tanstack/react-table';
+import { GroupColumnDef } from '@tanstack/react-table';
 import { FormGet, FormSchema } from '../api';
 import { getFormDateColumnName, getFormSchemaQuestionColumnName } from './columnNames';
 import { ColumnNameToHeaderLabelMap } from './useColumnNameToHeaderLabelMap';
@@ -25,9 +25,9 @@ export function getReactTableColumnDefForForm(
   formSchema: FormSchema,
   columnNameToHeaderLabelMap: ColumnNameToHeaderLabelMap,
   columnNamesToInclude: Array<string>,
-): GroupColumnDef<unknown> {
+): GroupColumnDef<Record<string, string>> {
   const formDateColumnName = getFormDateColumnName(form);
-  const formColumn: ColumnDef<unknown> = {
+  const formColumn: GroupColumnDef<Record<string, string>> = {
     header: form.name,
     columns: [
       // Each form column group always has the "Date" column.
@@ -40,7 +40,7 @@ export function getReactTableColumnDefForForm(
 
   for (const page of formSchema.pages ?? []) {
     for (const section of page.sections ?? []) {
-      const sectionColumn: ColumnDef<unknown> = {
+      const sectionColumn: GroupColumnDef<Record<string, string>> = {
         header: section.label,
         columns: [],
       };

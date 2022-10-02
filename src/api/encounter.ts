@@ -3,12 +3,13 @@ import useSWR from 'swr';
 import { FetchAllResponse } from './shared';
 
 export interface PastEncounterGet extends OpenmrsResource {
+  encounterDatetime: string;
   obs: Array<PastEncounterObsGet>;
 }
 
 export interface PastEncounterObsGet extends OpenmrsResource {
   concept: OpenmrsResource;
-  value?: unknown;
+  value?: null | string | number | OpenmrsResource;
   formFieldNamespace?: string;
   formFieldPath?: string;
   encounter: OpenmrsResource;

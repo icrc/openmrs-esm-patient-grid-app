@@ -1,13 +1,13 @@
 import { GroupColumnDef } from '@tanstack/react-table';
 import {
-  useFormSchemas,
   useGetAllPublishedPrivilegeFilteredForms,
   useMergedSwr,
-  PatientGridReportColumnGet,
+  PatientGridReportRowGet,
   useGetPatientGridReport,
   FormGet,
   FormSchema,
   PatientGridReportGet,
+  useFormSchemasOfForms,
 } from '../api';
 import {
   getFormSchemaReferenceUuid,
@@ -19,9 +19,14 @@ import {
   useColumnNameToHeaderLabelMap,
   getReactTableColumnDefForForm,
   ColumnNameToHeaderLabelMap,
+  getAllReportColumnNames,
 } from '../grid-utils';
 import { TFunction, useTranslation } from 'react-i18next';
-import { getAllReportColumnNames } from '../grid-utils/report';
+
+export interface PatientGridDataRow extends Record<string, unknown> {
+  __report: PatientGridReportGet;
+  __reportRow: PatientGridReportRowGet;
+}
 
 /**
  * The central hook fetching and manipulating the data that is required for rendering a patient grid.
@@ -32,9 +37,7 @@ export function usePatientGrid(id: string) {
   const { t } = useTranslation();
   const reportSwr = useGetPatientGridReport(id);
   const formsSwr = useGetAllPublishedPrivilegeFilteredForms();
-  const formSchemasSwr = useFormSchemas(
-    formsSwr.data?.map((form) => form.resources.find((resource) => resource.name === 'JSON schema').valueReference),
-  );
+  const formSchemasSwr = useFormSchemasOfForms(formsSwr.data);
   const columnNameToHeaderLabelMapSwr = useColumnNameToHeaderLabelMap();
 
   return useMergedSwr(
@@ -44,7 +47,7 @@ export function usePatientGrid(id: string) {
       const { data: columnNameToHeaderLabelMap } = columnNameToHeaderLabelMapSwr;
       const { data: report } = reportSwr;
       const columns = getColumns(forms, formSchemas, columnNameToHeaderLabelMap, report, t);
-      const data = mapReportEntriesToGridData(report.report);
+      const data = mapReportEntriesToGridData(report);
       return { columns, data };
     },
     [formsSwr, formSchemasSwr, columnNameToHeaderLabelMapSwr, reportSwr],
@@ -67,7 +70,7 @@ function getColumns(
   // All rows have the same attributes. Any row is therefore okay for checking whether a column
   // should be displayed.
   const columnNamesToInclude = getAllReportColumnNames(report);
-  const columns: Array<GroupColumnDef<unknown, unknown>> = [];
+  const columns: Array<GroupColumnDef<PatientGridDataRow>> = [];
 
   // Step 1: Construct the patient details columns.
   // These are simply hardcoded, but should still only appear if they are present in the report.
@@ -134,7 +137,7 @@ function getColumns(
     // Only add the entire form column if there is at least 1 section column.
     // Checking for length > 1 because there is *always* 1 column (the "Date" column).
     if (formColumn.columns.length > 1) {
-      columns.push(formColumn);
+      columns.push(formColumn as unknown as GroupColumnDef<PatientGridDataRow>);
     }
   }
 
@@ -142,15 +145,17 @@ function getColumns(
 }
 
 /**
-/**
  * Maps the results of a patient grid report to the shape expected by `react-table`.
  * Essentially converts `obs` to `strings`.
  */
-function mapReportEntriesToGridData(reportColumns: Array<PatientGridReportColumnGet>) {
-  return reportColumns.map((column) => {
-    const result: Record<string, unknown> = {};
+function mapReportEntriesToGridData(report: PatientGridReportGet) {
+  return report.report.map((reportRow) => {
+    const result: PatientGridDataRow = {
+      __report: report,
+      __reportRow: reportRow,
+    };
 
-    for (const [key, value] of Object.entries(column)) {
+    for (const [key, value] of Object.entries(reportRow)) {
       if (typeof value === 'string') {
         // The cell is already a raw string.
         result[key] = value;

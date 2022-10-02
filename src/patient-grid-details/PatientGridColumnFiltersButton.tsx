@@ -5,10 +5,11 @@ import { useTranslation } from 'react-i18next';
 import { useOnClickOutside } from '@openmrs/esm-framework';
 import styles from './PatientGridColumnFiltersButton.scss';
 import { Column } from '@tanstack/react-table';
+import { PatientGridDataRow } from './usePatientGrid';
 
 export interface PatientGridColumnFiltersButtonProps {
   columnDisplayName: string;
-  column: Column<unknown, unknown>;
+  column: Column<PatientGridDataRow, unknown>;
 }
 
 export function PatientGridColumnFiltersButton({ columnDisplayName, column }: PatientGridColumnFiltersButtonProps) {
