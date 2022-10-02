@@ -83,7 +83,7 @@ export function PatientGrid({ columns, data }: PatientGridProps) {
           <Table className={styles.table} useZebraStyles>
             <TableHead>
               {headerGroups.map((headerGroup, headerGroupIndex) => (
-                <TableRow key={headerGroup.id} className={styles.tableHeaderRow}>
+                <TableRow key={headerGroup.id}>
                   {/* Expand header. */}
                   <TableHeader />
 
@@ -124,7 +124,7 @@ export function PatientGrid({ columns, data }: PatientGridProps) {
             </TableHead>
 
             <TableBody>
-              {table.getRowModel().rows.map((row) => (
+              {table.getRowModel().rows.map((row, index) => (
                 <Fragment key={row.id}>
                   <TableRow>
                     <TableCell>
@@ -144,7 +144,6 @@ export function PatientGrid({ columns, data }: PatientGridProps) {
                     {row.getVisibleCells().map((cell) => (
                       <TableCell
                         key={cell.id}
-                        className={styles.tableCell}
                         onClick={() => {
                           // TODO: Open side panel which allows editing.
                         }}>
@@ -153,9 +152,21 @@ export function PatientGrid({ columns, data }: PatientGridProps) {
                     ))}
                   </TableRow>
                   {row.getIsExpanded() && (
-                    <TableExpandedRow colSpan="100%">
-                      <HistoricEncountersTabs report={row.original.__report} reportRow={row.original.__reportRow} />
-                    </TableExpandedRow>
+                    // Carbon isn't designed, at all, for having a nested table.
+                    // The nested tables' rows count towards the current zebra count of this outer table.
+                    // To prevent the zebra style from being switched up by the inner table
+                    // (and to also ensure that the inner table always "starts" with a light zebra row),
+                    // hidden filler rows are inserted here at a location where they ensure that the
+                    // outer zebra style appears in continuous colors.
+                    <>
+                      {index % 2 === 0 && <tr className={styles.hiddenTableRowForContinuousZebra} />}
+                      <TableExpandedRow className={styles.expandRow} colSpan="100%">
+                        <div className={styles.expandRowBackdrop}>
+                          <HistoricEncountersTabs report={row.original.__report} reportRow={row.original.__reportRow} />
+                        </div>
+                      </TableExpandedRow>
+                      {index % 2 === 1 && <tr className={styles.hiddenTableRowForContinuousZebra} />}
+                    </>
                   )}
                 </Fragment>
               ))}

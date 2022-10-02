@@ -42,7 +42,7 @@ export function HistoricEncountersTabs({ report, reportRow }: HistoricEncounters
           </TabList>
           <TabPanels>
             {formsReferencedInGridReport.map((form) => (
-              <TabPanel key={form.uuid}>
+              <TabPanel key={form.uuid} className={styles.tabPanel}>
                 <HistoricEncountersGrid
                   form={form}
                   formSchema={formSchemasSwr.data[getFormSchemaReferenceUuid(form)]}

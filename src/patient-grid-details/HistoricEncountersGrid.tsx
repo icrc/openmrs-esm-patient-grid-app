@@ -10,7 +10,6 @@ import {
   DataTableSkeleton,
 } from '@carbon/react';
 import { ChevronSort, ArrowUp, ArrowDown } from '@carbon/react/icons';
-import styles from './HistoricEncountersGrid.scss';
 import {
   flexRender,
   getCoreRowModel,
@@ -23,6 +22,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { FormGet, FormSchema, PatientGridReportGet } from '../api';
 import { useHistoricEncountersGrid } from './useHistoricEncountersGrid';
+import styles from './HistoricEncountersGrid.scss';
 
 export interface HistoricEncountersGridProps {
   patientId: string;
@@ -57,7 +57,7 @@ export function HistoricEncountersGrid({ patientId, form, formSchema, report }: 
     <Table className={styles.table} useZebraStyles>
       <TableHead>
         {headerGroups.map((headerGroup, headerGroupIndex) => (
-          <TableRow key={headerGroup.id} className={styles.tableHeaderRow}>
+          <TableRow key={headerGroup.id}>
             {headerGroup.headers.map((header) => (
               <TableHeader key={header.id} colSpan={header.colSpan}>
                 {header.isPlaceholder ? null : (
@@ -98,9 +98,7 @@ export function HistoricEncountersGrid({ patientId, form, formSchema, report }: 
         {table.getRowModel().rows.map((row) => (
           <TableRow key={row.id}>
             {row.getVisibleCells().map((cell) => (
-              <TableCell key={cell.id} className={styles.tableCell}>
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </TableCell>
+              <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
             ))}
           </TableRow>
         ))}

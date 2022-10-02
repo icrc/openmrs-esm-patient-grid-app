@@ -1,4 +1,5 @@
 @use '@carbon/layout';
+@use '../styles/table.scss';
 @import "~@openmrs/esm-styleguide/src/vars";
 
 .tableHeaderContainer {
@@ -26,36 +27,38 @@
   }
 }
 
-.table {
+table.table {
+  @include table.carbon-table-overrides;
   margin: 0 layout.$spacing-05 layout.$spacing-05 layout.$spacing-05;
 }
 
-.tableHeaderRow {
-  // This is not exactly pretty, but it's the easiest way to override Carbon's default style so that
-  // the colors adhere to the screen designs.
-  border: 0 solid #c4c4c4 !important;
-  border-bottom-width: 1px !important;
-  background-color: $ui-03 !important;
-  white-space: nowrap;
-
-  th {
-    background-color: $ui-03 !important;
-    color: $color-gray-70 !important;
-  }
-}
-
-.tableCell {
-  white-space: nowrap;
-}
-
 .expandCell {
-  white-space: nowrap;
   display: flex;
   align-items: center;
 }
 
+// This is a workaround™ which essentially allows to make the background of an expanded row white.
+// This is done by placing a full-size div with a white background in the row, thereby hiding
+// the "default" background of Carbon's expandable row.
+// This approach was chosen because the only realistic alternative is to override Carbon's default
+// styles and that is a pain. It would require finding and overriding the right classes from
+// the following file, which is a lot of code for the same behavior that can be achieved with
+// this relatively simple "hack": https://github.com/carbon-design-system/carbon/blob/dcf802a75caf0201ac831826f611d24dbe508859/packages/styles/scss/components/data-table/expandable/_data-table-expandable.scss#L106
+tr.expandRow {
+  > td {
+    padding: 0;
+  }
+
+  .expandRowBackdrop {
+    background-color: $ui-background;
+  }
+}
+
+.hiddenTableRowForContinuousZebra {
+  display: none;
+}
+
 .headerWithActions {
-  white-space: nowrap;
   display: flex;
   align-items: center;
 }

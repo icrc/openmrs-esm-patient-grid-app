@@ -1,5 +1,9 @@
 @use '@carbon/layout';
 
 .container {
-  padding: layout.$spacing-05 0;
+  padding: layout.$spacing-05;
+}
+
+:global(cds--tab-content), .tabPanel {
+  padding: 0;
 }
