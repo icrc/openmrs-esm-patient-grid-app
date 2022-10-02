@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { SWRResponse } from 'swr';
 import {
   useGetAllPublishedPrivilegeFilteredForms,
-  useFormSchemas,
   useGetBulkConceptsByReferences,
   useMergedSwr,
   useFormSchemasOfForms,
