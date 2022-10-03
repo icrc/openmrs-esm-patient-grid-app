@@ -43,9 +43,19 @@ function setupOpenMRS() {
       {
         load: getAsyncLifecycle(() => import('./Root'), options),
         route: 'patient-grids',
+        online: true,
+        offline: true,
       },
     ],
-    extensions: [],
+    extensions: [
+      {
+        id: 'patient-grids-link',
+        slot: 'app-menu-slot',
+        load: getAsyncLifecycle(() => import('./AppMenuLink'), options),
+        online: true,
+        offline: true,
+      },
+    ],
   };
 }
 
