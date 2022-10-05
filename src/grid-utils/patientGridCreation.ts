@@ -13,6 +13,7 @@ import { getFormSchemaReferenceUuid, getFormSchemaQuestionsMappableToColumns } f
  * Returns the {@link PatientGridColumnPost} resources for the hardcoded patient details grid sections.
  */
 export function getPatientDetailsPatientGridColumnPostResources(
+  ageCategoryEncounterType: string,
   countryFilter?: Array<PatientGridFilterPost>,
   structureFilter?: Array<PatientGridFilterPost>,
   genderFilter?: Array<PatientGridFilterPost>,
@@ -46,8 +47,8 @@ export function getPatientDetailsPatientGridColumnPostResources(
       name: patientDetailsAgeCategoryColumnName,
       type: 'agecolumn',
       datatype: 'ENC_AGE',
-      encounterType: '0c63150d-ff39-42e1-9048-834mh76p2s72', // TODO: Use encounter type from form.
-      convertToAgeRange: false, // TODO: Decide on true/false.
+      encounterType: ageCategoryEncounterType,
+      convertToAgeRange: true,
       filters: ageCategoryFilters,
     },
   ];

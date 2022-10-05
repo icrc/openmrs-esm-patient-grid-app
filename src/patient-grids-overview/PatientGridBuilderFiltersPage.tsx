@@ -88,7 +88,7 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
           onChange={(e) =>
             setState((state) => ({
               ...state,
-              gender: e.target.value
+              genderFilter: e.target.value
                 ? {
                     name: genders.find((x) => x.gender === e.target.value)?.display ?? e.target.value,
                     operand: e.target.value,
@@ -107,23 +107,31 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
             id="ageCategory"
             defaultValue=""
             labelText={t('patientGridDetailsAgeCategoryLabel', 'Age category')}
-            onChange={(e) =>
-              setState((state) => ({
-                ...state,
-                ageCategoryFilter: e.target.value
-                  ? {
-                      name: 'tbd',
-                      operand: e.target.value,
-                    }
-                  : undefined,
-              }))
-            }>
+            onChange={(e) => {
+              if (e.target.value === '') {
+                setState((state) => ({
+                  ...state,
+                  ageCategoryFilter: undefined,
+                }));
+              } else {
+                const ageRangeIndex = +e.target.value;
+                const ageRange = ageRanges[ageRangeIndex];
+                if (!ageRange) {
+                  return;
+                }
+
+                setState((state) => ({
+                  ...state,
+                  ageCategoryFilter: {
+                    name: ageRange.display,
+                    operand: JSON.stringify(ageRange),
+                  },
+                }));
+              }
+            }}>
             <SelectItem value="" text={t('patientGridDetailsAgeCategoryPlaceholder', 'Age category')} />
-            {ageRanges.map((ageRange) => (
-              // TODO: It's not clear at the moment what the identifying/unique attribute of an age range is.
-              // They are unforunately lacking a unique ID. We'll have to wait until we know how filters are POSTed
-              // with a patient grid.
-              <SelectItem key={ageRange.label} value={ageRange.label} text={ageRange.display} />
+            {ageRanges.map((ageRange, i) => (
+              <SelectItem key={ageRange.label} value={i} text={ageRange.display} />
             ))}
           </Select>
         ) : (

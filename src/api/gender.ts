@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export type GenderRepresentation = 'm' | 'f' | 'u' | 'o';
+export type GenderRepresentation = 'M' | 'F' | 'U' | 'O';
 
 export interface GenderDetails {
   gender: GenderRepresentation;
@@ -14,19 +14,19 @@ export function useAllGenders() {
   return useMemo<Array<GenderDetails>>(
     () => [
       {
-        gender: 'm',
+        gender: 'M',
         display: t('genderMale', 'Male'),
       },
       {
-        gender: 'f',
+        gender: 'F',
         display: t('genderFemale', 'Female'),
       },
       {
-        gender: 'u',
+        gender: 'U',
         display: t('genderUnknown', 'Unknown'),
       },
       {
-        gender: 'o',
+        gender: 'O',
         display: t('genderOther', 'Other'),
       },
     ],

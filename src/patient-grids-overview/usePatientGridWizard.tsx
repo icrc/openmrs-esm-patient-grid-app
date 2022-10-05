@@ -1,5 +1,7 @@
+import { useConfig } from '@openmrs/esm-framework';
 import React, { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react';
 import { FormGet, PatientGridPost, PatientGridFilterPost, FormSchema } from '../api';
+import { Config } from '../config-schema';
 import {
   getPatientDetailsPatientGridColumnPostResources,
   getPatientGridColumnPostResourcesForForms,
@@ -32,6 +34,7 @@ const initialWizardState: PatientGridWizardState = {
 };
 
 export function usePatientGridWizard(formSchemas: Record<string, FormSchema>) {
+  const config = useConfig() as Config;
   const [state, setState] = useState<PatientGridWizardState>(initialWizardState);
   const [page, setPage] = useState(0);
   const pageFactories = useMemo(
@@ -61,17 +64,22 @@ export function usePatientGridWizard(formSchemas: Record<string, FormSchema>) {
   );
 
   const isStateValidForSubmission = useMemo(() => {
-    // TODO: Enhance with additional criteria.
     return state.name?.trim().length && state.selectedForms.length;
   }, [state]);
 
   const createPostBody = useCallback(() => {
+    // The age category column may use a configurable form UUID.
+    // If that isn't configured, use the encounter type of the first form that we can find as fallback.
+    const ageCategoryEncounterType =
+      config.ageRangeEncounterTypeUuid ?? state.selectedForms.find((f) => !!f.encounterType.uuid).encounterType.uuid;
+
     const body: PatientGridPost = {
       name: state.name,
       description: state.description,
       owner: undefined, // TODO: Should this be the current owner?
       columns: [
         ...getPatientDetailsPatientGridColumnPostResources(
+          ageCategoryEncounterType,
           state.countryFilter ? [state.countryFilter] : undefined,
           state.structureFilter ? [state.structureFilter] : undefined,
           state.genderFilter ? [state.genderFilter] : undefined,
@@ -82,7 +90,7 @@ export function usePatientGridWizard(formSchemas: Record<string, FormSchema>) {
     };
 
     return body;
-  }, [state, formSchemas]);
+  }, [state, formSchemas, config.ageRangeEncounterTypeUuid]);
 
   return {
     currentPage,
