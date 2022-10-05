@@ -1,3 +1,4 @@
+import { formatDate } from '@openmrs/esm-framework';
 import {
   FormGet,
   FormSchema,
@@ -53,7 +54,7 @@ function createDataFromHistoricEncounters(
 
   for (const encounter of historicEncounters) {
     const encounterRow: Record<string, string> = {
-      [getFormDateColumnName(form)]: new Date(encounter.encounterDatetime).toLocaleDateString(),
+      [getFormDateColumnName(form)]: formatDate(new Date(encounter.encounterDatetime)),
     };
 
     for (const { question } of relevantQuestions) {

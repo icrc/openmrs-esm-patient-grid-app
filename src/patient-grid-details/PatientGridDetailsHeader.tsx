@@ -4,7 +4,7 @@ import { PageHeader } from '../components';
 import { Button, ButtonSkeleton, OverflowMenu, OverflowMenuItem, SkeletonText } from '@carbon/react';
 import { Save } from '@carbon/react/icons';
 import styles from './PatientGridDetailsHeader.scss';
-import { useGetPatientGrid } from '../api';
+import { useGetPatientGrid, useGetPatientGridReport } from '../api';
 import { useParams } from 'react-router-dom';
 import { PatientGridDetailsParams } from '../routes';
 
@@ -17,6 +17,7 @@ export function PatientGridDetailsHeader({ onEditClick, onDeleteClick }: Patient
   const { t } = useTranslation();
   const { id: patientGridId } = useParams<PatientGridDetailsParams>();
   const { data: patientGrid } = useGetPatientGrid(patientGridId);
+  const { data: patientGridReport } = useGetPatientGridReport(patientGridId);
 
   return (
     <PageHeader
@@ -30,8 +31,8 @@ export function PatientGridDetailsHeader({ onEditClick, onDeleteClick }: Patient
         </h1>
       }
       subTitle={
-        patientGrid ? (
-          <span className={styles.subTitle}>(tbd) patients &middot; Last updated: (tbd)</span>
+        patientGridReport ? (
+          <span className={styles.subTitle}>{patientGridReport.report.length} patients</span>
         ) : (
           <SkeletonText width="30%" />
         )
