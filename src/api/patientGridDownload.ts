@@ -1,18 +1,12 @@
 import { openmrsFetch, OpenmrsResource } from '@openmrs/esm-framework';
 import { useTranslation } from 'react-i18next';
 import useSWR from 'swr';
-import {
-  ColumnNameToHeaderLabelMap,
-  getPatientGridDownloadReportData,
-  useColumnNameToHeaderLabelMap,
-} from '../grid-utils';
+import { ColumnNameToHeaderLabelMap, useColumnNameToHeaderLabelMap } from '../grid-utils';
 import { FormGet, useGetAllPublishedPrivilegeFilteredForms } from './form';
 import { FormSchema, useFormSchemasOfForms } from './formSchema';
 import { PatientGridGet, useGetPatientGrid } from './patientGrid';
 import { FetchAllResponse } from './shared';
 import { useMergedSwr } from './useMergedSwr';
-import { useMutation } from './useMutation';
-import xlsx from 'xlsx';
 
 export interface PatientGridDownloadGet {
   patientGrid: OpenmrsResource;

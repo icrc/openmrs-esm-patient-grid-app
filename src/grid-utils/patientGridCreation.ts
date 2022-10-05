@@ -1,4 +1,4 @@
-import { PatientGridColumnPost, FormGet, FormSchema, AgeRangeGet, PatientGridFilterPost } from '../api';
+import { PatientGridColumnPost, FormGet, FormSchema, PatientGridFilterPost } from '../api';
 import {
   patientDetailsNameColumnName,
   patientDetailsCountryColumnName,
