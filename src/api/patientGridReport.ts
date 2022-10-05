@@ -7,7 +7,8 @@ export interface PatientGridReportGet {
   report: Array<PatientGridReportRowGet>;
 }
 
-export interface PatientGridReportRowGet extends Record<string, undefined | null | string | PatientGridReportObsGet> {
+export interface PatientGridReportRowGet
+  extends Record<string, undefined | null | string | number | boolean | PatientGridReportObsGet> {
   uuid: string;
 }
 

@@ -1,5 +1,6 @@
 import {
   Button,
+  ButtonSkeleton,
   Search,
   Table,
   TableHead,
@@ -28,14 +29,20 @@ import debounce from 'lodash-es/debounce';
 import { PatientGridColumnFiltersButton } from './PatientGridColumnFiltersButton';
 import { HistoricEncountersTabs } from './HistoricEncountersTabs';
 import { PatientGridDataRow } from './usePatientGrid';
+import { DownloadModal } from './DownloadModal';
+import { useDownloadGridMutationArgs } from '../api';
 
 export interface PatientGridProps {
+  patientGridId: string;
   columns: Array<ColumnDef<PatientGridDataRow, unknown>>;
   data: Array<PatientGridDataRow>;
 }
 
-export function PatientGrid({ columns, data }: PatientGridProps) {
+export function PatientGrid({ patientGridId, columns, data }: PatientGridProps) {
   const { t } = useTranslation();
+  const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
+  const { data: downloadGridMutationArgs, error: downloadGridMutationArgsError } =
+    useDownloadGridMutationArgs(patientGridId);
   const [globalFilter, setGlobalFilter] = useState('');
   const handleGlobalFilterChange = useMemo(() => debounce(setGlobalFilter, 300), []);
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -59,9 +66,13 @@ export function PatientGrid({ columns, data }: PatientGridProps) {
     <main>
       <section className={styles.tableHeaderContainer}>
         <>
-          <Button size="sm" kind="ghost" renderIcon={Download}>
-            {t('patientGridDownloadButton', 'Download')}
-          </Button>
+          {downloadGridMutationArgs ? (
+            <Button size="sm" kind="ghost" renderIcon={Download} onClick={() => setIsDownloadModalOpen(true)}>
+              {t('patientGridDownloadButton', 'Download')}
+            </Button>
+          ) : downloadGridMutationArgsError ? null : (
+            <ButtonSkeleton size="sm" />
+          )}
           <Button size="sm" kind="ghost" renderIcon={OpenPanelRight}>
             {t('patientGridColumnsButton', 'Columns ({actual}/{total})', {
               actual: '?',
@@ -174,6 +185,12 @@ export function PatientGrid({ columns, data }: PatientGridProps) {
           </Table>
         </section>
       </div>
+
+      <DownloadModal
+        isOpen={isDownloadModalOpen}
+        onClose={() => setIsDownloadModalOpen(false)}
+        downloadGridMutationArgs={downloadGridMutationArgs}
+      />
     </main>
   );
 }

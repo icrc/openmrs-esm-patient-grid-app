@@ -1692,13 +1692,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@faker-js/faker@npm:^7.5.0":
-  version: 7.5.0
-  resolution: "@faker-js/faker@npm:7.5.0"
-  checksum: 6f2c48a8017d486eddfe2c3e0b743b810bcc948e5dbd1395c44a38471294584636f565cb081517ce90b634f50d8678d1d38d0f7b6b48b7d402e0a2602cf4f2d9
-  languageName: node
-  linkType: hard
-
 "@gar/promisify@npm:^1.1.3":
   version: 1.1.3
   resolution: "@gar/promisify@npm:1.1.3"
@@ -1743,7 +1736,6 @@ __metadata:
   resolution: "@icrc/openmrs-esm-patient-grid@workspace:."
   dependencies:
     "@carbon/react": ^1.9.0
-    "@faker-js/faker": ^7.5.0
     "@openmrs/esm-framework": next
     "@swc/core": ^1.2.244
     "@swc/jest": ^0.2.22
@@ -1784,6 +1776,7 @@ __metadata:
     swr: ^1.3.0
     typescript: ^4.8.2
     webpack: ^5.73.0
+    xlsx: "https://cdn.sheetjs.com/xlsx-0.18.12/xlsx-0.18.12.tgz"
   peerDependencies:
     "@carbon/react": ^1.9.0
     "@openmrs/esm-framework": "*"
@@ -14182,6 +14175,15 @@ __metadata:
     parse-headers: ^2.0.0
     xtend: ^4.0.0
   checksum: a1db277e37737caf3ed363d2a33ce4b4ea5b5fc190b663a6f70bc252799185b840ccaa166eaeeea4841c9c60b87741f0a24e29cbcf6708dd425986d4df186d2f
+  languageName: node
+  linkType: hard
+
+"xlsx@https://cdn.sheetjs.com/xlsx-0.18.12/xlsx-0.18.12.tgz":
+  version: 0.18.12
+  resolution: "xlsx@https://cdn.sheetjs.com/xlsx-0.18.12/xlsx-0.18.12.tgz"
+  bin:
+    xlsx: ./bin/xlsx.njs
+  checksum: f073ecb2e2513c8d4a9435532db9abaf148f10a1828ae164935f811c4126c92ec3a175e3ffeacba062a9bb689b5325b80f3c5060d8d0ba0526fd9fb8a76a9891
   languageName: node
   linkType: hard
 

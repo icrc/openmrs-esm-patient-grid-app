@@ -56,7 +56,7 @@ export function PatientGridDetailsPage() {
         </div>
 
         <div className={styles.gridContainer}>
-          <PatientGrid columns={data?.columns ?? []} data={data?.data ?? []} />
+          <PatientGrid patientGridId={patientGridId} columns={data?.columns ?? []} data={data?.data ?? []} />
         </div>
       </Stack>
 
