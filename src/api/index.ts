@@ -12,4 +12,5 @@ export * from './patientGridColumn';
 export * from './patientGridDownload';
 export * from './patientGridFilter';
 export * from './patientGridReport';
+export * from './swrOptions';
 export * from './useMergedSwr';

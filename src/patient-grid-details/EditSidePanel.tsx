@@ -1,20 +1,20 @@
 import { ExtensionSlot, usePatient } from '@openmrs/esm-framework';
 import React, { useMemo } from 'react';
-import { useGetEncounter } from '../api';
+import { onlyStaleRevalidationConfig, useGetEncounter } from '../api';
 import { SidePanel } from '../components';
 import { SkeletonText } from '@carbon/react';
 import { useTranslation } from 'react-i18next';
 
 export interface EditSidePanelProps {
   formId: string;
-  encounterId: string;
   patientId: string;
+  encounterId?: string;
   onClose?(): void;
 }
 
 export function EditSidePanel({ formId, encounterId, patientId, onClose }: EditSidePanelProps) {
   const { t } = useTranslation();
-  const { data: encounter } = useGetEncounter(encounterId);
+  const { data: encounter } = useGetEncounter(encounterId, onlyStaleRevalidationConfig);
   const { patient } = usePatient(patientId);
   const extensionSlotState = useMemo(
     () => ({
@@ -24,7 +24,7 @@ export function EditSidePanel({ formId, encounterId, patientId, onClose }: EditS
       visitTypeUuid: encounter?.visit?.visitType?.uuid ?? '',
       patientUuid: patientId,
       patient,
-      encounterUuid: encounterId,
+      encounterUuid: encounterId ?? '',
       closeWorkspace: onClose,
       handleEncounterCreate: onClose,
       handlePostResponse: onClose,
@@ -33,12 +33,14 @@ export function EditSidePanel({ formId, encounterId, patientId, onClose }: EditS
     [formId, encounterId, patientId, encounter, patient, onClose],
   );
 
-  console.info('[FORM]', extensionSlotState);
-
   return (
     <SidePanel title={t('editSidePanelTitle', 'Edit patient entry')} onClose={onClose}>
       <section>
-        {encounter && patient ? <ExtensionSlot name="form-widget-slot" state={extensionSlotState} /> : <SkeletonText />}
+        {(encounterId ? encounter : true) && patient ? (
+          <ExtensionSlot name="form-widget-slot" state={extensionSlotState} />
+        ) : (
+          <SkeletonText paragraph />
+        )}
       </section>
     </SidePanel>
   );

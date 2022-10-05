@@ -33,10 +33,11 @@ import { PatientGridColumnFiltersButton } from './PatientGridColumnFiltersButton
 import { HistoricEncountersTabs } from './HistoricEncountersTabs';
 import { PatientGridDataRow } from './usePatientGrid';
 import { DownloadModal } from './DownloadModal';
-import { PatientGridReportObsGet, useDownloadGridMutationArgs } from '../api';
+import { useDownloadGridMutationArgs } from '../api';
 import { EditSidePanelValues } from './PatientGridDetailsPage';
-import { patientDetailsNameColumnName } from '../grid-utils';
+import { isFormSchemaQuestionColumnName, patientDetailsNameColumnName } from '../grid-utils';
 import { interpolateUrl } from '@openmrs/esm-framework';
+import { getFormEngineDataRequiredForEditing } from '../grid-utils/editing';
 
 export interface PatientGridProps {
   patientGridId: string;
@@ -71,26 +72,8 @@ export function PatientGrid({ patientGridId, columns, data, setEditSidePanelValu
 
   const handleCellClick = (cell: Cell<PatientGridDataRow, unknown>, row: Row<PatientGridDataRow>) => {
     const columnName = cell.column.id;
-    const formUuid = columnName.split('__')[1];
-    const rowValue = row.original.__reportRow[columnName];
-    let matchingObs: PatientGridReportObsGet | undefined = typeof rowValue === 'object' ? rowValue : undefined;
-
-    if (!matchingObs) {
-      matchingObs = Object.entries(row.original.__reportRow).find(([key, value]) => {
-        console.info(key, value);
-        return key.startsWith(`formQuestion__${formUuid}`) && typeof value === 'object';
-      })?.[1] as PatientGridReportObsGet | undefined;
-    }
-
-    if (matchingObs?.encounter) {
-      setEditSidePanelValues({
-        encounterId: matchingObs.encounter.uuid,
-        formId: formUuid,
-        patientId: row.original.__reportRow.uuid,
-      });
-    }
-
-    console.info(columnName, formUuid, rowValue, matchingObs);
+    const formEngineData = getFormEngineDataRequiredForEditing(row.original.__reportRow, columnName);
+    setEditSidePanelValues(formEngineData);
   };
 
   return (
@@ -184,7 +167,14 @@ export function PatientGrid({ patientGridId, columns, data, setEditSidePanelValu
                     </TableCell>
 
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id} onClick={() => handleCellClick(cell, row)}>
+                      <TableCell
+                        key={cell.id}
+                        onClick={
+                          isFormSchemaQuestionColumnName(cell.column.id)
+                            ? () => handleCellClick(cell, row)
+                            : () => undefined
+                        }
+                        className={isFormSchemaQuestionColumnName(cell.column.id) ? styles.clickableCell : undefined}>
                         {cell.column.id === patientDetailsNameColumnName ? (
                           <Link
                             href={interpolateUrl(`\${openmrsSpaBase}/patient/${row.original.__reportRow.uuid}/chart`)}>

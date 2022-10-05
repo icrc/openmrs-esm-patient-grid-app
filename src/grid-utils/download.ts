@@ -178,12 +178,7 @@ function getGroups(
             for (const row of download.report) {
               const rowEncounters = row[form.encounterType.uuid];
               const thisColumnEncounter = Array.isArray(rowEncounters) ? rowEncounters[repetition] : undefined;
-
-              if (thisColumnEncounter) {
-                column.values.push(thisColumnEncounter[matchingPatientGridColumnUuid]?.value ?? '');
-              } else {
-                column.values.push('');
-              }
+              column.values.push(thisColumnEncounter?.[matchingPatientGridColumnUuid]?.value ?? '');
             }
 
             section.columns.push(column);
