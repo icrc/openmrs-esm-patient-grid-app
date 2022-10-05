@@ -33,7 +33,6 @@ import { PatientGridColumnFiltersButton } from './PatientGridColumnFiltersButton
 import { HistoricEncountersTabs } from './HistoricEncountersTabs';
 import { PatientGridDataRow } from './usePatientGrid';
 import { DownloadModal } from './DownloadModal';
-import { useDownloadGridMutationArgs } from '../api';
 import { EditSidePanelValues } from './PatientGridDetailsPage';
 import { isFormSchemaQuestionColumnName, patientDetailsNameColumnName } from '../grid-utils';
 import { interpolateUrl } from '@openmrs/esm-framework';
@@ -49,8 +48,6 @@ export interface PatientGridProps {
 export function PatientGrid({ patientGridId, columns, data, setEditSidePanelValues }: PatientGridProps) {
   const { t } = useTranslation();
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
-  const { data: downloadGridMutationArgs, error: downloadGridMutationArgsError } =
-    useDownloadGridMutationArgs(patientGridId);
   const [globalFilter, setGlobalFilter] = useState('');
   const handleGlobalFilterChange = useMemo(() => debounce(setGlobalFilter, 300), []);
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -80,13 +77,9 @@ export function PatientGrid({ patientGridId, columns, data, setEditSidePanelValu
     <main>
       <section className={styles.tableHeaderContainer}>
         <>
-          {downloadGridMutationArgs ? (
-            <Button size="sm" kind="ghost" renderIcon={Download} onClick={() => setIsDownloadModalOpen(true)}>
-              {t('patientGridDownloadButton', 'Download')}
-            </Button>
-          ) : downloadGridMutationArgsError ? null : (
-            <ButtonSkeleton size="sm" />
-          )}
+          <Button size="sm" kind="ghost" renderIcon={Download} onClick={() => setIsDownloadModalOpen(true)}>
+            {t('patientGridDownloadButton', 'Download')}
+          </Button>
           <Button size="sm" kind="ghost" renderIcon={OpenPanelRight}>
             {t('patientGridColumnsButton', 'Columns ({actual}/{total})', {
               actual: '?',
@@ -211,9 +204,9 @@ export function PatientGrid({ patientGridId, columns, data, setEditSidePanelValu
       </div>
 
       <DownloadModal
+        patientGridId={patientGridId}
         isOpen={isDownloadModalOpen}
         onClose={() => setIsDownloadModalOpen(false)}
-        downloadGridMutationArgs={downloadGridMutationArgs}
       />
     </main>
   );

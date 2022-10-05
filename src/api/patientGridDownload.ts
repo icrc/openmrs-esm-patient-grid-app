@@ -60,7 +60,7 @@ export function useGetPatientGridDownload(id: string) {
   );
 }
 
-export interface DownloadGridMutationArgs {
+export interface DownloadGridData {
   download: PatientGridDownloadGet;
   patientGrid: PatientGridGet;
   forms: Array<FormGet>;
@@ -71,37 +71,7 @@ export interface DownloadGridMutationArgs {
   fileName: string;
 }
 
-export function useDownloadGridMutation() {
-  return useMutation<DownloadGridMutationArgs>(
-    async ({
-      download,
-      patientGrid,
-      forms,
-      formSchemas,
-      columnNamesToInclude,
-      columnNameToHeaderLabelMap,
-      patientDetailsGroupHeader,
-      fileName,
-    }) => {
-      const spreadsheetData = getPatientGridDownloadReportData(
-        download,
-        patientGrid,
-        forms,
-        formSchemas,
-        columnNamesToInclude,
-        columnNameToHeaderLabelMap,
-        patientDetailsGroupHeader,
-      );
-
-      const sheet = xlsx.utils.json_to_sheet(spreadsheetData);
-      const wb = xlsx.utils.book_new();
-      xlsx.utils.book_append_sheet(wb, sheet, patientGrid.name);
-      xlsx.writeFile(wb, fileName);
-    },
-  );
-}
-
-export function useDownloadGridMutationArgs(patientGridId: string) {
+export function useDownloadGridData(patientGridId: string) {
   const { t } = useTranslation();
   const downloadSwr = useGetPatientGridDownload(patientGridId);
   const patientGridSwr = useGetPatientGrid(patientGridId);
@@ -109,7 +79,7 @@ export function useDownloadGridMutationArgs(patientGridId: string) {
   const formSchemasSwr = useFormSchemasOfForms(formsSwr.data);
   const columnNameToHeaderLabelMapSwr = useColumnNameToHeaderLabelMap();
 
-  return useMergedSwr<Omit<DownloadGridMutationArgs, 'fileName'>>(
+  return useMergedSwr<Omit<DownloadGridData, 'fileName'>>(
     () => {
       return {
         download: downloadSwr.data,

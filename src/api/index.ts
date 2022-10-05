@@ -14,3 +14,4 @@ export * from './patientGridFilter';
 export * from './patientGridReport';
 export * from './swrOptions';
 export * from './useMergedSwr';
+export * from './useMutation';

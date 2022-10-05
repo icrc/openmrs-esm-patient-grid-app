@@ -1,19 +1,48 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal, RadioButtonGroup, RadioButton } from '@carbon/react';
-import { DownloadGridMutationArgs, useDownloadGridMutation } from '../api';
-import { showToast } from '@openmrs/esm-framework';
+import { DownloadGridData, useDownloadGridData } from '../api';
+import { getPatientGridDownloadReportData } from '../grid-utils';
+import xlsx from 'xlsx';
 
 export interface DownloadModalProps {
+  patientGridId: string;
   isOpen: boolean;
-  downloadGridMutationArgs?: Omit<DownloadGridMutationArgs, 'fileName'>;
   onClose(): void;
 }
 
-export function DownloadModal({ isOpen, downloadGridMutationArgs, onClose }: DownloadModalProps) {
+export function DownloadModal({ patientGridId, isOpen, onClose }: DownloadModalProps) {
   const { t } = useTranslation();
-  const { isLoading, mutate } = useDownloadGridMutation();
   const [fileExtension, setFileExtension] = useState<string | undefined>(undefined);
+  const [hasDownloadStarted, setHasDownloadStarted] = useState(false);
+
+  const handleDownloadPrepared = async ({
+    download,
+    patientGrid,
+    forms,
+    formSchemas,
+    columnNamesToInclude,
+    columnNameToHeaderLabelMap,
+    patientDetailsGroupHeader,
+  }: Omit<DownloadGridData, 'fileName'>) => {
+    const fileName = t('patientGridExportFileName', 'export.{extension}', { extension: fileExtension });
+    const spreadsheetData = getPatientGridDownloadReportData(
+      download,
+      patientGrid,
+      forms,
+      formSchemas,
+      columnNamesToInclude,
+      columnNameToHeaderLabelMap,
+      patientDetailsGroupHeader,
+    );
+
+    const sheet = xlsx.utils.json_to_sheet(spreadsheetData, { skipHeader: true });
+    const wb = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(wb, sheet, patientGrid.name);
+    xlsx.writeFile(wb, fileName);
+    onClose();
+  };
+
   const modalPropsForSteps = {
     internalExternal: {
       danger: true,
@@ -27,7 +56,7 @@ export function DownloadModal({ isOpen, downloadGridMutationArgs, onClose }: Dow
         setStepKey('externalConfirmation');
       },
       onSecondarySubmit() {
-        setStepKey('confirmDownload');
+        setStepKey('chooseDownload');
       },
     },
 
@@ -45,20 +74,22 @@ export function DownloadModal({ isOpen, downloadGridMutationArgs, onClose }: Dow
       primaryButtonText: t('downloadModalExternalConfirmationPrimaryButtonText', 'Proceed'),
       secondaryButtonText: t('downloadModalExternalConfirmationSecondaryButtonText', 'Cancel'),
       onRequestSubmit() {
-        setStepKey('confirmDownload');
+        setStepKey('chooseDownload');
       },
       onSecondarySubmit() {
         onClose();
       },
     },
 
-    confirmDownload: {
+    chooseDownload: {
       danger: false,
-      modalHeading: t('downloadModalDownloadingHeading', 'Download data as file'),
-      modalBody: (
+      modalHeading: t('downloadModalChooseDownloadHeading', 'Download data as file'),
+      modalBody: hasDownloadStarted ? (
+        <PrepareDownload patientGridId={patientGridId} onDownloadPrepared={handleDownloadPrepared} />
+      ) : (
         <RadioButtonGroup
           legendText={t(
-            'downloadModalDownloadingLegend',
+            'downloadModalChooseDownloadLegend',
             'Select the file format that you want the data to be converted to',
           )}
           name="file-extension-group"
@@ -66,45 +97,23 @@ export function DownloadModal({ isOpen, downloadGridMutationArgs, onClose }: Dow
           orientation="vertical"
           onChange={(value) => setFileExtension(value)}>
           <RadioButton
-            labelText={t('downloadModalDownloadingCsvOption', 'CSV (Comma-Separated Values)')}
+            labelText={t('downloadModalChooseDownloadCsvOption', 'CSV (Comma-Separated Values)')}
             value="csv"
             id="csv"
           />
           <RadioButton
-            labelText={t('downloadModalDownloadingXlsxOption', 'XLSX (Microsoft Excel)')}
+            labelText={t('downloadModalChooseDownloadXlsxOption', 'XLSX (Microsoft Excel)')}
             value="xlsx"
             id="xlsx"
           />
         </RadioButtonGroup>
       ),
-      primaryButtonText: isLoading
-        ? t('downloadModalDownloadingPrimaryButtonTextDownloading', 'Converting...')
-        : t('downloadModalDownloadingPrimaryButtonTextConvert', 'Convert & Download'),
-      secondaryButtonText: isLoading
-        ? t('downloadModalDownloadingSecondaryButtonTextClose', 'Close')
-        : t('downloadModalDownloadingSecondaryButtonTextCancel', 'Cancel'),
+      primaryButtonText: hasDownloadStarted
+        ? t('downloadModalChooseDownloadPrimaryButtonTextDownloading', 'Converting...')
+        : t('downloadModalChooseDownloadPrimaryButtonTextConvert', 'Convert & Download'),
+      secondaryButtonText: t('downloadModalChooseDownloadSecondaryButtonTextCancel', 'Cancel'),
       onRequestSubmit() {
-        mutate(
-          {
-            ...downloadGridMutationArgs,
-            fileName: t('patientGridExportFileName', 'export.{extension}', { extension: fileExtension }),
-          },
-          {
-            async onSuccess() {
-              onClose();
-            },
-            onError(e) {
-              showToast({
-                title: t('downloadModalErrorToastTitle', 'Downloading failed'),
-                description: t(
-                  'downloadModalErrorToastDescription',
-                  'An unexpected error occured while attempting to convert and download the data.',
-                ),
-                kind: 'error',
-              });
-            },
-          },
-        );
+        setHasDownloadStarted(true);
       },
       onSecondarySubmit() {
         onClose();
@@ -118,6 +127,8 @@ export function DownloadModal({ isOpen, downloadGridMutationArgs, onClose }: Dow
     // Reset to the first step whenever the modal is newly open.
     if (isOpen) {
       setStepKey('internalExternal');
+      setHasDownloadStarted(false);
+      setFileExtension(undefined);
     }
   }, [isOpen]);
 
@@ -128,11 +139,38 @@ export function DownloadModal({ isOpen, downloadGridMutationArgs, onClose }: Dow
       modalHeading={step.modalHeading}
       primaryButtonText={step.primaryButtonText}
       secondaryButtonText={step.secondaryButtonText}
-      primaryButtonDisabled={isLoading || (!fileExtension && stepKey === 'confirmDownload')}
+      primaryButtonDisabled={hasDownloadStarted || (!fileExtension && stepKey === 'chooseDownload')}
       onRequestSubmit={() => step.onRequestSubmit()}
       onSecondarySubmit={() => step.onSecondarySubmit()}
       onRequestClose={onClose}>
       {step.modalBody}
     </Modal>
+  );
+}
+
+interface PrepareDownloadProps {
+  patientGridId: string;
+  onDownloadPrepared(data: Omit<DownloadGridData, 'fileName'>): void;
+}
+
+function PrepareDownload({ patientGridId, onDownloadPrepared }: PrepareDownloadProps) {
+  const { t } = useTranslation();
+  const { data } = useDownloadGridData(patientGridId);
+  const triggered = useRef(false);
+
+  useEffect(() => {
+    if (data && !triggered.current) {
+      triggered.current = true;
+      onDownloadPrepared(data);
+    }
+  }, [data, onDownloadPrepared]);
+
+  return (
+    <p>
+      {t(
+        'downloadModalChooseDownloadDownloadingMessage',
+        "Preparing your download... This may take some time. Please don't close or reload this browser window.",
+      )}
+    </p>
   );
 }
