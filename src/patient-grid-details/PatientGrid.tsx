@@ -10,8 +10,19 @@ import {
   TableCell,
   Layer,
   Link,
+  Stack,
 } from '@carbon/react';
-import { ChevronDown, ChevronUp, ChevronSort, ArrowUp, ArrowDown, Download, OpenPanelRight } from '@carbon/react/icons';
+import {
+  ChevronDown,
+  ChevronUp,
+  ChevronSort,
+  ArrowUp,
+  ArrowDown,
+  Download,
+  OpenPanelRight,
+  Renew,
+  WarningAltFilled,
+} from '@carbon/react/icons';
 import React, { Dispatch, Fragment, SetStateAction, useMemo, useState } from 'react';
 import {
   useReactTable,
@@ -41,10 +52,19 @@ export interface PatientGridProps {
   patientGridId: string;
   columns: Array<ColumnDef<PatientGridDataRow, unknown>>;
   data: Array<PatientGridDataRow>;
+  showReloadGrid: boolean;
   setEditSidePanelValues: Dispatch<SetStateAction<EditSidePanelValues>>;
+  refreshPatientGrid(): void;
 }
 
-export function PatientGrid({ patientGridId, columns, data, setEditSidePanelValues }: PatientGridProps) {
+export function PatientGrid({
+  patientGridId,
+  columns,
+  data,
+  showReloadGrid,
+  setEditSidePanelValues,
+  refreshPatientGrid,
+}: PatientGridProps) {
   const { t } = useTranslation();
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
   const [globalFilter, setGlobalFilter] = useState('');
@@ -76,6 +96,17 @@ export function PatientGrid({ patientGridId, columns, data, setEditSidePanelValu
     <main>
       <section className={styles.tableHeaderContainer}>
         <>
+          {showReloadGrid && (
+            <Stack className={styles.reloadContainer} orientation="horizontal" gap={3}>
+              <WarningAltFilled className={styles.reloadWarningIcon} />
+              <span className={styles.reloadMessage}>
+                {t('patientGridReloadWarning', 'The list contains changes that are not visible.')}
+              </span>
+              <Button size="sm" kind="ghost" renderIcon={Renew} onClick={refreshPatientGrid}>
+                {t('patientGridReloadButton', 'Reload')}
+              </Button>
+            </Stack>
+          )}
           <Button size="sm" kind="ghost" renderIcon={Download} onClick={() => setIsDownloadModalOpen(true)}>
             {t('patientGridDownloadButton', 'Download')}
           </Button>

@@ -1,4 +1,5 @@
 @use '@carbon/layout';
+@use '@carbon/type';
 @use '../styles/table.scss';
 @import "~@openmrs/esm-styleguide/src/vars";
 
@@ -11,6 +12,19 @@
     width: 20%;
     min-width: 12.5rem;
   }
+}
+
+.reloadContainer {
+  margin-right: auto;
+  align-items: center;
+}
+
+.reloadMessage {
+  @include type.type-style('helper-text-02');
+}
+
+.reloadWarningIcon {
+  fill: $inverse-support-03;
 }
 
 .relativeTablePositioner {

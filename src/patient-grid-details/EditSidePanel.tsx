@@ -10,9 +10,10 @@ export interface EditSidePanelProps {
   patientId: string;
   encounterId?: string;
   onClose?(): void;
+  onEncounterCreate?(): void;
 }
 
-export function EditSidePanel({ formId, encounterId, patientId, onClose }: EditSidePanelProps) {
+export function EditSidePanel({ formId, encounterId, patientId, onEncounterCreate, onClose }: EditSidePanelProps) {
   const { t } = useTranslation();
   const { data: encounter } = useGetEncounter(encounterId, onlyStaleRevalidationConfig);
   const { patient } = usePatient(patientId);
@@ -26,11 +27,13 @@ export function EditSidePanel({ formId, encounterId, patientId, onClose }: EditS
       patient,
       encounterUuid: encounterId ?? '',
       closeWorkspace: onClose,
-      handleEncounterCreate: onClose,
-      handlePostResponse: onClose,
+      handleEncounterCreate: () => {
+        onEncounterCreate?.();
+        onClose?.();
+      },
       showDiscardSubmitButtons: true,
     }),
-    [formId, encounterId, patientId, encounter, patient, onClose],
+    [formId, encounterId, patientId, encounter, patient, onEncounterCreate, onClose],
   );
 
   return (

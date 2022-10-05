@@ -1,6 +1,7 @@
 import { openmrsFetch, OpenmrsResource } from '@openmrs/esm-framework';
-import useSWR from 'swr';
+import useSWR, { useSWRConfig } from 'swr';
 import { FetchAllResponse } from './shared';
+import { useMutation } from './useMutation';
 
 export interface PatientGridReportGet {
   patientGrid: OpenmrsResource;
@@ -36,4 +37,14 @@ export function useGetPatientGridReport(id: string) {
       revalidateOnReconnect: false,
     },
   );
+}
+
+export function useRefreshPatientGridReportMutation() {
+  const { mutate } = useSWRConfig();
+  return useMutation<{ id: string }>(async ({ id }) => {
+    const newReport = await openmrsFetch<FetchAllResponse<PatientGridReportGet>>(
+      `/ws/rest/v1/patientgrid/patientgrid/${id}/report?refresh=true`,
+    ).then(({ data }) => data.results[0]);
+    mutate(`/ws/rest/v1/patientgrid/patientgrid/${id}/report`, () => newReport);
+  });
 }

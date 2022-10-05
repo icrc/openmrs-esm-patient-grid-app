@@ -6,7 +6,7 @@ import { Stack } from '@carbon/react';
 import { PatientGridFiltersHeader } from './PatientGridFiltersHeader';
 import { PatientGrid } from './PatientGrid';
 import { DeletePatientGridModal, EditPatientGridModal } from '../crosscutting-features';
-import { PatientGridGet, useGetPatientGrid } from '../api';
+import { PatientGridGet, useGetPatientGrid, useRefreshPatientGridReportMutation } from '../api';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PatientGridDetailsParams, routes } from '../routes';
 import { PatientGridReportLoadingIndicator } from './PatientGridReportLoadingIndicator';
@@ -26,6 +26,26 @@ export function PatientGridDetailsPage() {
   const { id: patientGridId } = useParams<PatientGridDetailsParams>();
   const { data: patientGrid } = useGetPatientGrid(patientGridId);
   const { data, error } = usePatientGrid(patientGridId);
+  const [showReloadGrid, setShowReloadGrid] = useState(false);
+  const refreshPatientGridMutation = useRefreshPatientGridReportMutation();
+
+  const refreshGrid = () => {
+    refreshPatientGridMutation.mutate(
+      { id: patientGridId },
+      {
+        onSuccess: () => setShowReloadGrid(false),
+        onError: () =>
+          showToast({
+            title: t('patientGridRefreshFailedToastTitle', 'Grid refresh failed'),
+            description: t(
+              'patientGridRefreshFailedToastDescription',
+              'Refreshing the grid failed. The grid will not show the newest data.',
+            ),
+            kind: 'error',
+          }),
+      },
+    );
+  };
 
   useEffect(() => {
     if (error) {
@@ -37,7 +57,7 @@ export function PatientGridDetailsPage() {
     }
   }, [t, error]);
 
-  if (!data) {
+  if (!data || refreshPatientGridMutation.isLoading) {
     return <PatientGridReportLoadingIndicator />;
   }
 
@@ -49,7 +69,16 @@ export function PatientGridDetailsPage() {
             encounterId={editSidePanelValues.encounterId}
             patientId={editSidePanelValues.patientId}
             formId={editSidePanelValues.formId}
-            onClose={() => setEditSidePanelValues(undefined)}
+            onEncounterCreate={() => setShowReloadGrid(true)}
+            onClose={() => {
+              setEditSidePanelValues(undefined);
+
+              // TODO: This should *ideally* be deleted.
+              // This is only called because the form engine currently doesn't call the encounter created
+              // callback for some reason.
+              // If it does, remove the following line.
+              setShowReloadGrid(true);
+            }}
           />
         ) : undefined
       }
@@ -76,7 +105,9 @@ export function PatientGridDetailsPage() {
             patientGridId={patientGridId}
             columns={data?.columns ?? []}
             data={data?.data ?? []}
+            showReloadGrid={showReloadGrid}
             setEditSidePanelValues={setEditSidePanelValues}
+            refreshPatientGrid={refreshGrid}
           />
         </div>
       </Stack>
