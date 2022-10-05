@@ -15,12 +15,13 @@ export function useGetAllCountryLocations() {
 export function useGetAllStructureLocations(countryLocationName: string | undefined) {
   return useFilteredLocations(
     countryLocationName ? `?_tag=Visit Location&address-country=${countryLocationName}&` : '?',
+    !!countryLocationName,
   );
 }
 
-function useFilteredLocations(filter: string | undefined, maxCount = 100) {
+function useFilteredLocations(filter: string, enabled = true, maxCount = 100) {
   const url = `/ws/fhir2/R4/Location${filter}`;
-  const swrKey = filter ? url : null;
+  const swrKey = enabled ? url : null;
 
   return useSWRImmutable(swrKey, async (url) => {
     // Locations are returning a max. value of 100 per query.
