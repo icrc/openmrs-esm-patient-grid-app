@@ -1,6 +1,11 @@
-import { openmrsFetch, OpenmrsResource } from '@openmrs/esm-framework';
+import { openmrsFetch, OpenmrsResource, Visit } from '@openmrs/esm-framework';
 import useSWR from 'swr';
 import { FetchAllResponse } from './shared';
+
+export interface EncounterGet extends OpenmrsResource {
+  patient: OpenmrsResource;
+  visit: Visit;
+}
 
 export interface PastEncounterGet extends OpenmrsResource {
   encounterDatetime: string;
@@ -21,5 +26,11 @@ export function useGetAllPastEncounters(patientId: string, encounterType: string
   return useSWR(
     `/ws/rest/v1/encounter?s=patientgridGetEncounterHistory&patient=${patientId}&encounterType=${encounterType}&v=${v}`,
     (url) => openmrsFetch<FetchAllResponse<PastEncounterGet>>(url).then(({ data }) => data.results),
+  );
+}
+
+export function useGetEncounter(id: string) {
+  return useSWR(`/ws/rest/v1/encounter/${id}?v=full`, (url) =>
+    openmrsFetch<EncounterGet>(url).then(({ data }) => data),
   );
 }

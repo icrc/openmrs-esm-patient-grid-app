@@ -13,12 +13,16 @@ import { PatientGridReportLoadingIndicator } from './PatientGridReportLoadingInd
 import { usePatientGrid } from './usePatientGrid';
 import { useTranslation } from 'react-i18next';
 import styles from './PatientGridDetailsPage.scss';
+import { EditSidePanel, EditSidePanelProps } from './EditSidePanel';
+
+export type EditSidePanelValues = Omit<EditSidePanelProps, 'onClose'>;
 
 export function PatientGridDetailsPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [patientGridToDelete, setPatientGridToDelete] = useState<PatientGridGet | undefined>(undefined);
   const [patientGridToEdit, setPatientGridToEdit] = useState<PatientGridGet | undefined>(undefined);
+  const [editSidePanelValues, setEditSidePanelValues] = useState<EditSidePanelValues | undefined>(undefined);
   const { id: patientGridId } = useParams<PatientGridDetailsParams>();
   const { data: patientGrid } = useGetPatientGrid(patientGridId);
   const { data, error } = usePatientGrid(patientGridId);
@@ -38,7 +42,19 @@ export function PatientGridDetailsPage() {
   }
 
   return (
-    <PageWithSidePanel>
+    <PageWithSidePanel
+      sidePanel={
+        editSidePanelValues ? (
+          <EditSidePanel
+            encounterId={editSidePanelValues.encounterId}
+            patientId={editSidePanelValues.patientId}
+            formId={editSidePanelValues.formId}
+            onClose={() => setEditSidePanelValues(undefined)}
+          />
+        ) : undefined
+      }
+      showSidePanel={!!editSidePanelValues}
+      sidePanelSize="lg">
       <ExtensionSlot extensionSlotName="breadcrumbs-slot" />
       <Hr />
 
@@ -56,7 +72,12 @@ export function PatientGridDetailsPage() {
         </div>
 
         <div className={styles.gridContainer}>
-          <PatientGrid patientGridId={patientGridId} columns={data?.columns ?? []} data={data?.data ?? []} />
+          <PatientGrid
+            patientGridId={patientGridId}
+            columns={data?.columns ?? []}
+            data={data?.data ?? []}
+            setEditSidePanelValues={setEditSidePanelValues}
+          />
         </div>
       </Stack>
 

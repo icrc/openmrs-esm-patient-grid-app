@@ -10,9 +10,10 @@ import {
   TableBody,
   TableCell,
   Layer,
+  Link,
 } from '@carbon/react';
 import { ChevronDown, ChevronUp, ChevronSort, ArrowUp, ArrowDown, Download, OpenPanelRight } from '@carbon/react/icons';
-import React, { Fragment, useMemo, useState } from 'react';
+import React, { Dispatch, Fragment, SetStateAction, useMemo, useState } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -22,6 +23,8 @@ import {
   getFilteredRowModel,
   ColumnDef,
   getFacetedUniqueValues,
+  Cell,
+  Row,
 } from '@tanstack/react-table';
 import styles from './PatientGrid.scss';
 import { useTranslation } from 'react-i18next';
@@ -30,15 +33,19 @@ import { PatientGridColumnFiltersButton } from './PatientGridColumnFiltersButton
 import { HistoricEncountersTabs } from './HistoricEncountersTabs';
 import { PatientGridDataRow } from './usePatientGrid';
 import { DownloadModal } from './DownloadModal';
-import { useDownloadGridMutationArgs } from '../api';
+import { PatientGridReportObsGet, useDownloadGridMutationArgs } from '../api';
+import { EditSidePanelValues } from './PatientGridDetailsPage';
+import { patientDetailsNameColumnName } from '../grid-utils';
+import { interpolateUrl } from '@openmrs/esm-framework';
 
 export interface PatientGridProps {
   patientGridId: string;
   columns: Array<ColumnDef<PatientGridDataRow, unknown>>;
   data: Array<PatientGridDataRow>;
+  setEditSidePanelValues: Dispatch<SetStateAction<EditSidePanelValues>>;
 }
 
-export function PatientGrid({ patientGridId, columns, data }: PatientGridProps) {
+export function PatientGrid({ patientGridId, columns, data, setEditSidePanelValues }: PatientGridProps) {
   const { t } = useTranslation();
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
   const { data: downloadGridMutationArgs, error: downloadGridMutationArgsError } =
@@ -61,6 +68,30 @@ export function PatientGrid({ patientGridId, columns, data }: PatientGridProps) 
     },
   });
   const headerGroups = table.getHeaderGroups();
+
+  const handleCellClick = (cell: Cell<PatientGridDataRow, unknown>, row: Row<PatientGridDataRow>) => {
+    const columnName = cell.column.id;
+    const formUuid = columnName.split('__')[1];
+    const rowValue = row.original.__reportRow[columnName];
+    let matchingObs: PatientGridReportObsGet | undefined = typeof rowValue === 'object' ? rowValue : undefined;
+
+    if (!matchingObs) {
+      matchingObs = Object.entries(row.original.__reportRow).find(([key, value]) => {
+        console.info(key, value);
+        return key.startsWith(`formQuestion__${formUuid}`) && typeof value === 'object';
+      })?.[1] as PatientGridReportObsGet | undefined;
+    }
+
+    if (matchingObs?.encounter) {
+      setEditSidePanelValues({
+        encounterId: matchingObs.encounter.uuid,
+        formId: formUuid,
+        patientId: row.original.__reportRow.uuid,
+      });
+    }
+
+    console.info(columnName, formUuid, rowValue, matchingObs);
+  };
 
   return (
     <main>
@@ -153,12 +184,15 @@ export function PatientGrid({ patientGridId, columns, data }: PatientGridProps) 
                     </TableCell>
 
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell
-                        key={cell.id}
-                        onClick={() => {
-                          // TODO: Open side panel which allows editing.
-                        }}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      <TableCell key={cell.id} onClick={() => handleCellClick(cell, row)}>
+                        {cell.column.id === patientDetailsNameColumnName ? (
+                          <Link
+                            href={interpolateUrl(`\${openmrsSpaBase}/patient/${row.original.__reportRow.uuid}/chart`)}>
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </Link>
+                        ) : (
+                          flexRender(cell.column.columnDef.cell, cell.getContext())
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
