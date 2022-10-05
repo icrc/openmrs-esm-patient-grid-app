@@ -1,5 +1,5 @@
 import { openmrsFetch, OpenmrsResource } from '@openmrs/esm-framework';
-import useSWR from 'swr';
+import useSWRImmutable from 'swr/immutable';
 import { FetchAllResponse } from './shared';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -12,7 +12,7 @@ export interface ConceptGet extends OpenmrsResource {}
  * @param referenceIds The UUIDs of the concepts to be bulk-fetched.
  */
 export function useGetBulkConceptsByReferences(referenceIds: Array<string>) {
-  return useSWR(['concepts', ...[...referenceIds].sort()], async () => {
+  return useSWRImmutable(['concepts', ...[...referenceIds].sort()], async () => {
     const chunkSize = 100;
     const urlsToRequest = [...new Set(referenceIds)]
       .reduceRight((acc, _, __, array) => [...acc, array.splice(0, chunkSize)], [])

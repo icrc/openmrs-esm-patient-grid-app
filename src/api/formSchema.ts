@@ -1,5 +1,5 @@
 import { openmrsFetch, OpenmrsResource } from '@openmrs/esm-framework';
-import useSWR from 'swr';
+import useSWRImmutable from 'swr/immutable';
 import { getFormSchemaReferenceUuid } from '../grid-utils';
 import { FormGet } from './form';
 
@@ -75,7 +75,7 @@ export async function getFormSchemas(ids: Array<string>) {
 
 export function useFormSchemas(ids?: Array<string>) {
   const keyProvider = () => (ids ? `formSchemas/${[...ids].sort().join(',')}` : null);
-  return useSWR(keyProvider, () => getFormSchemas(ids));
+  return useSWRImmutable(keyProvider, () => getFormSchemas(ids));
 }
 
 export function useFormSchemasOfForms(forms?: Array<FormGet>) {

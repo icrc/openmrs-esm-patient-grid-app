@@ -1,5 +1,5 @@
 import { openmrsFetch } from '@openmrs/esm-framework';
-import useSWR from 'swr';
+import useSWRImmutable from 'swr/immutable';
 import { FhirBundleResponse } from './shared';
 
 export interface LocationGet {
@@ -21,7 +21,7 @@ function useFilteredLocations(filter: string | undefined) {
   const url = `/ws/fhir2/R4/Location${filter}`;
   const swrKey = filter ? url : null;
 
-  return useSWR(swrKey, (url) =>
+  return useSWRImmutable(swrKey, (url) =>
     openmrsFetch<FhirBundleResponse<LocationGet>>(url).then(
       (res) => res.data.entry?.map((entry) => entry.resource) ?? [],
     ),

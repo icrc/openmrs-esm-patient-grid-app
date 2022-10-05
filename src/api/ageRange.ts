@@ -1,5 +1,5 @@
 import { openmrsFetch } from '@openmrs/esm-framework';
-import useSWR from 'swr';
+import useSWRImmutable from 'swr/immutable';
 import { FetchAllResponse } from './shared';
 
 export type AgeRangeUnit = 'YEARS' | 'MONTHS';
@@ -14,7 +14,7 @@ export interface AgeRangeGet {
 }
 
 export function useGetAllAgeRanges() {
-  return useSWR(`/ws/rest/v1/patientgrid/agerange?v=full`, (url) =>
+  return useSWRImmutable(`/ws/rest/v1/patientgrid/agerange?v=full`, (url) =>
     openmrsFetch<FetchAllResponse<AgeRangeGet>>(url).then(({ data }) => data.results),
   );
 }

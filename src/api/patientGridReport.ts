@@ -26,7 +26,14 @@ export interface PatientGridReportObsGet {
 }
 
 export function useGetPatientGridReport(id: string) {
-  return useSWR(`/ws/rest/v1/patientgrid/patientgrid/${id}/report`, (url) =>
-    openmrsFetch<FetchAllResponse<PatientGridReportGet>>(url).then(({ data }) => data.results[0]),
+  return useSWR(
+    `/ws/rest/v1/patientgrid/patientgrid/${id}/report`,
+    (url) => openmrsFetch<FetchAllResponse<PatientGridReportGet>>(url).then(({ data }) => data.results[0]),
+    {
+      // We do manual revalidation/mutation of this one.
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    },
   );
 }

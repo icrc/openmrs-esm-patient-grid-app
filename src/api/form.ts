@@ -1,6 +1,6 @@
 import { openmrsFetch, OpenmrsResource, userHasAccess, useSession } from '@openmrs/esm-framework';
 import { useMemo } from 'react';
-import useSWR from 'swr';
+import useSWRImmutable from 'swr/immutable';
 import { EncounterTypeGet } from './encounterType';
 import { FetchAllResponse } from './shared';
 
@@ -21,7 +21,7 @@ export interface FormResourceGet extends OpenmrsResource {
 }
 
 export function useGetAllForms() {
-  return useSWR('/ws/rest/v1/form?v=full', (url) =>
+  return useSWRImmutable('/ws/rest/v1/form?v=full', (url) =>
     openmrsFetch<FetchAllResponse<FormGet>>(url).then(({ data }) => data.results),
   );
 }
