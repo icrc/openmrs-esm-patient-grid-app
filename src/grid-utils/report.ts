@@ -25,11 +25,6 @@ export function getFormsReferencedInGridReport(
   formSchemas: Record<string, FormSchema>,
 ) {
   const reportColumns = getAllReportColumnNames(report);
-
-  // The quick-and-dirty approach for this function would be to check which of the report's column names
-  // start with "form__" and then simply extract the UUID of the "form__FORM_UUID_..." string.
-  // This can become super brittle though if the naming ever changes, which is why this fn takes the
-  // "harder" approach, which is a cross-check of the form schemas with the column names.
   return forms.filter((form) => {
     const formSchema = formSchemas[getFormSchemaReferenceUuid(form)];
     if (!formSchema) {
