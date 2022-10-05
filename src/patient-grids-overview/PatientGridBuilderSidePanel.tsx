@@ -1,25 +1,28 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { SidePanel, SidePanelProps } from '../components';
-import { ModalFooter } from '@carbon/react';
+import { ModalFooter, SkeletonText } from '@carbon/react';
 import styles from './PatientGridBuilderSidePanel.scss';
 import { usePatientGridWizard } from './usePatientGridWizard';
-import { useCreatePatientGridMutation } from '../api';
-import { showToast } from '@openmrs/esm-framework';
+import { useCreatePatientGridMutation, useFormSchemasOfForms, useGetAllPublishedPrivilegeFilteredForms } from '../api';
+import { navigate, showToast } from '@openmrs/esm-framework';
+import { routes } from '../routes';
 
 export type PatientGridBuilderSidePanelProps = Pick<SidePanelProps, 'onClose'>;
 
 export function PatientGridBuilderSidePanel({ onClose }: PatientGridBuilderSidePanelProps) {
   const { t } = useTranslation();
-  const { currentPage, isAtLastPage, isStateValidForSubmission, createPostBody, state } = usePatientGridWizard();
+  const { data: forms } = useGetAllPublishedPrivilegeFilteredForms();
+  const { data: formSchemas } = useFormSchemasOfForms(forms);
+  const { currentPage, isAtLastPage, isStateValidForSubmission, createPostBody, state } =
+    usePatientGridWizard(formSchemas);
   const { isLoading: isSubmitting, mutate } = useCreatePatientGridMutation();
 
   const submit = async () => {
-    const body = await createPostBody();
     await mutate(
-      { body },
+      { body: createPostBody() },
       {
-        onSuccess: () => {
+        onSuccess: (result) => {
           showToast({
             kind: 'success',
             title: t('patientGridSidePanelSuccessToastTitle', 'Grid created successfully'),
@@ -28,8 +31,10 @@ export function PatientGridBuilderSidePanel({ onClose }: PatientGridBuilderSideP
             }),
           });
           onClose();
+          navigate({ to: `\${openmrsSpaBase}${routes.patientGridDetails.interpolate({ id: result.uuid })}` });
         },
-        onError: () => {
+        onError: (e) => {
+          console.error('Error while creating patient grid: ', e);
           showToast({
             kind: 'error',
             title: t('patientGridSidePanelErrorToastTitle', 'Grid creation failed'),
@@ -57,7 +62,7 @@ export function PatientGridBuilderSidePanel({ onClose }: PatientGridBuilderSideP
         />
       }
       onClose={onClose}>
-      <section className={styles.contentContainer}>{currentPage}</section>
+      <section className={styles.contentContainer}>{formSchemas ? currentPage : <SkeletonText paragraph />}</section>
     </SidePanel>
   );
 }

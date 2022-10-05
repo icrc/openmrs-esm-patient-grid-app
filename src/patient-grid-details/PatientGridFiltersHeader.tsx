@@ -50,7 +50,7 @@ function FilterTag({ filter, columnNameToHeaderLabelMap, patientGridId }: Filter
   const { t } = useTranslation();
   const filterName = `${
     columnNameToHeaderLabelMap[filter.column.display] ?? filter.column.display ?? filter.display
-  }: ${filter.operand}`;
+  }: ${filter.name ?? filter.operand}`;
   const deleteFilterMutation = useDeletePatientGridFilterMutation(patientGridId);
   const handleDelete = () =>
     deleteFilterMutation.mutate(

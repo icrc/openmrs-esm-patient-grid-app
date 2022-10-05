@@ -11,7 +11,7 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
   const { t } = useTranslation();
   const { data: countryLocations } = useGetAllCountryLocations();
   const { data: structureLocations } = useGetAllStructureLocations(
-    countryLocations?.find((location) => location.id === state.countryLocationId)?.name,
+    countryLocations?.find((location) => location.id === state.countryFilter?.operand)?.name,
   );
   const genders = useAllGenders();
   const { data: ageRanges } = useGetAllAgeRanges();
@@ -32,20 +32,21 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
         {countryLocations ? (
           <Select
             id="country"
-            defaultValue={state.countryLocationId ?? 'placeholder'}
+            defaultValue={state.countryFilter ?? ''}
             labelText={t('patientGridDetailsCountryLabel', 'Country')}
             onChange={(e) =>
               setState((state) => ({
                 ...state,
-                countryLocationId: e.target.value,
+                countryFilter: e.target.value
+                  ? {
+                      name: countryLocations.find((x) => x.id === e.target.value)?.name ?? e.target.value,
+                      operand: e.target.value,
+                    }
+                  : undefined,
+                structureFilter: e.target.value ? state.structureFilter : undefined,
               }))
             }>
-            <SelectItem
-              disabled
-              hidden
-              value="placeholder"
-              text={t('patientGridDetailsCountryPlaceholder', 'Country')}
-            />
+            <SelectItem value="" text={t('patientGridDetailsCountryPlaceholder', 'Country')} />
             {countryLocations?.map(({ id, name }) => (
               <SelectItem key={id} value={id} text={name} />
             ))}
@@ -54,24 +55,24 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
           <SelectSkeleton />
         )}
 
-        {!state.countryLocationId || structureLocations ? (
+        {!state.countryFilter || structureLocations ? (
           <Select
             id="structure"
-            defaultValue={state.structureLocationId ?? 'placeholder'}
+            defaultValue={state.structureFilter?.operand ?? ''}
             labelText={t('patientGridDetailsStructureLabel', 'Structure')}
-            disabled={!state.countryLocationId}
+            disabled={!state.countryFilter}
             onChange={(e) =>
               setState((state) => ({
                 ...state,
-                structureLocationId: e.target.value,
+                structureFilter: e.target.value
+                  ? {
+                      name: structureLocations.find((x) => x.id === e.target.value)?.name ?? e.target.value,
+                      operand: e.target.value,
+                    }
+                  : undefined,
               }))
             }>
-            <SelectItem
-              disabled
-              hidden
-              value="placeholder"
-              text={t('patientGridDetailsStructurePlaceholder', 'Structure')}
-            />
+            <SelectItem value="" text={t('patientGridDetailsStructurePlaceholder', 'Structure')} />
             {structureLocations?.map(({ id, name }) => (
               <SelectItem key={id} value={id} text={name} />
             ))}
@@ -82,10 +83,20 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
 
         <Select
           id="gender"
-          defaultValue={state.gender ?? 'placeholder'}
+          defaultValue={state.genderFilter?.operand ?? ''}
           labelText={t('patientGridDetailsGenderLabel', 'Gender')}
-          onChange={(e) => setState((state) => ({ ...state, gender: e.target.value }))}>
-          <SelectItem disabled hidden value="placeholder" text={t('patientGridDetailsGenderPlaceholder', 'Gender')} />
+          onChange={(e) =>
+            setState((state) => ({
+              ...state,
+              gender: e.target.value
+                ? {
+                    name: genders.find((x) => x.gender === e.target.value)?.display ?? e.target.value,
+                    operand: e.target.value,
+                  }
+                : undefined,
+            }))
+          }>
+          <SelectItem value="" text={t('patientGridDetailsGenderPlaceholder', 'Gender')} />
           {genders.map(({ gender, display }) => (
             <SelectItem key={gender} value={gender} text={display} />
           ))}
@@ -94,14 +105,20 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
         {ageRanges ? (
           <Select
             id="ageCategory"
-            defaultValue="placeholder"
-            labelText={t('patientGridDetailsAgeCategoryLabel', 'Age category')}>
-            <SelectItem
-              disabled
-              hidden
-              value="placeholder"
-              text={t('patientGridDetailsAgeCategoryPlaceholder', 'Age category')}
-            />
+            defaultValue=""
+            labelText={t('patientGridDetailsAgeCategoryLabel', 'Age category')}
+            onChange={(e) =>
+              setState((state) => ({
+                ...state,
+                ageCategoryFilter: e.target.value
+                  ? {
+                      name: 'tbd',
+                      operand: e.target.value,
+                    }
+                  : undefined,
+              }))
+            }>
+            <SelectItem value="" text={t('patientGridDetailsAgeCategoryPlaceholder', 'Age category')} />
             {ageRanges.map((ageRange) => (
               // TODO: It's not clear at the moment what the identifying/unique attribute of an age range is.
               // They are unforunately lacking a unique ID. We'll have to wait until we know how filters are POSTed

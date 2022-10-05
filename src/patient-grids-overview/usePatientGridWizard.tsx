@@ -1,7 +1,6 @@
 import React, { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react';
-import { GenderRepresentation, FormGet, getFormSchemas, PatientGridPost } from '../api';
+import { FormGet, PatientGridPost, PatientGridFilterPost, FormSchema } from '../api';
 import {
-  getFormSchemaReferenceUuid,
   getPatientDetailsPatientGridColumnPostResources,
   getPatientGridColumnPostResourcesForForms,
 } from '../grid-utils';
@@ -12,10 +11,10 @@ import { PatientGridBuilderSectionsPage } from './PatientGridBuilderSectionsPage
 export interface PatientGridWizardState {
   name?: string;
   description?: string;
-  countryLocationId?: string;
-  structureLocationId?: string;
-  gender?: GenderRepresentation;
-  generatePatientDetailsColumns: boolean;
+  countryFilter?: PatientGridFilterPost;
+  structureFilter?: PatientGridFilterPost;
+  genderFilter?: PatientGridFilterPost;
+  ageCategoryFilter?: PatientGridFilterPost;
   selectedForms: Array<FormGet>;
 }
 
@@ -29,11 +28,10 @@ export interface WizardPageProps {
 }
 
 const initialWizardState: PatientGridWizardState = {
-  generatePatientDetailsColumns: true,
   selectedForms: [],
 };
 
-export function usePatientGridWizard() {
+export function usePatientGridWizard(formSchemas: Record<string, FormSchema>) {
   const [state, setState] = useState<PatientGridWizardState>(initialWizardState);
   const [page, setPage] = useState(0);
   const pageFactories = useMemo(
@@ -64,23 +62,27 @@ export function usePatientGridWizard() {
 
   const isStateValidForSubmission = useMemo(() => {
     // TODO: Enhance with additional criteria.
-    return state.name?.trim().length && (state.generatePatientDetailsColumns || state.selectedForms.length);
+    return state.name?.trim().length && state.selectedForms.length;
   }, [state]);
 
-  const createPostBody = useCallback(async () => {
-    const formSchemas = await getFormSchemas(state.selectedForms.map(getFormSchemaReferenceUuid));
+  const createPostBody = useCallback(() => {
     const body: PatientGridPost = {
       name: state.name,
       description: state.description,
       owner: undefined, // TODO: Should this be the current owner?
       columns: [
-        ...getPatientDetailsPatientGridColumnPostResources(),
+        ...getPatientDetailsPatientGridColumnPostResources(
+          state.countryFilter ? [state.countryFilter] : undefined,
+          state.structureFilter ? [state.structureFilter] : undefined,
+          state.genderFilter ? [state.genderFilter] : undefined,
+          state.ageCategoryFilter ? [state.ageCategoryFilter] : undefined,
+        ),
         ...getPatientGridColumnPostResourcesForForms(state.selectedForms, formSchemas),
       ],
     };
 
     return body;
-  }, [state]);
+  }, [state, formSchemas]);
 
   return {
     currentPage,

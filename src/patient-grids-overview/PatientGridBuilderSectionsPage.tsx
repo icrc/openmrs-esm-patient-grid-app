@@ -17,7 +17,7 @@ export function PatientGridBuilderSectionsPage({
 }: WizardPageProps) {
   const { t } = useTranslation();
   const { data: allForms } = useGetAllPublishedPrivilegeFilteredForms();
-  const canContinue = state.selectedForms.length > 0 || state.generatePatientDetailsColumns; // TODO: Do you have to select at least one form?
+  const canContinue = state.selectedForms.length > 0;
 
   return (
     <Form>
@@ -29,18 +29,6 @@ export function PatientGridBuilderSectionsPage({
           title={t('patientGridSections', 'Grid sections')}
         />
         <FormGroup legendText={t('patientGridSectionsLabel', 'Enable/Disable list sections')}>
-          <Checkbox
-            id="generatePatientDetailsColumns"
-            labelText={t('patientgridSectionsPatientDetailsCheckboxLabel', 'Patient Details')}
-            checked={state.generatePatientDetailsColumns}
-            onChange={(_, { checked }) =>
-              setState((state) => ({
-                ...state,
-                generatePatientDetailsColumns: checked,
-              }))
-            }
-          />
-
           {allForms ? (
             allForms.map((form) => (
               <Checkbox

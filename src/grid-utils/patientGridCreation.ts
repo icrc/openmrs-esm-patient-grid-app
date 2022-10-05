@@ -1,4 +1,4 @@
-import { PatientGridColumnPost, FormGet, FormSchema } from '../api';
+import { PatientGridColumnPost, FormGet, FormSchema, AgeRangeGet, PatientGridFilterPost } from '../api';
 import {
   patientDetailsNameColumnName,
   patientDetailsCountryColumnName,
@@ -12,7 +12,12 @@ import { getFormSchemaReferenceUuid, getFormSchemaQuestionsMappableToColumns } f
 /**
  * Returns the {@link PatientGridColumnPost} resources for the hardcoded patient details grid sections.
  */
-export function getPatientDetailsPatientGridColumnPostResources(): Array<PatientGridColumnPost> {
+export function getPatientDetailsPatientGridColumnPostResources(
+  countryFilter?: Array<PatientGridFilterPost>,
+  structureFilter?: Array<PatientGridFilterPost>,
+  genderFilter?: Array<PatientGridFilterPost>,
+  ageCategoryFilters?: Array<PatientGridFilterPost>,
+): Array<PatientGridColumnPost> {
   return [
     {
       name: patientDetailsNameColumnName,
@@ -22,17 +27,20 @@ export function getPatientDetailsPatientGridColumnPostResources(): Array<Patient
     {
       name: patientDetailsCountryColumnName,
       type: 'column',
-      datatype: 'DATAFILTER_LOCATION',
+      datatype: 'DATAFILTER_COUNTRY',
+      filters: countryFilter,
     },
     {
       name: patientDetailsStructureColumnName,
       type: 'column',
       datatype: 'DATAFILTER_LOCATION',
+      filters: structureFilter,
     },
     {
       name: patientDetailsGenderColumnName,
       type: 'column',
       datatype: 'GENDER',
+      filters: genderFilter,
     },
     {
       name: patientDetailsAgeCategoryColumnName,
@@ -40,13 +48,7 @@ export function getPatientDetailsPatientGridColumnPostResources(): Array<Patient
       datatype: 'ENC_AGE',
       encounterType: '0c63150d-ff39-42e1-9048-834mh76p2s72', // TODO: Use encounter type from form.
       convertToAgeRange: false, // TODO: Decide on true/false.
-      filters: [
-        // TODO: Remove
-        {
-          name: 'equal 12',
-          operand: '12',
-        },
-      ],
+      filters: ageCategoryFilters,
     },
   ];
 }

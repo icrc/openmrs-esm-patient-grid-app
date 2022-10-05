@@ -39,13 +39,13 @@ export function useGetPatientGrid(id: string) {
 
 export function useCreatePatientGridMutation() {
   const { mutate: mutateGetAllPatientGrids } = useGetAllPatientGrids();
-  return useMutation<{ body: PatientGridPost }>(
+  return useMutation<{ body: PatientGridPost }, PatientGridGet>(
     ({ body }) =>
-      openmrsFetch(`/ws/rest/v1/patientgrid/patientgrid`, {
+      openmrsFetch<PatientGridGet>(`/ws/rest/v1/patientgrid/patientgrid`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body,
-      }),
+      }).then(({ data }) => data),
     {
       onSuccess: () => mutateGetAllPatientGrids(),
     },
