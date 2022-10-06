@@ -91,6 +91,7 @@ export function PatientGridDetailsPage() {
         <div className={styles.headerContainer}>
           <PatientGridDetailsHeader
             onEditClick={() => setPatientGridToEdit(patientGrid)}
+            onRefreshGridClick={refreshGrid}
             onDeleteClick={() => setPatientGridToDelete(patientGrid)}
           />
         </div>

@@ -10,10 +10,15 @@ import { PatientGridDetailsParams } from '../routes';
 
 export interface PatientGridDetailsHeaderProps {
   onEditClick?(): void;
+  onRefreshGridClick?(): void;
   onDeleteClick?(): void;
 }
 
-export function PatientGridDetailsHeader({ onEditClick, onDeleteClick }: PatientGridDetailsHeaderProps) {
+export function PatientGridDetailsHeader({
+  onEditClick,
+  onRefreshGridClick,
+  onDeleteClick,
+}: PatientGridDetailsHeaderProps) {
   const { t } = useTranslation();
   const { id: patientGridId } = useParams<PatientGridDetailsParams>();
   const { data: patientGrid } = useGetPatientGrid(patientGridId);
@@ -47,6 +52,10 @@ export function PatientGridDetailsHeader({ onEditClick, onDeleteClick }: Patient
               <OverflowMenuItem
                 itemText={t('patientGridDetailsHeaderEditNameDescriptionMenuItem', 'Edit name / description')}
                 onClick={onEditClick}
+              />
+              <OverflowMenuItem
+                itemText={t('patientGridDetailsHeaderRefreshGridMenuItem', 'Reload grid')}
+                onClick={onRefreshGridClick}
               />
               <OverflowMenuItem
                 isDelete
