@@ -185,7 +185,7 @@ function useTableRows(type: PatientGridViewType) {
           },
         };
       }),
-    [patientGrids, type, t],
+    [patientGrids, t, session.user],
   );
 }
 
