@@ -2,17 +2,17 @@ import { FormGet, FormSchemaQuestion } from '../api';
 
 // Column names which are hardcoded. Those do not come from any dynamic data source (e.g. forms),
 // but are always "manually" created by this module.
-export const patientDetailsNameColumnName = 'patientDetails-name';
-export const patientDetailsCountryColumnName = 'patientDetails-country';
-export const patientDetailsStructureColumnName = 'patientDetails-structure';
-export const patientDetailsGenderColumnName = 'patientDetails-Gender';
-export const patientDetailsAgeCategoryColumnName = 'patientDetails-ageCategory';
+export const patientDetailsNameColumnName = 'patientDetails--name';
+export const patientDetailsCountryColumnName = 'patientDetails--country';
+export const patientDetailsStructureColumnName = 'patientDetails--structure';
+export const patientDetailsGenderColumnName = 'patientDetails--Gender';
+export const patientDetailsAgeCategoryColumnName = 'patientDetails--ageCategory';
 
 /**
  * Returns a unique patient grid column name for a given form schema question.
  */
 export function getFormSchemaQuestionColumnName(form: FormGet, question: FormSchemaQuestion) {
-  return `formQuestion-${form.uuid}-${question.id}`;
+  return `formQuestion--${form.uuid}--${question.id}`;
 }
 
 /**
@@ -22,7 +22,7 @@ export function getFormSchemaQuestionColumnName(form: FormGet, question: FormSch
  * This is introduced as a workaround to be able to edit cells without an encounter reference in a report.
  */
 export function extractFormUuidFromFormSchemaQuestionColumnName(columnName: string) {
-  return columnName.split('-')[1];
+  return columnName.split('--')[1];
 }
 
 /**
@@ -31,20 +31,20 @@ export function extractFormUuidFromFormSchemaQuestionColumnName(columnName: stri
  * This is introduced as a workaround to be able to edit cells without an encounter reference in a report.
  */
 export function isFormSchemaQuestionColumnNameForForm(columnName: string, formId: string) {
-  return columnName.startsWith(`formQuestion-${formId}`);
+  return columnName.startsWith(`formQuestion--${formId}`);
 }
 
 export function isFormSchemaQuestionColumnName(columnName: string) {
-  return columnName.startsWith('formQuestion-');
+  return columnName.startsWith('formQuestion--');
 }
 
 /**
  * Returns a unique patient grid column name for a form's "Date" column.
  */
 export function getFormDateColumnName(form: FormGet) {
-  return `form-${form.uuid}-formDate`;
+  return `form--${form.uuid}--formDate`;
 }
 
 export function getFormAgeColumnName(form: FormGet) {
-  return `form-${form.uuid}-age`;
+  return `form--${form.uuid}--age`;
 }
