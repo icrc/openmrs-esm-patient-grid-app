@@ -44,3 +44,7 @@ export function isFormSchemaQuestionColumnName(columnName: string) {
 export function getFormDateColumnName(form: FormGet) {
   return `form-${form.uuid}-formDate`;
 }
+
+export function getFormAgeColumnName(form: FormGet) {
+  return `form-${form.uuid}-age`;
+}

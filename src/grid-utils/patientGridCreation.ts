@@ -6,6 +6,7 @@ import {
   patientDetailsGenderColumnName,
   patientDetailsAgeCategoryColumnName,
   getFormSchemaQuestionColumnName,
+  getFormAgeColumnName,
 } from './columnNames';
 import { getFormSchemaReferenceUuid, getFormSchemaQuestionsMappableToColumns } from './formSchema';
 
@@ -70,17 +71,32 @@ export function getPatientGridColumnPostResourcesForForms(
       return [];
     }
 
-    // TODO: Each form needs an "encounterDatetime" column *if* there is a question of type "encounterDatetime"
-    // inside the form schema. That column should be added exactly here.
-    // Right now this is not supported by the backend, hence this TODO.
+    const specialColumns: Array<PatientGridColumnPost> = [
+      // TODO: Each form needs an "encounterDatetime" column *if* there is a question of type "encounterDatetime"
+      // inside the form schema. That column should be added exactly here.
+      // Right now this is not supported by the backend, hence this TODO.
+      //
+      //
+      // TODO: Age columns currently crash the report.
+      // If the report supports age columns without errors, uncomment the following.
+      // {
+      //   name: getFormAgeColumnName(form),
+      //   type: 'agecolumn',
+      //   datatype: 'ENC_AGE',
+      //   encounterType: form.encounterType.uuid,
+      //   convertToAgeRange: false,
+      // },
+    ];
 
     const questionInfoMappableToColumns = getFormSchemaQuestionsMappableToColumns(form, formSchema);
-    return questionInfoMappableToColumns.map(({ question, form }) => ({
+    const formQuestionColumns = questionInfoMappableToColumns.map<PatientGridColumnPost>(({ question, form }) => ({
       name: getFormSchemaQuestionColumnName(form, question),
       type: 'obscolumn',
       datatype: 'OBS',
       concept: question.questionOptions.concept,
       encounterType: form.encounterType.uuid,
     }));
+
+    return formQuestionColumns.length ? [...specialColumns, ...formQuestionColumns] : [];
   });
 }

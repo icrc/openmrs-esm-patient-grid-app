@@ -1,15 +1,15 @@
 import { GroupColumnDef } from '@tanstack/react-table';
 import { FormGet, FormSchema } from '../api';
-import { getFormDateColumnName, getFormSchemaQuestionColumnName } from './columnNames';
+import { getFormAgeColumnName, getFormDateColumnName, getFormSchemaQuestionColumnName } from './columnNames';
 import { ColumnNameToHeaderLabelMap } from './useColumnNameToHeaderLabelMap';
 
 /**
  * Creates the `react-table` {@link GroupColumnDef} which renders the columns of one single form.
  * The column maps, for example, to a table similar to this:
  * ```
- * | Form Name |                                                           |
- * |           | Section 1                   | Section 2                   |
- * | Date      | Question 1-1 | Question 2.1 | Question 2.1 | Question 2.2 |
+ * | Form Name |                                                                  |
+ * |                  | Section 1                   | Section 2                   |
+ * | Age       | Date | Question 1-1 | Question 2.1 | Question 2.1 | Question 2.2 |
  * ```
  * @param form The form for which to generate the table columns.
  * @param formSchema The form's associated form schema.
@@ -27,10 +27,15 @@ export function getReactTableColumnDefForForm(
   columnNamesToInclude: Array<string>,
 ): GroupColumnDef<Record<string, string>> {
   const formDateColumnName = getFormDateColumnName(form);
+  const formAgeColumnName = getFormAgeColumnName(form);
   const formColumn: GroupColumnDef<Record<string, string>> = {
     header: form.name,
     columns: [
-      // Each form column group always has the "Date" column.
+      // Each form column group always has the "Date"/"Age" column.
+      {
+        header: columnNameToHeaderLabelMap[formAgeColumnName],
+        accessorKey: formAgeColumnName,
+      },
       {
         header: columnNameToHeaderLabelMap[formDateColumnName],
         accessorKey: formDateColumnName,

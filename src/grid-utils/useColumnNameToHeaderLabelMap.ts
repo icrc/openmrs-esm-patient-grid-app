@@ -15,6 +15,7 @@ import {
   patientDetailsAgeCategoryColumnName,
   getFormDateColumnName,
   getFormSchemaQuestionColumnName,
+  getFormAgeColumnName,
 } from './columnNames';
 import {
   getUnlabeledConceptIdentifiersFromSchema,
@@ -77,7 +78,8 @@ export function useColumnNameToHeaderLabelMap(): SWRResponse<ColumnNameToHeaderL
           continue;
         }
 
-        // Each form column group always has the "Date" column.
+        // Each form column group always has the "Age"/"Date" columns.
+        result[getFormAgeColumnName(form)] = t('patientGridColumnHeaderFormAge', 'Age');
         result[getFormDateColumnName(form)] = t('patientGridColumnHeaderFormDate', 'Date');
 
         // Each question column might have a header coming from concept labels.
