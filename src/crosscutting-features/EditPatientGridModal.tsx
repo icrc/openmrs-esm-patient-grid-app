@@ -1,7 +1,7 @@
 import { showToast } from '@openmrs/esm-framework';
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Modal, TextInput, TextArea, Stack } from '@carbon/react';
+import { Modal, TextInput, TextArea, Stack, Checkbox } from '@carbon/react';
 import { PatientGridGet, useEditPatientGridMutation } from '../api';
 
 export interface EditPatientGridModalProps {
@@ -13,11 +13,12 @@ export function EditPatientGridModal({ patientGridToEdit, setPatientGridToEdit }
   const { t } = useTranslation();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [shared, setShared] = useState(false);
   const isValidSubmissionResult = !!name.trim().length;
   const { mutate, isLoading } = useEditPatientGridMutation();
   const submit = () => {
     mutate(
-      { id: patientGridToEdit.uuid, body: { name, description } },
+      { id: patientGridToEdit.uuid, body: { name, description, shared } },
       {
         onSuccess: () => {
           showToast({
@@ -46,6 +47,7 @@ export function EditPatientGridModal({ patientGridToEdit, setPatientGridToEdit }
     if (patientGridToEdit) {
       setName(patientGridToEdit.name);
       setDescription(patientGridToEdit.description);
+      setShared(patientGridToEdit.shared ?? false);
     }
   }, [patientGridToEdit]);
 
@@ -75,6 +77,12 @@ export function EditPatientGridModal({ patientGridToEdit, setPatientGridToEdit }
           labelText={t('editPatientGridModalDescriptionInputLabel', 'Describe the purpose of this grid in a few words')}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+        />
+        <Checkbox
+          id="shareGrid"
+          labelText={t('patientGridDetailsShareGridCheckboxLabel', 'Share this grid with others')}
+          checked={shared}
+          onChange={(_, { checked }) => setShared(checked)}
         />
       </Stack>
     </Modal>

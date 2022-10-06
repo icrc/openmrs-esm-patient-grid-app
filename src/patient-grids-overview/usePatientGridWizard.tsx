@@ -1,4 +1,4 @@
-import { useConfig } from '@openmrs/esm-framework';
+import { useConfig, useSession } from '@openmrs/esm-framework';
 import React, { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react';
 import { FormGet, PatientGridPost, PatientGridFilterPost, FormSchema } from '../api';
 import { Config } from '../config-schema';
@@ -13,6 +13,7 @@ import { PatientGridBuilderSectionsPage } from './PatientGridBuilderSectionsPage
 export interface PatientGridWizardState {
   name?: string;
   description?: string;
+  shared?: boolean;
   countryFilter?: PatientGridFilterPost;
   structureFilter?: PatientGridFilterPost;
   genderFilter?: PatientGridFilterPost;
@@ -35,6 +36,7 @@ const initialWizardState: PatientGridWizardState = {
 
 export function usePatientGridWizard(formSchemas: Record<string, FormSchema>) {
   const config = useConfig() as Config;
+  const session = useSession();
   const [state, setState] = useState<PatientGridWizardState>(initialWizardState);
   const [page, setPage] = useState(0);
   const pageFactories = useMemo(
@@ -76,7 +78,8 @@ export function usePatientGridWizard(formSchemas: Record<string, FormSchema>) {
     const body: PatientGridPost = {
       name: state.name,
       description: state.description,
-      owner: undefined, // TODO: Should this be the current owner?
+      owner: session.user?.uuid,
+      shared: state.shared,
       columns: [
         ...getPatientDetailsPatientGridColumnPostResources(
           ageCategoryEncounterType,
@@ -90,7 +93,7 @@ export function usePatientGridWizard(formSchemas: Record<string, FormSchema>) {
     };
 
     return body;
-  }, [state, formSchemas, config.ageRangeEncounterTypeUuid]);
+  }, [state, formSchemas, config.ageRangeEncounterTypeUuid, session.user]);
 
   return {
     currentPage,

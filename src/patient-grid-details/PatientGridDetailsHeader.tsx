@@ -9,6 +9,8 @@ import { useParams } from 'react-router-dom';
 import { PatientGridDetailsParams } from '../routes';
 
 export interface PatientGridDetailsHeaderProps {
+  canEdit?: boolean;
+  canDelete?: boolean;
   canSave?: boolean;
   canUndo?: boolean;
   canRedo?: boolean;
@@ -21,6 +23,8 @@ export interface PatientGridDetailsHeaderProps {
 }
 
 export function PatientGridDetailsHeader({
+  canEdit,
+  canDelete,
   canSave,
   canUndo,
   canRedo,
@@ -69,6 +73,7 @@ export function PatientGridDetailsHeader({
             <OverflowMenu ariaLabel={t('patientGridDetailsHeaderActionsLabel', 'Actions')} size="md" flipped>
               <OverflowMenuItem
                 itemText={t('patientGridDetailsHeaderEditNameDescriptionMenuItem', 'Edit name / description')}
+                disabled={!canEdit}
                 onClick={onEditClick}
               />
               <OverflowMenuItem
@@ -78,6 +83,7 @@ export function PatientGridDetailsHeader({
               <OverflowMenuItem
                 isDelete
                 itemText={t('patientGridDetailsHeaderDeleteGridMenuItem', 'Delete')}
+                disabled={!canDelete}
                 onClick={onDeleteClick}
               />
             </OverflowMenu>

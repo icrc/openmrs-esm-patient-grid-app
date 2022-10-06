@@ -18,11 +18,9 @@ import { useTranslation } from 'react-i18next';
 import { Link as ReactRouterLink, useNavigate } from 'react-router-dom';
 import styles from './PatientGridsTable.scss';
 import { routes } from '../routes';
-import { PatientGridGet, useGetAllPatientGrids, PatientGridType, usePatientGridsWithInferredTypes } from '../api';
-import { ErrorState } from '@openmrs/esm-framework';
-import { DeletePatientGridModal } from '../crosscutting-features';
-
-export type PatientGridViewType = 'system' | 'my' | 'all';
+import { PatientGridGet, useGetAllPatientGrids, PatientGridViewType, usePatientGridsOfType } from '../api';
+import { ErrorState, useSession } from '@openmrs/esm-framework';
+import { DeletePatientGridModal, EditPatientGridModal } from '../crosscutting-features';
 
 export interface PatientGridsTableProps {
   type: PatientGridViewType;
@@ -30,11 +28,13 @@ export interface PatientGridsTableProps {
 
 export function PatientGridsTable({ type }: PatientGridsTableProps) {
   const { t } = useTranslation();
+  const session = useSession();
   const navigate = useNavigate();
   const { data: patientGrids, error: patientGridsError } = useGetAllPatientGrids();
   const headers = useTableHeaders();
   const rows = useTableRows(type);
   const [patientGridToDelete, setPatientGridToDelete] = useState<PatientGridGet | undefined>(undefined);
+  const [patientGridToEdit, setPatientGridToEdit] = useState<PatientGridGet | undefined>(undefined);
 
   if (patientGridsError && !patientGrids) {
     // TODO: This error state looks weird in the UI. I assume that it's better than having nothing, but
@@ -76,42 +76,50 @@ export function PatientGridsTable({ type }: PatientGridsTableProps) {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows?.map((row) => (
-                  <TableRow {...getRowProps({ row })}>
-                    {row.cells.map((cell) => (
-                      <TableCell key={cell.id}>
-                        {typeof cell.value === 'object' ? cell.value.cellContent : cell.value}
+                {rows?.map((row) => {
+                  const patientGrid = patientGrids.find((patientGrid) => patientGrid.uuid === row.id);
+                  return (
+                    <TableRow {...getRowProps({ row })}>
+                      {row.cells.map((cell) => (
+                        <TableCell key={cell.id}>
+                          {typeof cell.value === 'object' ? cell.value.cellContent : cell.value}
+                        </TableCell>
+                      ))}
+                      <TableCell className="cds--table-column-menu">
+                        <OverflowMenu size="sm" ariaLabel={t('patientGridRowLabel', 'Actions')}>
+                          <OverflowMenuItem
+                            itemText={t('patientGridViewRowMenuItem', 'View')}
+                            onClick={() =>
+                              navigate(
+                                routes.patientGridDetails.interpolate({
+                                  id: row.id,
+                                }),
+                              )
+                            }
+                          />
+                          <OverflowMenuItem
+                            itemText={t('patientGridEditRowMenuItem', 'Edit')}
+                            onClick={() => setPatientGridToEdit(patientGrid)}
+                            disabled={patientGrid.owner?.uuid !== session.user?.uuid}
+                          />
+                          <OverflowMenuItem
+                            isDelete
+                            itemText={t('patientGridDeleteRowMenuItem', 'Delete')}
+                            onClick={() => setPatientGridToDelete(patientGrid)}
+                            disabled={patientGrid.owner?.uuid !== session.user?.uuid}
+                          />
+                        </OverflowMenu>
                       </TableCell>
-                    ))}
-                    <TableCell className="cds--table-column-menu">
-                      <OverflowMenu size="sm" ariaLabel={t('patientGridRowLabel', 'Actions')}>
-                        <OverflowMenuItem
-                          itemText={t('patientGridViewRowMenuItem', 'View')}
-                          onClick={() =>
-                            navigate(
-                              routes.patientGridDetails.interpolate({
-                                id: row.id,
-                              }),
-                            )
-                          }
-                        />
-                        <OverflowMenuItem
-                          isDelete
-                          itemText={t('patientGridDeleteRowMenuItem', 'Delete')}
-                          onClick={() =>
-                            setPatientGridToDelete(patientGrids.find((patientGrid) => patientGrid.uuid === row.id))
-                          }
-                        />
-                      </OverflowMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </>
         )}
       </DataTable>
 
+      <EditPatientGridModal patientGridToEdit={patientGridToEdit} setPatientGridToEdit={setPatientGridToEdit} />
       <DeletePatientGridModal
         patientGridToDelete={patientGridToDelete}
         setPatientGridToDelete={setPatientGridToDelete}
@@ -129,7 +137,8 @@ function useTableHeaders() {
         key: 'description',
         header: t('descriptionTableHeader', 'Description'),
       },
-      { key: 'type', header: t('gridTypeTableHeader', 'Grid type') },
+      { key: 'ownership', header: t('gridOwnershipTableHeader', 'Ownership') },
+      { key: 'shared', header: t('gridSharedTableHeader', 'Shared') },
     ],
     [t],
   );
@@ -137,42 +146,47 @@ function useTableHeaders() {
 
 function useTableRows(type: PatientGridViewType) {
   const { t } = useTranslation();
-  const { data: patientGrids = [] } = usePatientGridsWithInferredTypes();
+  const session = useSession();
+  const { data: patientGrids = [] } = usePatientGridsOfType(type);
 
-  return useMemo(() => {
-    const gridsToDisplay =
-      type === 'all' ? patientGrids : patientGrids.filter((patientGrid) => patientGrid.type === type);
-    const typeDisplayStrings: Record<PatientGridType, string> = {
-      system: t('sharedGrid', 'Shared grid'),
-      my: t('myGrid', 'My grid'),
-      other: t('systemGrid', "Other's grid"),
-    };
+  return useMemo(
+    () =>
+      patientGrids.map((patientGrid) => {
+        const ownershipString = patientGrid.owner
+          ? patientGrid.owner.uuid === session.user?.uuid
+            ? t('patientGridsOwnerMyGrid', 'My grid')
+            : t('patientGridsOwnerOtherGrid', "Other's grid")
+          : t('patientGridsOwnerUnownedGrid', 'Unowned grid');
 
-    return gridsToDisplay.map((patientGrid) => {
-      return {
-        id: patientGrid.uuid,
-        name: {
-          cellContent: (
-            <ReactRouterLink
-              to={routes.patientGridDetails.interpolate({
-                id: patientGrid.uuid,
-              })}>
-              <Link>{patientGrid.name}</Link>
-            </ReactRouterLink>
-          ),
-          filterableString: patientGrid.name,
-        },
-        description: {
-          cellContent: patientGrid.description || t('patientGridsDescriptionCellFallback', '--'),
-          filterableString: patientGrid.description || t('patientGridsDescriptionCellFallback', '--'),
-        },
-        type: {
-          cellContent: typeDisplayStrings[patientGrid.type],
-          filterableString: typeDisplayStrings[patientGrid.type],
-        },
-      };
-    });
-  }, [patientGrids, type, t]);
+        return {
+          id: patientGrid.uuid,
+          name: {
+            cellContent: (
+              <ReactRouterLink
+                to={routes.patientGridDetails.interpolate({
+                  id: patientGrid.uuid,
+                })}>
+                <Link>{patientGrid.name}</Link>
+              </ReactRouterLink>
+            ),
+            filterableString: patientGrid.name,
+          },
+          description: {
+            cellContent: patientGrid.description || t('patientGridsDescriptionCellFallback', '--'),
+            filterableString: patientGrid.description || t('patientGridsDescriptionCellFallback', '--'),
+          },
+          ownership: {
+            cellContent: ownershipString,
+            filterableString: ownershipString,
+          },
+          shared: {
+            cellContent: patientGrid.shared ? t('patientGridsShared', 'Yes') : t('patientGridsNotShared', 'No'),
+            filterableString: patientGrid.shared ? t('patientGridsShared', 'Yes') : t('patientGridsNotShared', 'No'),
+          },
+        };
+      }),
+    [patientGrids, type, t],
+  );
 }
 
 function filterTableRows({ rowIds, headers, cellsById, inputValue, getCellId }) {

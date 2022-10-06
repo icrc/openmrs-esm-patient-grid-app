@@ -10,16 +10,20 @@ export function PatientGridTabs() {
   return (
     <Tabs activation="manual">
       <TabList contained className={styles.tabList} aria-label={t('patientGridTabsLabel', 'Patient grid tabs')}>
-        <Tab>{t('systemGridsTabLabel', 'System grids')}</Tab>
         <Tab>{t('myGridsTabLabel', 'My grids')}</Tab>
+        <Tab>{t('sharedGridsTabLabel', 'Shared grids')}</Tab>
+        <Tab>{t('systemGridsTabLabel', 'System grids')}</Tab>
         <Tab>{t('allGridsTabLabel', 'All grids')}</Tab>
       </TabList>
       <TabPanels>
         <TabPanel>
-          <PatientGridsTable type="system" />
+          <PatientGridsTable type="my" />
         </TabPanel>
         <TabPanel>
-          <PatientGridsTable type="my" />
+          <PatientGridsTable type="shared" />
+        </TabPanel>
+        <TabPanel>
+          <PatientGridsTable type="system" />
         </TabPanel>
         <TabPanel>
           <PatientGridsTable type="all" />

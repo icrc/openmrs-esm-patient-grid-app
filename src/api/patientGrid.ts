@@ -20,7 +20,7 @@ export interface PatientGridPost {
   name?: string;
   description?: string;
   columns?: Array<PatientGridColumnPost>;
-  owner?: OpenmrsResource;
+  owner?: string;
   shared?: boolean;
 }
 
@@ -86,27 +86,21 @@ export function useDeletePatientGridMutation() {
   );
 }
 
-export function usePatientGridsWithInferredTypes() {
-  const patientGridsSwr = useGetAllPatientGrids();
-  const myUserUuid = useSession().user?.uuid;
-  const data = useMemo(
-    () =>
-      patientGridsSwr.data?.map((patientGrid) => {
-        let type: PatientGridType;
-        if (patientGrid.owner?.uuid === myUserUuid) {
-          type = 'my';
-        } else if (!patientGrid.owner) {
-          type = 'system';
-        } else {
-          type = 'other';
-        }
+export type PatientGridViewType = 'my' | 'shared' | 'system' | 'all';
 
-        return {
-          ...patientGrid,
-          type,
-        };
-      }),
-    [patientGridsSwr.data, myUserUuid],
+const patientGridTypeFilters: Record<PatientGridViewType, (patientGrid: PatientGridGet, userId: string) => boolean> = {
+  my: (grid, userId) => grid.owner?.uuid === userId,
+  shared: (grid) => grid.shared,
+  system: (grid) => !grid.owner,
+  all: (grid, userId) => !(grid.owner && grid.owner.uuid !== userId && !grid.shared),
+};
+
+export function usePatientGridsOfType(type: PatientGridViewType) {
+  const patientGridsSwr = useGetAllPatientGrids();
+  const userId = useSession().user?.uuid;
+  const data = useMemo(
+    () => patientGridsSwr.data?.filter((grid) => patientGridTypeFilters[type](grid, userId)),
+    [patientGridsSwr.data, userId, type],
   );
 
   return {

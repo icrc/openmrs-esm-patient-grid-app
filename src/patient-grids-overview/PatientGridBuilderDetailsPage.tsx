@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Select, SelectItem, Stack, TextArea, TextInput } from '@carbon/react';
+import { Form, Select, SelectItem, Stack, TextArea, TextInput, Checkbox } from '@carbon/react';
 import { useTranslation } from 'react-i18next';
 import { Hr } from '../components';
 import { PatientGridBuilderContinueButton } from './PatientGridBuilderContinueButton';
@@ -55,6 +55,13 @@ export function PatientGridBuilderDetailsPage({
           labelText={t('patientGridDetailsDescriptionInputLabel', 'Describe the purpose of this grid in a few words')}
           value={state.description ?? ''}
           onChange={(e) => setState((state) => ({ ...state, description: e.target.value }))}
+        />
+
+        <Checkbox
+          id="shareGrid"
+          labelText={t('patientGridDetailsShareGridCheckboxLabel', 'Share this grid with others')}
+          checked={state.shared}
+          onChange={(_, { checked }) => setState((state) => ({ ...state, shared: checked }))}
         />
 
         <Hr />

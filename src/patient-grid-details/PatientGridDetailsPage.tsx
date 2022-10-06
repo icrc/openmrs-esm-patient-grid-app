@@ -1,4 +1,4 @@
-import { ExtensionSlot, showToast } from '@openmrs/esm-framework';
+import { ExtensionSlot, showToast, useSession } from '@openmrs/esm-framework';
 import React, { ReactNode, useEffect, useState } from 'react';
 import { Hr, PageWithSidePanel, PageWithSidePanelProps } from '../components';
 import { PatientGridDetailsHeader } from './PatientGridDetailsHeader';
@@ -21,6 +21,7 @@ export type EditSidePanelValues = Omit<EditSidePanelProps, 'onClose'>;
 
 export function PatientGridDetailsPage() {
   const { t } = useTranslation();
+  const session = useSession();
   const navigate = useNavigate();
   const [patientGridToDelete, setPatientGridToDelete] = useState<PatientGridGet | undefined>(undefined);
   const [patientGridToEdit, setPatientGridToEdit] = useState<PatientGridGet | undefined>(undefined);
@@ -119,6 +120,9 @@ export function PatientGridDetailsPage() {
       <Stack gap={4}>
         <div className={styles.headerContainer}>
           <PatientGridDetailsHeader
+            canEdit={session.user?.uuid === patientGrid.owner?.uuid}
+            canDelete={session.user?.uuid === patientGrid.owner?.uuid}
+            canSave={session.user?.uuid === patientGrid.owner?.uuid /* TODO: && hasLocalChanges*/}
             canUndo={canUndo}
             canRedo={canRedo}
             onUndoClick={undo}
