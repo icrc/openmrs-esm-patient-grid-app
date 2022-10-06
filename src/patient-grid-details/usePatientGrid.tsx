@@ -135,8 +135,8 @@ function getColumns(
     );
 
     // Only add the entire form column if there is at least 1 section column.
-    // Checking for length > 1 because there is *always* 1 column (the "Date" column).
-    if (formColumn.columns.length > 1) {
+    // Checking for length > 2 because there is *always* 2 columns (the "Age"/"Date" columns).
+    if (formColumn.columns.length > 2) {
       columns.push(formColumn as unknown as GroupColumnDef<PatientGridDataRow>);
     }
   }

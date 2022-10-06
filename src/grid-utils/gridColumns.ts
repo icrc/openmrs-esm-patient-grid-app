@@ -7,7 +7,7 @@ import { ColumnNameToHeaderLabelMap } from './useColumnNameToHeaderLabelMap';
  * Creates the `react-table` {@link GroupColumnDef} which renders the columns of one single form.
  * The column maps, for example, to a table similar to this:
  * ```
- * | Form Name |                                                                  |
+ * | Form Name                                                                    |
  * |                  | Section 1                   | Section 2                   |
  * | Age       | Date | Question 1-1 | Question 2.1 | Question 2.1 | Question 2.2 |
  * ```
