@@ -23,21 +23,33 @@ import { useTranslation } from 'react-i18next';
 import { FormGet, FormSchema, PatientGridReportGet } from '../api';
 import { useHistoricEncountersGrid } from './useHistoricEncountersGrid';
 import styles from './HistoricEncountersGrid.scss';
+import { useVisibleColumnsOnly } from './useVisibleColumnsOnly';
+import { ColumnNameToHiddenStateMap } from '../grid-utils';
 
 export interface HistoricEncountersGridProps {
   patientId: string;
   form: FormGet;
   formSchema: FormSchema;
   report: PatientGridReportGet;
+  columnHiddenStates: ColumnNameToHiddenStateMap;
 }
 
-export function HistoricEncountersGrid({ patientId, form, formSchema, report }: HistoricEncountersGridProps) {
+const stableEmptyArray = [];
+
+export function HistoricEncountersGrid({
+  patientId,
+  form,
+  formSchema,
+  report,
+  columnHiddenStates,
+}: HistoricEncountersGridProps) {
   const { t } = useTranslation();
   const { data } = useHistoricEncountersGrid(patientId, form, formSchema, report);
   const [sorting, setSorting] = useState<SortingState>([]);
+  const visibleColumns = useVisibleColumnsOnly(data?.columns ?? stableEmptyArray, columnHiddenStates);
   const table = useReactTable({
-    columns: data?.columns ?? [],
-    data: data?.data ?? [],
+    columns: visibleColumns,
+    data: data?.data ?? stableEmptyArray,
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),

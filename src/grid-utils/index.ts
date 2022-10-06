@@ -3,5 +3,7 @@ export * from './download';
 export * from './formSchema';
 export * from './gridColumns';
 export * from './patientGridCreation';
+export * from './reactTable';
 export * from './report';
+export * from './useColumnHiddenStates';
 export * from './useColumnNameToHeaderLabelMap';

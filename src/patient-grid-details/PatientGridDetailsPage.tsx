@@ -1,6 +1,6 @@
 import { ExtensionSlot, showToast } from '@openmrs/esm-framework';
-import React, { useEffect, useState } from 'react';
-import { Hr, PageWithSidePanel } from '../components';
+import React, { ReactNode, useEffect, useState } from 'react';
+import { Hr, PageWithSidePanel, PageWithSidePanelProps } from '../components';
 import { PatientGridDetailsHeader } from './PatientGridDetailsHeader';
 import { Stack } from '@carbon/react';
 import { PatientGridFiltersHeader } from './PatientGridFiltersHeader';
@@ -14,6 +14,8 @@ import { usePatientGrid } from './usePatientGrid';
 import { useTranslation } from 'react-i18next';
 import styles from './PatientGridDetailsPage.scss';
 import { EditSidePanel, EditSidePanelProps } from './EditSidePanel';
+import { ToggleColumnsSidePanel } from './ToggleColumnsSidePanel';
+import { useInlinePatientGridEditing } from './useInlineEditing';
 
 export type EditSidePanelValues = Omit<EditSidePanelProps, 'onClose'>;
 
@@ -22,12 +24,60 @@ export function PatientGridDetailsPage() {
   const navigate = useNavigate();
   const [patientGridToDelete, setPatientGridToDelete] = useState<PatientGridGet | undefined>(undefined);
   const [patientGridToEdit, setPatientGridToEdit] = useState<PatientGridGet | undefined>(undefined);
-  const [editSidePanelValues, setEditSidePanelValues] = useState<EditSidePanelValues | undefined>(undefined);
+  const [sidePanel, setSidePanel] = useState<ReactNode | undefined>(undefined);
+  const [sidePanelSize, setSidePanelSize] = useState<PageWithSidePanelProps['sidePanelSize']>(undefined);
   const { id: patientGridId } = useParams<PatientGridDetailsParams>();
   const { data: patientGrid } = useGetPatientGrid(patientGridId);
   const { data, error } = usePatientGrid(patientGridId);
   const [showReloadGrid, setShowReloadGrid] = useState(false);
   const refreshPatientGridMutation = useRefreshPatientGridReportMutation();
+  const {
+    canUndo,
+    canRedo,
+    undo,
+    redo,
+    push,
+    current: currentInlineState,
+    columnHiddenStates,
+  } = useInlinePatientGridEditing(patientGridId);
+
+  const showEditSidePanel = (editSidePanelValues: EditSidePanelValues) => {
+    setSidePanel(
+      <EditSidePanel
+        encounterId={editSidePanelValues.encounterId}
+        patientId={editSidePanelValues.patientId}
+        formId={editSidePanelValues.formId}
+        onEncounterCreate={() => setShowReloadGrid(true)}
+        onClose={() => {
+          setSidePanel(undefined);
+
+          // TODO: This should *ideally* be deleted.
+          // This is only called because the form engine currently doesn't call the encounter created
+          // callback for some reason.
+          // If it does, remove the following line.
+          setShowReloadGrid(true);
+        }}
+      />,
+    );
+    setSidePanelSize('lg');
+  };
+
+  const showToggleColumnsSidePanel = () => {
+    setSidePanel(
+      <ToggleColumnsSidePanel
+        columns={data.columns}
+        columnHiddenStates={columnHiddenStates}
+        onClose={() => setSidePanel(undefined)}
+        onSubmit={(value) =>
+          push({
+            ...currentInlineState,
+            columnHiddenStates: value,
+          })
+        }
+      />,
+    );
+    setSidePanelSize('md');
+  };
 
   const refreshGrid = () => {
     refreshPatientGridMutation.mutate(
@@ -62,34 +112,17 @@ export function PatientGridDetailsPage() {
   }
 
   return (
-    <PageWithSidePanel
-      sidePanel={
-        editSidePanelValues ? (
-          <EditSidePanel
-            encounterId={editSidePanelValues.encounterId}
-            patientId={editSidePanelValues.patientId}
-            formId={editSidePanelValues.formId}
-            onEncounterCreate={() => setShowReloadGrid(true)}
-            onClose={() => {
-              setEditSidePanelValues(undefined);
-
-              // TODO: This should *ideally* be deleted.
-              // This is only called because the form engine currently doesn't call the encounter created
-              // callback for some reason.
-              // If it does, remove the following line.
-              setShowReloadGrid(true);
-            }}
-          />
-        ) : undefined
-      }
-      showSidePanel={!!editSidePanelValues}
-      sidePanelSize="lg">
+    <PageWithSidePanel sidePanel={sidePanel} showSidePanel={!!sidePanel} sidePanelSize={sidePanelSize}>
       <ExtensionSlot extensionSlotName="breadcrumbs-slot" />
       <Hr />
 
       <Stack gap={4}>
         <div className={styles.headerContainer}>
           <PatientGridDetailsHeader
+            canUndo={canUndo}
+            canRedo={canRedo}
+            onUndoClick={undo}
+            onRedoClick={redo}
             onEditClick={() => setPatientGridToEdit(patientGrid)}
             onRefreshGridClick={refreshGrid}
             onDeleteClick={() => setPatientGridToDelete(patientGrid)}
@@ -107,7 +140,9 @@ export function PatientGridDetailsPage() {
             columns={data?.columns ?? []}
             data={data?.data ?? []}
             showReloadGrid={showReloadGrid}
-            setEditSidePanelValues={setEditSidePanelValues}
+            columnHiddenStates={columnHiddenStates}
+            showEditSidePanel={showEditSidePanel}
+            showToggleColumnsSidePanel={showToggleColumnsSidePanel}
             refreshPatientGrid={refreshGrid}
           />
         </div>

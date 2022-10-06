@@ -26,22 +26,26 @@ export function getReactTableColumnDefForForm(
   columnNameToHeaderLabelMap: ColumnNameToHeaderLabelMap,
   columnNamesToInclude: Array<string>,
 ): GroupColumnDef<Record<string, string>> {
-  const formDateColumnName = getFormDateColumnName(form);
   const formAgeColumnName = getFormAgeColumnName(form);
+  const formDateColumnName = getFormDateColumnName(form);
   const formColumn: GroupColumnDef<Record<string, string>> = {
     header: form.name,
-    columns: [
-      // Each form column group always has the "Date"/"Age" column.
-      {
-        header: columnNameToHeaderLabelMap[formAgeColumnName],
-        accessorKey: formAgeColumnName,
-      },
-      {
-        header: columnNameToHeaderLabelMap[formDateColumnName],
-        accessorKey: formDateColumnName,
-      },
-    ],
+    columns: [],
   };
+
+  if (columnNamesToInclude.includes(formAgeColumnName)) {
+    formColumn.columns.push({
+      header: columnNameToHeaderLabelMap[formAgeColumnName],
+      accessorKey: formAgeColumnName,
+    });
+  }
+
+  if (columnNamesToInclude.includes(formDateColumnName)) {
+    formColumn.columns.push({
+      header: columnNameToHeaderLabelMap[formDateColumnName],
+      accessorKey: formDateColumnName,
+    });
+  }
 
   for (const page of formSchema.pages ?? []) {
     for (const section of page.sections ?? []) {

@@ -15,6 +15,7 @@ interface PatientGridBaseColumnGet extends OpenmrsResource {
   name: string;
   description?: string;
   datatype: PatientGridColumnDataType;
+  hidden?: boolean;
 }
 
 interface PatientGridNormalColumnGet extends PatientGridBaseColumnGet {
@@ -23,13 +24,13 @@ interface PatientGridNormalColumnGet extends PatientGridBaseColumnGet {
 
 interface PatientGridObsColumnGet extends PatientGridBaseColumnGet {
   type: 'obscolumn';
-  encounterType: unknown; // TODO: Type
-  concept: unknown; // TODO: Type
+  encounterType: OpenmrsResource;
+  concept: OpenmrsResource;
 }
 
 interface PatientGridAgeColumnGet extends PatientGridBaseColumnGet {
   type: 'agecolumn';
-  encounterType: unknown; // TODO: Type
+  encounterType: OpenmrsResource;
   convertToAgeRange: boolean;
 }
 
@@ -42,8 +43,9 @@ export interface PatientGridColumnPost {
   datatype?: PatientGridColumnDataType;
   name?: string;
   description?: string;
-  concept?: unknown; // TODO: Type
-  encounterType?: unknown; // TODO: Type
+  concept?: string;
+  encounterType?: string;
   convertToAgeRange?: boolean;
   filters?: Array<PatientGridFilterPost>;
+  hidden?: boolean;
 }

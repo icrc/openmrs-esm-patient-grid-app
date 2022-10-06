@@ -23,7 +23,7 @@ import {
   Renew,
   WarningAltFilled,
 } from '@carbon/react/icons';
-import React, { Dispatch, Fragment, SetStateAction, useMemo, useState } from 'react';
+import React, { Fragment, useMemo, useState } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -31,10 +31,10 @@ import {
   SortingState,
   getSortedRowModel,
   getFilteredRowModel,
-  ColumnDef,
   getFacetedUniqueValues,
   Cell,
   Row,
+  GroupColumnDef,
 } from '@tanstack/react-table';
 import styles from './PatientGrid.scss';
 import { useTranslation } from 'react-i18next';
@@ -44,16 +44,23 @@ import { HistoricEncountersTabs } from './HistoricEncountersTabs';
 import { PatientGridDataRow } from './usePatientGrid';
 import { DownloadModal } from './DownloadModal';
 import { EditSidePanelValues } from './PatientGridDetailsPage';
-import { isFormSchemaQuestionColumnName, patientDetailsNameColumnName } from '../grid-utils';
+import {
+  isFormSchemaQuestionColumnName,
+  patientDetailsNameColumnName,
+  ColumnNameToHiddenStateMap,
+} from '../grid-utils';
 import { interpolateUrl } from '@openmrs/esm-framework';
 import { getFormEngineDataRequiredForEditing } from '../grid-utils/editing';
+import { useVisibleColumnsOnly } from './useVisibleColumnsOnly';
 
 export interface PatientGridProps {
   patientGridId: string;
-  columns: Array<ColumnDef<PatientGridDataRow, unknown>>;
+  columns: Array<GroupColumnDef<PatientGridDataRow, unknown>>;
   data: Array<PatientGridDataRow>;
   showReloadGrid: boolean;
-  setEditSidePanelValues: Dispatch<SetStateAction<EditSidePanelValues>>;
+  columnHiddenStates: ColumnNameToHiddenStateMap;
+  showEditSidePanel(values: EditSidePanelValues): void;
+  showToggleColumnsSidePanel(): void;
   refreshPatientGrid(): void;
 }
 
@@ -62,7 +69,9 @@ export function PatientGrid({
   columns,
   data,
   showReloadGrid,
-  setEditSidePanelValues,
+  columnHiddenStates,
+  showEditSidePanel,
+  showToggleColumnsSidePanel,
   refreshPatientGrid,
 }: PatientGridProps) {
   const { t } = useTranslation();
@@ -70,8 +79,9 @@ export function PatientGrid({
   const [globalFilter, setGlobalFilter] = useState('');
   const handleGlobalFilterChange = useMemo(() => debounce(setGlobalFilter, 300), []);
   const [sorting, setSorting] = useState<SortingState>([]);
+  const visibleColumns = useVisibleColumnsOnly(columns, columnHiddenStates);
   const table = useReactTable<PatientGridDataRow>({
-    columns,
+    columns: visibleColumns,
     data,
     getCoreRowModel: getCoreRowModel(),
     onGlobalFilterChange: setGlobalFilter,
@@ -89,7 +99,7 @@ export function PatientGrid({
   const handleCellClick = (cell: Cell<PatientGridDataRow, unknown>, row: Row<PatientGridDataRow>) => {
     const columnName = cell.column.id;
     const formEngineData = getFormEngineDataRequiredForEditing(row.original.__reportRow, columnName);
-    setEditSidePanelValues(formEngineData);
+    showEditSidePanel(formEngineData);
   };
 
   return (
@@ -110,9 +120,9 @@ export function PatientGrid({
           <Button size="sm" kind="ghost" renderIcon={Download} onClick={() => setIsDownloadModalOpen(true)}>
             {t('patientGridDownloadButton', 'Download')}
           </Button>
-          <Button size="sm" kind="ghost" renderIcon={OpenPanelRight}>
+          <Button size="sm" kind="ghost" renderIcon={OpenPanelRight} onClick={showToggleColumnsSidePanel}>
             {t('patientGridColumnsButton', 'Columns ({actual}/{total})', {
-              actual: '?',
+              actual: Object.values(columnHiddenStates).filter((x) => !x).length,
               total: headerGroups[headerGroups.length - 1].headers.length,
             })}
           </Button>
@@ -220,7 +230,11 @@ export function PatientGrid({
                       {index % 2 === 0 && <tr className={styles.hiddenTableRowForContinuousZebra} />}
                       <TableExpandedRow className={styles.expandRow} colSpan="100%">
                         <div className={styles.expandRowBackdrop}>
-                          <HistoricEncountersTabs report={row.original.__report} reportRow={row.original.__reportRow} />
+                          <HistoricEncountersTabs
+                            report={row.original.__report}
+                            reportRow={row.original.__reportRow}
+                            columnHiddenStates={columnHiddenStates}
+                          />
                         </div>
                       </TableExpandedRow>
                       {index % 2 === 1 && <tr className={styles.hiddenTableRowForContinuousZebra} />}
@@ -236,6 +250,7 @@ export function PatientGrid({
       <DownloadModal
         patientGridId={patientGridId}
         isOpen={isDownloadModalOpen}
+        columnHiddenStates={columnHiddenStates}
         onClose={() => setIsDownloadModalOpen(false)}
       />
     </main>

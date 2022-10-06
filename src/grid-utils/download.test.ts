@@ -44,7 +44,7 @@ const patientGrid: PatientGridGet = {
       name: patientDetailsAgeCategoryColumnName,
       type: 'agecolumn',
       datatype: 'ENC_AGE',
-      encounterType: 'f1-enc-type',
+      encounterType: { uuid: 'f1-enc-type' },
       convertToAgeRange: false,
     },
   ],

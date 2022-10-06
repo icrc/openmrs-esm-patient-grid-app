@@ -9,6 +9,7 @@ export interface PatientGridGet extends OpenmrsResource {
   name: string;
   description?: string;
   retired: boolean;
+  shared?: boolean;
   owner?: OpenmrsResource;
   cohort: OpenmrsResource;
   columns: Array<PatientGridColumnGet>;
@@ -20,6 +21,7 @@ export interface PatientGridPost {
   description?: string;
   columns?: Array<PatientGridColumnPost>;
   owner?: OpenmrsResource;
+  shared?: boolean;
 }
 
 /** Used on the frontend for placing a grid into a category. */

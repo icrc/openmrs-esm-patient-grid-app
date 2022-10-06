@@ -21,6 +21,8 @@
 
 .reloadMessage {
   @include type.type-style('helper-text-02');
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .reloadWarningIcon {

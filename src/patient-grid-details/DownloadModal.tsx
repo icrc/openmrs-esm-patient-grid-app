@@ -2,16 +2,17 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal, RadioButtonGroup, RadioButton } from '@carbon/react';
 import { DownloadGridData, useDownloadGridData } from '../api';
-import { getPatientGridDownloadReportData } from '../grid-utils';
+import { getPatientGridDownloadReportData, ColumnNameToHiddenStateMap } from '../grid-utils';
 import xlsx from 'xlsx';
 
 export interface DownloadModalProps {
   patientGridId: string;
   isOpen: boolean;
+  columnHiddenStates: ColumnNameToHiddenStateMap;
   onClose(): void;
 }
 
-export function DownloadModal({ patientGridId, isOpen, onClose }: DownloadModalProps) {
+export function DownloadModal({ patientGridId, isOpen, columnHiddenStates, onClose }: DownloadModalProps) {
   const { t } = useTranslation();
   const [fileExtension, setFileExtension] = useState<string | undefined>(undefined);
   const [hasDownloadStarted, setHasDownloadStarted] = useState(false);
@@ -85,7 +86,11 @@ export function DownloadModal({ patientGridId, isOpen, onClose }: DownloadModalP
       danger: false,
       modalHeading: t('downloadModalChooseDownloadHeading', 'Download data as file'),
       modalBody: hasDownloadStarted ? (
-        <PrepareDownload patientGridId={patientGridId} onDownloadPrepared={handleDownloadPrepared} />
+        <PrepareDownload
+          patientGridId={patientGridId}
+          columnHiddenStates={columnHiddenStates}
+          onDownloadPrepared={handleDownloadPrepared}
+        />
       ) : (
         <RadioButtonGroup
           legendText={t(
@@ -150,12 +155,13 @@ export function DownloadModal({ patientGridId, isOpen, onClose }: DownloadModalP
 
 interface PrepareDownloadProps {
   patientGridId: string;
+  columnHiddenStates: ColumnNameToHiddenStateMap;
   onDownloadPrepared(data: Omit<DownloadGridData, 'fileName'>): void;
 }
 
-function PrepareDownload({ patientGridId, onDownloadPrepared }: PrepareDownloadProps) {
+function PrepareDownload({ patientGridId, columnHiddenStates, onDownloadPrepared }: PrepareDownloadProps) {
   const { t } = useTranslation();
-  const { data } = useDownloadGridData(patientGridId);
+  const { data } = useDownloadGridData(patientGridId, columnHiddenStates);
   const triggered = useRef(false);
 
   useEffect(() => {

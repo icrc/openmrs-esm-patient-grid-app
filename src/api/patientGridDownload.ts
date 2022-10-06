@@ -1,7 +1,7 @@
 import { openmrsFetch, OpenmrsResource } from '@openmrs/esm-framework';
 import { useTranslation } from 'react-i18next';
 import useSWR from 'swr';
-import { ColumnNameToHeaderLabelMap, useColumnNameToHeaderLabelMap } from '../grid-utils';
+import { ColumnNameToHeaderLabelMap, useColumnNameToHeaderLabelMap, ColumnNameToHiddenStateMap } from '../grid-utils';
 import { FormGet, useGetAllPublishedPrivilegeFilteredForms } from './form';
 import { FormSchema, useFormSchemasOfForms } from './formSchema';
 import { PatientGridGet, useGetPatientGrid } from './patientGrid';
@@ -65,7 +65,7 @@ export interface DownloadGridData {
   fileName: string;
 }
 
-export function useDownloadGridData(patientGridId: string) {
+export function useDownloadGridData(patientGridId: string, columnHiddenStates: ColumnNameToHiddenStateMap) {
   const { t } = useTranslation();
   const downloadSwr = useGetPatientGridDownload(patientGridId);
   const patientGridSwr = useGetPatientGrid(patientGridId);
@@ -81,7 +81,9 @@ export function useDownloadGridData(patientGridId: string) {
         forms: formsSwr.data,
         formSchemas: formSchemasSwr.data,
         columnNameToHeaderLabelMap: columnNameToHeaderLabelMapSwr.data,
-        columnNamesToInclude: patientGridSwr.data.columns.map((column) => column.name), // TODO: Add hidden filtering.
+        columnNamesToInclude: patientGridSwr.data.columns
+          .map((column) => column.name)
+          .filter((name) => !columnHiddenStates[name]),
         patientDetailsGroupHeader: t('patientDetailsDownloadGroupHeader', 'Healthcare user'),
       };
     },

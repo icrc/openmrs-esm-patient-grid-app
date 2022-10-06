@@ -8,16 +8,17 @@ import {
   useGetAllPublishedPrivilegeFilteredForms,
   useMergedSwr,
 } from '../api';
-import { getFormsReferencedInGridReport, getFormSchemaReferenceUuid } from '../grid-utils';
+import { getFormsReferencedInGridReport, getFormSchemaReferenceUuid, ColumnNameToHiddenStateMap } from '../grid-utils';
 import { useTranslation } from 'react-i18next';
 import { HistoricEncountersGrid } from './HistoricEncountersGrid';
 
 export interface HistoricEncountersTabsProps {
   report: PatientGridReportGet;
   reportRow: PatientGridReportRowGet;
+  columnHiddenStates: ColumnNameToHiddenStateMap;
 }
 
-export function HistoricEncountersTabs({ report, reportRow }: HistoricEncountersTabsProps) {
+export function HistoricEncountersTabs({ report, reportRow, columnHiddenStates }: HistoricEncountersTabsProps) {
   const { t } = useTranslation();
   const formsSwr = useGetAllPublishedPrivilegeFilteredForms();
   const formSchemasSwr = useFormSchemasOfForms(formsSwr.data);
@@ -48,6 +49,7 @@ export function HistoricEncountersTabs({ report, reportRow }: HistoricEncounters
                   formSchema={formSchemasSwr.data[getFormSchemaReferenceUuid(form)]}
                   patientId={reportRow.uuid}
                   report={report}
+                  columnHiddenStates={columnHiddenStates}
                 />
               </TabPanel>
             ))}
