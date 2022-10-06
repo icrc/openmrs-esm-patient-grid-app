@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Select, SelectItem, Stack, TextArea, TextInput, Checkbox } from '@carbon/react';
+import { Form, Stack, TextArea, TextInput, Checkbox } from '@carbon/react';
 import { useTranslation } from 'react-i18next';
 import { Hr } from '../components';
 import { PatientGridBuilderContinueButton } from './PatientGridBuilderContinueButton';
@@ -27,7 +27,7 @@ export function PatientGridBuilderDetailsPage({
           title={t('patientGridDetails', 'Grid details')}
         />
 
-        <Select
+        {/* <Select
           id="gridToDuplicate"
           defaultValue="placeholder"
           labelText={t('patientGridDetailsDuplicateSelectLabel', 'Base on / duplicate from existing patient grid')}>
@@ -37,7 +37,7 @@ export function PatientGridBuilderDetailsPage({
             value="placeholder"
             text={t('patientGridDetailsDuplicateSelectPlaceholder', 'Select an existing grid (optional)')}
           />
-        </Select>
+        </Select> */}
 
         <Hr />
 
