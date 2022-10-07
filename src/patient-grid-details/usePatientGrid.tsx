@@ -20,8 +20,10 @@ import {
   getReactTableColumnDefForForm,
   ColumnNameToHeaderLabelMap,
   getAllReportColumnNames,
+  LocalFilter,
 } from '../grid-utils';
 import { TFunction, useTranslation } from 'react-i18next';
+import { getLocallyFilteredReportRows } from '../grid-utils/localRowFiltering';
 
 export interface PatientGridDataRow extends Record<string, unknown> {
   __report: PatientGridReportGet;
@@ -33,7 +35,7 @@ export interface PatientGridDataRow extends Record<string, unknown> {
  * @param id The ID of the patient grid report for which data should be returned.
  * @returns The columns and data to be forwarded to the `useReactTable` hook that renders the actual patient grid.
  */
-export function usePatientGrid(id: string) {
+export function usePatientGrid(id: string, filters: Array<LocalFilter>) {
   const { t } = useTranslation();
   const reportSwr = useGetPatientGridReport(id);
   const formsSwr = useGetAllPublishedPrivilegeFilteredForms();
@@ -46,12 +48,13 @@ export function usePatientGrid(id: string) {
       const { data: formSchemas } = formSchemasSwr;
       const { data: columnNameToHeaderLabelMap } = columnNameToHeaderLabelMapSwr;
       const { data: report } = reportSwr;
+      const locallyFilteredReportRows = getLocallyFilteredReportRows(report.report, filters);
       const columns = getColumns(forms, formSchemas, columnNameToHeaderLabelMap, report, t);
-      const data = mapReportEntriesToGridData(report);
+      const data = mapReportEntriesToGridData(report, locallyFilteredReportRows);
       return { columns, data };
     },
     [formsSwr, formSchemasSwr, columnNameToHeaderLabelMapSwr, reportSwr],
-    [t],
+    [t, filters],
   );
 }
 
@@ -148,8 +151,8 @@ function getColumns(
  * Maps the results of a patient grid report to the shape expected by `react-table`.
  * Essentially converts `obs` to `strings`.
  */
-function mapReportEntriesToGridData(report: PatientGridReportGet) {
-  return report.report.map((reportRow) => {
+function mapReportEntriesToGridData(report: PatientGridReportGet, reportRows: Array<PatientGridReportRowGet>) {
+  return reportRows.map((reportRow) => {
     const result: PatientGridDataRow = {
       __report: report,
       __reportRow: reportRow,

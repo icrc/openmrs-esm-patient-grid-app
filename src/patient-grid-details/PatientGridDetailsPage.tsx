@@ -23,16 +23,16 @@ export function PatientGridDetailsPage() {
   const { t } = useTranslation();
   const session = useSession();
   const navigate = useNavigate();
+  const { id: patientGridId } = useParams<PatientGridDetailsParams>();
+  const inlinePatientGridEditingState = useInlinePatientGridEditingContextState(patientGridId);
   const [patientGridToDelete, setPatientGridToDelete] = useState<PatientGridGet | undefined>(undefined);
   const [patientGridToEdit, setPatientGridToEdit] = useState<PatientGridGet | undefined>(undefined);
   const [sidePanel, setSidePanel] = useState<ReactNode | undefined>(undefined);
   const [sidePanelSize, setSidePanelSize] = useState<PageWithSidePanelProps['sidePanelSize']>(undefined);
-  const { id: patientGridId } = useParams<PatientGridDetailsParams>();
   const { data: patientGrid } = useGetPatientGrid(patientGridId);
-  const { data, error } = usePatientGrid(patientGridId);
+  const { data, error } = usePatientGrid(patientGridId, inlinePatientGridEditingState.filters);
   const [showReloadGrid, setShowReloadGrid] = useState(false);
   const refreshPatientGridMutation = useRefreshPatientGridReportMutation();
-  const inlinePatientGridEditingState = useInlinePatientGridEditingContextState(patientGridId);
 
   const showEditSidePanel = (editSidePanelValues: EditSidePanelValues) => {
     setSidePanel(
