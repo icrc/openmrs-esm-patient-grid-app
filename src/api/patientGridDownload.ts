@@ -43,7 +43,14 @@ export type PatientGridDownloadEncounterGet = Record<string, PatientGridDownload
 export interface PatientGridDownloadObsGet {
   uuid: string;
   concept: string;
-  value: string;
+  value:
+    | string
+    | number
+    | boolean
+    | {
+        uuid: string;
+        display: string;
+      };
   formFieldPath?: string;
   formFieldNamespace?: string;
   encounter: {

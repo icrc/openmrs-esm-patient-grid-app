@@ -155,7 +155,7 @@ interface PrepareDownloadProps {
 
 function PrepareDownload({ patientGridId, onDownloadPrepared }: PrepareDownloadProps) {
   const { t } = useTranslation();
-  const { data } = useDownloadGridData(patientGridId);
+  const { data, error } = useDownloadGridData(patientGridId);
   const triggered = useRef(false);
 
   useEffect(() => {
@@ -163,14 +163,19 @@ function PrepareDownload({ patientGridId, onDownloadPrepared }: PrepareDownloadP
       triggered.current = true;
       onDownloadPrepared(data);
     }
-  }, [data, onDownloadPrepared]);
+  }, [data, error, onDownloadPrepared]);
 
   return (
     <p>
-      {t(
-        'downloadModalChooseDownloadDownloadingMessage',
-        "Preparing your download... This may take some time. Please don't close or reload this browser window.",
-      )}
+      {error
+        ? t(
+            'downloadModalChooseDownloadError',
+            'There was an error while preparing the download. You can close this modal and try again.',
+          )
+        : t(
+            'downloadModalChooseDownloadDownloadingMessage',
+            "Preparing your download... This may take some time. Please don't close or reload this browser window.",
+          )}
     </p>
   );
 }
