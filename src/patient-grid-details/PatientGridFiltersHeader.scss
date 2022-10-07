@@ -8,6 +8,10 @@
   white-space: nowrap;
 }
 
+.localFilterTag {
+  opacity: 0.8;
+}
+
 .filtersCaption {
   @include type.type-style('heading-compact-01');
 }

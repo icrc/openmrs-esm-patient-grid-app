@@ -1,15 +1,15 @@
 import { GroupColumnDef } from '@tanstack/react-table';
-import { useMemo } from 'react';
-import { isAccessorKeyColumnDef, isGroupColumnDef, ColumnNameToHiddenStateMap } from '../grid-utils';
+import { useContext, useMemo } from 'react';
+import { isAccessorKeyColumnDef, isGroupColumnDef } from './reactTable';
+import { InlinePatientGridEditingContext } from './useInlinePatientGridEditing';
 
 /**
  * Given a react-table column definition set, returns only those columns that should be displayed,
  * according to the given `hidden` map.
  */
-export function useVisibleColumnsOnly<T = unknown>(
-  columns: Array<GroupColumnDef<T>>,
-  columnHiddenStates: ColumnNameToHiddenStateMap,
-) {
+export function useVisibleColumnsOnly<T = unknown>(columns: Array<GroupColumnDef<T>>) {
+  const { columnHiddenStates } = useContext(InlinePatientGridEditingContext);
+
   return useMemo(() => {
     const impl = (columnGroup: GroupColumnDef<T>) => {
       const updatedGroup = {

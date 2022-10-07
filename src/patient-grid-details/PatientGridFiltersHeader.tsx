@@ -1,10 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Stack, ButtonSkeleton, Tag } from '@carbon/react';
 import styles from './PatientGridFiltersHeader.scss';
-import { PatientGridFilterGet, useDeletePatientGridFilterMutation, useGetAllPatientGridFilters } from '../api';
-import { showToast } from '@openmrs/esm-framework';
-import { useColumnNameToHeaderLabelMap } from '../grid-utils';
+import { InlinePatientGridEditingContext, LocalFilter, useColumnNameToHeaderLabelMap } from '../grid-utils';
 
 export interface PatientGridFiltersHeaderProps {
   patientGridId: string;
@@ -13,21 +11,30 @@ export interface PatientGridFiltersHeaderProps {
 export function PatientGridFiltersHeader({ patientGridId }: PatientGridFiltersHeaderProps) {
   const { t } = useTranslation();
   const { data: columnNameToHeaderLabelMap } = useColumnNameToHeaderLabelMap();
-  const { data: filters } = useGetAllPatientGridFilters(patientGridId);
+  const { filters } = useContext(InlinePatientGridEditingContext);
+
+  // Every filter with a UUID must come from the backend.
+  // Those should appear before the local ones.
+  const originalFilters = filters.filter((x) => 'uuid' in x);
+  const localFilters = filters.filter((x) => !('uuid' in x));
 
   return (
     <Stack as="section" orientation="horizontal" gap={4} className={styles.filtersContainer}>
       <span className={styles.filtersCaption}>{t('patientGridFiltersHeaderFilterCaption', 'Filters:')}</span>
 
       {filters?.length && columnNameToHeaderLabelMap ? (
-        filters.map((filter) => (
-          <FilterTag
-            key={filter.uuid}
-            filter={filter}
-            patientGridId={patientGridId}
-            columnNameToHeaderLabelMap={columnNameToHeaderLabelMap}
-          />
-        ))
+        <>
+          {originalFilters.map((filter) => (
+            <FilterTag key={filter.uuid} filter={filter} columnNameToHeaderLabelMap={columnNameToHeaderLabelMap} />
+          ))}
+          {localFilters.map((filter) => (
+            <FilterTag
+              key={`${filter.name}-${filter.operand}`}
+              filter={filter}
+              columnNameToHeaderLabelMap={columnNameToHeaderLabelMap}
+            />
+          ))}
+        </>
       ) : filters && columnNameToHeaderLabelMap ? (
         <span className={styles.filtersFallback}>{t('patientGridFiltersHeaderNoFiltersFallback', '--')}</span>
       ) : (
@@ -41,52 +48,32 @@ export function PatientGridFiltersHeader({ patientGridId }: PatientGridFiltersHe
 }
 
 interface FilterTagProps {
-  filter: PatientGridFilterGet;
+  filter: LocalFilter;
   columnNameToHeaderLabelMap: Record<string, string>;
-  patientGridId: string;
 }
 
-function FilterTag({ filter, columnNameToHeaderLabelMap, patientGridId }: FilterTagProps) {
+function FilterTag({ filter, columnNameToHeaderLabelMap }: FilterTagProps) {
   const { t } = useTranslation();
-  const filterName = `${
-    columnNameToHeaderLabelMap[filter.column.display] ?? filter.column.display ?? filter.display
-  }: ${filter.name ?? filter.operand}`;
-  const deleteFilterMutation = useDeletePatientGridFilterMutation(patientGridId);
-  const handleDelete = () =>
-    deleteFilterMutation.mutate(
-      { patientGridId, filterId: filter.uuid },
-      {
-        onSuccess: () =>
-          showToast({
-            kind: 'success',
-            title: t('deletePatientGridFilterSuccessToastTitle', 'Filter deleted successfully'),
-            description: t(
-              'deletePatientGridFilterSuccessToastDescription',
-              'Successfully deleted the filter "{name}".',
-              {
-                name: filterName,
-              },
-            ),
-          }),
-        onError: () =>
-          showToast({
-            kind: 'error',
-            title: t('deletePatientGridFilterErrorToastTitle', 'Filter deletion failed'),
-            description: t('deletePatientGridFilterErrorToastDescription', 'Deleting the filter "{name}" failed.', {
-              name: filterName,
-            }),
-          }),
-      },
-    );
+  const isLocalFilter = !('uuid' in filter);
+  const filterName = `${columnNameToHeaderLabelMap[filter.columnName] ?? filter.columnName}: ${
+    filter.name ?? filter.operand
+  }`;
+  const { filters } = useContext(InlinePatientGridEditingContext);
+  const { push } = useContext(InlinePatientGridEditingContext);
+  const handleDelete = () => {
+    push((state) => ({
+      ...state,
+      filters: filters.filter((x) => x.columnName !== filter.columnName && x.operand !== filter.operand),
+    }));
+  };
 
   return (
     <Tag
-      className={styles.filterTag}
+      className={`${styles.filterTag} ${isLocalFilter ? styles.localFilterTag : ''}`}
       size="md"
       type="gray"
       filter
       title={t('patientGridFiltersHeaderRemoveFilter', 'Remove filter')}
-      disabled={deleteFilterMutation.isLoading}
       onClose={handleDelete}>
       {filterName}
     </Tag>

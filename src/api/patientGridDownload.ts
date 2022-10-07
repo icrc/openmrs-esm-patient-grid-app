@@ -1,7 +1,13 @@
 import { openmrsFetch, OpenmrsResource } from '@openmrs/esm-framework';
+import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSWR from 'swr';
-import { ColumnNameToHeaderLabelMap, useColumnNameToHeaderLabelMap, ColumnNameToHiddenStateMap } from '../grid-utils';
+import {
+  ColumnNameToHeaderLabelMap,
+  useColumnNameToHeaderLabelMap,
+  ColumnNameToHiddenStateMap,
+  InlinePatientGridEditingContext,
+} from '../grid-utils';
 import { FormGet, useGetAllPublishedPrivilegeFilteredForms } from './form';
 import { FormSchema, useFormSchemasOfForms } from './formSchema';
 import { PatientGridGet, useGetPatientGrid } from './patientGrid';
@@ -65,13 +71,14 @@ export interface DownloadGridData {
   fileName: string;
 }
 
-export function useDownloadGridData(patientGridId: string, columnHiddenStates: ColumnNameToHiddenStateMap) {
+export function useDownloadGridData(patientGridId: string) {
   const { t } = useTranslation();
   const downloadSwr = useGetPatientGridDownload(patientGridId);
   const patientGridSwr = useGetPatientGrid(patientGridId);
   const formsSwr = useGetAllPublishedPrivilegeFilteredForms();
   const formSchemasSwr = useFormSchemasOfForms(formsSwr.data);
   const columnNameToHeaderLabelMapSwr = useColumnNameToHeaderLabelMap();
+  const { columnHiddenStates } = useContext(InlinePatientGridEditingContext);
 
   return useMergedSwr<Omit<DownloadGridData, 'fileName'>>(
     () => {

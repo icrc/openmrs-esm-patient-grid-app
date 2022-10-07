@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageHeader } from '../components';
 import { Button, ButtonSkeleton, OverflowMenu, OverflowMenuItem, SkeletonText } from '@carbon/react';
@@ -7,18 +7,15 @@ import styles from './PatientGridDetailsHeader.scss';
 import { useGetPatientGrid, useGetPatientGridReport } from '../api';
 import { useParams } from 'react-router-dom';
 import { PatientGridDetailsParams } from '../routes';
+import { InlinePatientGridEditingContext } from '../grid-utils';
 
 export interface PatientGridDetailsHeaderProps {
   canEdit?: boolean;
   canDelete?: boolean;
   canSave?: boolean;
-  canUndo?: boolean;
-  canRedo?: boolean;
   onEditClick?(): void;
   onRefreshGridClick?(): void;
   onDeleteClick?(): void;
-  onUndoClick?(): void;
-  onRedoClick?(): void;
   onSaveClick?(): void;
 }
 
@@ -26,19 +23,16 @@ export function PatientGridDetailsHeader({
   canEdit,
   canDelete,
   canSave,
-  canUndo,
-  canRedo,
   onEditClick,
   onRefreshGridClick,
   onDeleteClick,
-  onUndoClick,
-  onRedoClick,
   onSaveClick,
 }: PatientGridDetailsHeaderProps) {
   const { t } = useTranslation();
   const { id: patientGridId } = useParams<PatientGridDetailsParams>();
   const { data: patientGrid } = useGetPatientGrid(patientGridId);
   const { data: patientGridReport } = useGetPatientGridReport(patientGridId);
+  const { canUndo, canRedo, undo, redo } = useContext(InlinePatientGridEditingContext);
 
   return (
     <PageHeader
@@ -61,10 +55,10 @@ export function PatientGridDetailsHeader({
       actions={
         patientGrid ? (
           <>
-            <Button kind="ghost" size="md" renderIcon={Undo} disabled={!canUndo} onClick={onUndoClick}>
+            <Button kind="ghost" size="md" renderIcon={Undo} disabled={!canUndo} onClick={undo}>
               {t('patientGridDetailsHeaderUndo', 'Undo')}
             </Button>
-            <Button kind="ghost" size="md" renderIcon={Redo} disabled={!canRedo} onClick={onRedoClick}>
+            <Button kind="ghost" size="md" renderIcon={Redo} disabled={!canRedo} onClick={redo}>
               {t('patientGridDetailsHeaderRedo', 'Redo')}
             </Button>
             <Button kind="ghost" size="md" renderIcon={Save} disabled={!canSave} onClick={onSaveClick}>

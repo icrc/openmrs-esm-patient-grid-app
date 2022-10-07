@@ -23,7 +23,7 @@ import {
   Renew,
   WarningAltFilled,
 } from '@carbon/react/icons';
-import React, { Fragment, useMemo, useState } from 'react';
+import React, { Fragment, useContext, useMemo, useState } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -47,18 +47,18 @@ import { EditSidePanelValues } from './PatientGridDetailsPage';
 import {
   isFormSchemaQuestionColumnName,
   patientDetailsNameColumnName,
-  ColumnNameToHiddenStateMap,
+  getFormEngineDataRequiredForEditing,
+  InlinePatientGridEditingContext,
 } from '../grid-utils';
 import { interpolateUrl } from '@openmrs/esm-framework';
-import { getFormEngineDataRequiredForEditing } from '../grid-utils/editing';
-import { useVisibleColumnsOnly } from './useVisibleColumnsOnly';
+import { useVisibleColumnsOnly } from '../grid-utils/useVisibleColumnsOnly';
+import { useGetPatientGrid } from '../api';
 
 export interface PatientGridProps {
   patientGridId: string;
   columns: Array<GroupColumnDef<PatientGridDataRow, unknown>>;
   data: Array<PatientGridDataRow>;
   showReloadGrid: boolean;
-  columnHiddenStates: ColumnNameToHiddenStateMap;
   showEditSidePanel(values: EditSidePanelValues): void;
   showToggleColumnsSidePanel(): void;
   refreshPatientGrid(): void;
@@ -69,17 +69,17 @@ export function PatientGrid({
   columns,
   data,
   showReloadGrid,
-  columnHiddenStates,
   showEditSidePanel,
   showToggleColumnsSidePanel,
   refreshPatientGrid,
 }: PatientGridProps) {
   const { t } = useTranslation();
+  const { data: patientGrid } = useGetPatientGrid(patientGridId);
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
   const [globalFilter, setGlobalFilter] = useState('');
   const handleGlobalFilterChange = useMemo(() => debounce(setGlobalFilter, 300), []);
   const [sorting, setSorting] = useState<SortingState>([]);
-  const visibleColumns = useVisibleColumnsOnly(columns, columnHiddenStates);
+  const visibleColumns = useVisibleColumnsOnly(columns);
   const table = useReactTable<PatientGridDataRow>({
     columns: visibleColumns,
     data,
@@ -95,6 +95,7 @@ export function PatientGrid({
     },
   });
   const headerGroups = table.getHeaderGroups();
+  const { columnHiddenStates } = useContext(InlinePatientGridEditingContext);
 
   const handleCellClick = (cell: Cell<PatientGridDataRow, unknown>, row: Row<PatientGridDataRow>) => {
     const columnName = cell.column.id;
@@ -123,7 +124,7 @@ export function PatientGrid({
           <Button size="sm" kind="ghost" renderIcon={OpenPanelRight} onClick={showToggleColumnsSidePanel}>
             {t('patientGridColumnsButton', 'Columns ({actual}/{total})', {
               actual: Object.values(columnHiddenStates).filter((x) => !x).length,
-              total: headerGroups[headerGroups.length - 1].headers.length,
+              total: patientGrid?.columns.length,
             })}
           </Button>
           <Layer className={styles.tableSearchLayer}>
@@ -230,11 +231,7 @@ export function PatientGrid({
                       {index % 2 === 0 && <tr className={styles.hiddenTableRowForContinuousZebra} />}
                       <TableExpandedRow className={styles.expandRow} colSpan="100%">
                         <div className={styles.expandRowBackdrop}>
-                          <HistoricEncountersTabs
-                            report={row.original.__report}
-                            reportRow={row.original.__reportRow}
-                            columnHiddenStates={columnHiddenStates}
-                          />
+                          <HistoricEncountersTabs report={row.original.__report} reportRow={row.original.__reportRow} />
                         </div>
                       </TableExpandedRow>
                       {index % 2 === 1 && <tr className={styles.hiddenTableRowForContinuousZebra} />}
@@ -250,7 +247,6 @@ export function PatientGrid({
       <DownloadModal
         patientGridId={patientGridId}
         isOpen={isDownloadModalOpen}
-        columnHiddenStates={columnHiddenStates}
         onClose={() => setIsDownloadModalOpen(false)}
       />
     </main>

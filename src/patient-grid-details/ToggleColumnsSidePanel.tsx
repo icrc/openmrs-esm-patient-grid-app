@@ -1,34 +1,35 @@
 import { GroupColumnDef } from '@tanstack/react-table';
 import { Checkbox, ModalFooter } from '@carbon/react';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SidePanel } from '../components';
 import styles from './ToggleColumnsSidePanel.scss';
 import { PatientGridDataRow } from './usePatientGrid';
-import { ColumnNameToHiddenStateMap } from '../grid-utils';
-import { isAccessorKeyColumnDef, isGroupColumnDef } from '../grid-utils/reactTable';
+import {
+  ColumnNameToHiddenStateMap,
+  InlinePatientGridEditingContext,
+  isAccessorKeyColumnDef,
+  isGroupColumnDef,
+} from '../grid-utils';
 
 export interface ToggleColumnsSidePanelProps {
   columns: Array<GroupColumnDef<PatientGridDataRow>>;
-  columnHiddenStates: ColumnNameToHiddenStateMap;
   onClose(): void;
-  onSubmit(value: ColumnNameToHiddenStateMap);
 }
 
-export function ToggleColumnsSidePanel({
-  columns,
-  columnHiddenStates,
-  onSubmit,
-  onClose,
-}: ToggleColumnsSidePanelProps) {
+export function ToggleColumnsSidePanel({ columns, onClose }: ToggleColumnsSidePanelProps) {
   const { t } = useTranslation();
+  const { columnHiddenStates, push } = useContext(InlinePatientGridEditingContext);
   const [localColumnHiddenStates, setLocalColumnHiddenStates] = useState(columnHiddenStates);
 
   // Sync undo/redo while the panel is open.
   useEffect(() => setLocalColumnHiddenStates(columnHiddenStates), [columnHiddenStates]);
 
   const submit = () => {
-    onSubmit(localColumnHiddenStates);
+    push((current) => ({
+      ...current,
+      columnHiddenStates: localColumnHiddenStates,
+    }));
     onClose();
   };
 

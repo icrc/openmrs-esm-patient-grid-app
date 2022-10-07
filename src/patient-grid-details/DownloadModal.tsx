@@ -2,17 +2,16 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal, RadioButtonGroup, RadioButton } from '@carbon/react';
 import { DownloadGridData, useDownloadGridData } from '../api';
-import { getPatientGridDownloadReportData, ColumnNameToHiddenStateMap } from '../grid-utils';
+import { getPatientGridDownloadReportData } from '../grid-utils';
 import xlsx from 'xlsx';
 
 export interface DownloadModalProps {
   patientGridId: string;
   isOpen: boolean;
-  columnHiddenStates: ColumnNameToHiddenStateMap;
   onClose(): void;
 }
 
-export function DownloadModal({ patientGridId, isOpen, columnHiddenStates, onClose }: DownloadModalProps) {
+export function DownloadModal({ patientGridId, isOpen, onClose }: DownloadModalProps) {
   const { t } = useTranslation();
   const [fileExtension, setFileExtension] = useState<string | undefined>(undefined);
   const [hasDownloadStarted, setHasDownloadStarted] = useState(false);
@@ -86,11 +85,7 @@ export function DownloadModal({ patientGridId, isOpen, columnHiddenStates, onClo
       danger: false,
       modalHeading: t('downloadModalChooseDownloadHeading', 'Download data as file'),
       modalBody: hasDownloadStarted ? (
-        <PrepareDownload
-          patientGridId={patientGridId}
-          columnHiddenStates={columnHiddenStates}
-          onDownloadPrepared={handleDownloadPrepared}
-        />
+        <PrepareDownload patientGridId={patientGridId} onDownloadPrepared={handleDownloadPrepared} />
       ) : (
         <RadioButtonGroup
           legendText={t(
@@ -129,7 +124,7 @@ export function DownloadModal({ patientGridId, isOpen, columnHiddenStates, onClo
   const step = modalPropsForSteps[stepKey];
 
   useEffect(() => {
-    // Reset to the first step whenever the modal is newly open.
+    // Reset to the first step whenever the modal is newly opened.
     if (isOpen) {
       setStepKey('internalExternal');
       setHasDownloadStarted(false);
@@ -155,13 +150,12 @@ export function DownloadModal({ patientGridId, isOpen, columnHiddenStates, onClo
 
 interface PrepareDownloadProps {
   patientGridId: string;
-  columnHiddenStates: ColumnNameToHiddenStateMap;
   onDownloadPrepared(data: Omit<DownloadGridData, 'fileName'>): void;
 }
 
-function PrepareDownload({ patientGridId, columnHiddenStates, onDownloadPrepared }: PrepareDownloadProps) {
+function PrepareDownload({ patientGridId, onDownloadPrepared }: PrepareDownloadProps) {
   const { t } = useTranslation();
-  const { data } = useDownloadGridData(patientGridId, columnHiddenStates);
+  const { data } = useDownloadGridData(patientGridId);
   const triggered = useRef(false);
 
   useEffect(() => {

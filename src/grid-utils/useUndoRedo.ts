@@ -38,9 +38,9 @@ export function useUndoRedo<T>() {
   const clear = useCallback(() => setState(initialState), []);
 
   const push = useCallback(
-    (entry: T) =>
+    (getNext: (current?: T) => T) =>
       setState((state) => ({
-        undoStack: [...state.undoStack, entry],
+        undoStack: [...state.undoStack, getNext(state.undoStack[state.undoStack.length - 1])],
         redoStack: [],
       })),
     [],
@@ -56,3 +56,5 @@ export function useUndoRedo<T>() {
     push,
   };
 }
+
+export type UndoRedo<T> = ReturnType<typeof useUndoRedo<T>>;
