@@ -6,6 +6,8 @@ import {
   patientDetailsGenderColumnName,
   patientDetailsAgeCategoryColumnName,
   getFormSchemaQuestionColumnName,
+  getFormAgeColumnName,
+  getFormDateColumnName,
 } from './columnNames';
 import { getFormSchemaReferenceUuid, getFormSchemaQuestionsMappableToColumns } from './formSchema';
 
@@ -71,20 +73,19 @@ export function getPatientGridColumnPostResourcesForForms(
     }
 
     const specialColumns: Array<PatientGridColumnPost> = [
-      // TODO: Each form needs an "encounterDatetime" column *if* there is a question of type "encounterDatetime"
-      // inside the form schema. That column should be added exactly here.
-      // Right now this is not supported by the backend, hence this TODO.
-      //
-      //
-      // TODO: Age columns currently crash the report.
-      // If the report supports age columns without errors, uncomment the following.
       // {
-      //   name: getFormAgeColumnName(form),
+      //   name: getFormDateColumnName(form),
       //   type: 'agecolumn',
-      //   datatype: 'ENC_AGE',
+      //   datatype: 'ENC_DATE',
       //   encounterType: form.encounterType.uuid,
-      //   convertToAgeRange: false,
       // },
+      {
+        name: getFormAgeColumnName(form),
+        type: 'agecolumn',
+        datatype: 'ENC_AGE',
+        encounterType: form.encounterType.uuid,
+        convertToAgeRange: false,
+      },
     ];
 
     const questionInfoMappableToColumns = getFormSchemaQuestionsMappableToColumns(form, formSchema);

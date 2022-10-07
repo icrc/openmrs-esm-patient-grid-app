@@ -33,7 +33,6 @@ export function PatientGridDetailsPage() {
   const [showReloadGrid, setShowReloadGrid] = useState(false);
   const refreshPatientGridMutation = useRefreshPatientGridReportMutation();
   const inlinePatientGridEditingState = useInlinePatientGridEditingContextState(patientGridId);
-  const { columnHiddenStates, push } = inlinePatientGridEditingState;
 
   const showEditSidePanel = (editSidePanelValues: EditSidePanelValues) => {
     setSidePanel(
@@ -104,7 +103,6 @@ export function PatientGridDetailsPage() {
             <PatientGridDetailsHeader
               canEdit={session.user?.uuid === patientGrid.owner?.uuid}
               canDelete={session.user?.uuid === patientGrid.owner?.uuid}
-              canSave={session.user?.uuid === patientGrid.owner?.uuid /* TODO: && hasLocalChanges*/}
               onEditClick={() => setPatientGridToEdit(patientGrid)}
               onRefreshGridClick={refreshGrid}
               onDeleteClick={() => setPatientGridToDelete(patientGrid)}

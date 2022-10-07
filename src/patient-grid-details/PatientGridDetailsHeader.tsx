@@ -8,31 +8,36 @@ import { useGetPatientGrid, useGetPatientGridReport } from '../api';
 import { useParams } from 'react-router-dom';
 import { PatientGridDetailsParams } from '../routes';
 import { InlinePatientGridEditingContext } from '../grid-utils';
+import { useSession } from '@openmrs/esm-framework';
 
 export interface PatientGridDetailsHeaderProps {
   canEdit?: boolean;
   canDelete?: boolean;
-  canSave?: boolean;
   onEditClick?(): void;
   onRefreshGridClick?(): void;
   onDeleteClick?(): void;
-  onSaveClick?(): void;
 }
 
 export function PatientGridDetailsHeader({
   canEdit,
   canDelete,
-  canSave,
   onEditClick,
   onRefreshGridClick,
   onDeleteClick,
-  onSaveClick,
 }: PatientGridDetailsHeaderProps) {
   const { t } = useTranslation();
+  const session = useSession();
   const { id: patientGridId } = useParams<PatientGridDetailsParams>();
   const { data: patientGrid } = useGetPatientGrid(patientGridId);
   const { data: patientGridReport } = useGetPatientGridReport(patientGridId);
-  const { canUndo, canRedo, undo, redo } = useContext(InlinePatientGridEditingContext);
+  const { canUndo, canRedo, undo, redo, saveChanges, isSavingChanges, canSaveChanges } = useContext(
+    InlinePatientGridEditingContext,
+  );
+
+  const handleSaveClick = async () => {
+    // TODO: Error handling.
+    await saveChanges();
+  };
 
   return (
     <PageHeader
@@ -61,7 +66,12 @@ export function PatientGridDetailsHeader({
             <Button kind="ghost" size="md" renderIcon={Redo} disabled={!canRedo} onClick={redo}>
               {t('patientGridDetailsHeaderRedo', 'Redo')}
             </Button>
-            <Button kind="ghost" size="md" renderIcon={Save} disabled={!canSave} onClick={onSaveClick}>
+            <Button
+              kind="ghost"
+              size="md"
+              renderIcon={Save}
+              disabled={patientGrid.owner?.uuid !== session.user?.uuid || !canSaveChanges || isSavingChanges}
+              onClick={handleSaveClick}>
               {t('patientGridDetailsHeaderSaveChanges', 'Save changes')}
             </Button>
             <OverflowMenu ariaLabel={t('patientGridDetailsHeaderActionsLabel', 'Actions')} size="md" flipped>

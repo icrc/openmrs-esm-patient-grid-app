@@ -5,6 +5,7 @@ export type PatientGridColumnDataType =
   | 'NAME'
   | 'GENDER'
   | 'ENC_AGE'
+  | 'ENC_DATE'
   | 'OBS'
   | 'DATAFILTER_LOCATION'
   | 'DATAFILTER_COUNTRY';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Stack, TextArea, TextInput, Checkbox } from '@carbon/react';
+import { Stack, TextArea, TextInput, Checkbox } from '@carbon/react';
 import { useTranslation } from 'react-i18next';
 import { Hr } from '../components';
 import { PatientGridBuilderContinueButton } from './PatientGridBuilderContinueButton';
@@ -18,16 +18,14 @@ export function PatientGridBuilderDetailsPage({
   const canContinue = !!state.name?.trim().length;
 
   return (
-    <Form>
-      <Stack gap={6}>
-        <PatientGridBuilderHeader
-          page={page}
-          pages={pages}
-          goToPrevious={goToPrevious}
-          title={t('patientGridDetails', 'Grid details')}
-        />
-
-        {/* <Select
+    <Stack gap={6}>
+      <PatientGridBuilderHeader
+        page={page}
+        pages={pages}
+        goToPrevious={goToPrevious}
+        title={t('patientGridDetails', 'Grid details')}
+      />
+      {/* <Select
           id="gridToDuplicate"
           defaultValue="placeholder"
           labelText={t('patientGridDetailsDuplicateSelectLabel', 'Base on / duplicate from existing patient grid')}>
@@ -39,36 +37,35 @@ export function PatientGridBuilderDetailsPage({
           />
         </Select> */}
 
-        <Hr />
+      <Hr />
 
-        <TextInput
-          id="gridName"
-          labelText={t('patientGridDetailsNameInputLabel', 'Grid name')}
-          value={state.name ?? ''}
-          onChange={(e) => setState((state) => ({ ...state, name: e.target.value }))}
-        />
+      <TextInput
+        id="gridName"
+        labelText={t('patientGridDetailsNameInputLabel', 'Grid name')}
+        value={state.name ?? ''}
+        onChange={(e) => setState((state) => ({ ...state, name: e.target.value }))}
+      />
 
-        <TextArea
-          id="gridDescription"
-          enableCounter
-          maxCount={300}
-          labelText={t('patientGridDetailsDescriptionInputLabel', 'Describe the purpose of this grid in a few words')}
-          value={state.description ?? ''}
-          onChange={(e) => setState((state) => ({ ...state, description: e.target.value }))}
-        />
+      <TextArea
+        id="gridDescription"
+        enableCounter
+        maxCount={300}
+        labelText={t('patientGridDetailsDescriptionInputLabel', 'Describe the purpose of this grid in a few words')}
+        value={state.description ?? ''}
+        onChange={(e) => setState((state) => ({ ...state, description: e.target.value }))}
+      />
 
-        <Checkbox
-          id="shareGrid"
-          labelText={t('patientGridDetailsShareGridCheckboxLabel', 'Share this grid with others')}
-          checked={state.shared}
-          onChange={(_, { checked }) => setState((state) => ({ ...state, shared: checked }))}
-        />
+      <Checkbox
+        id="createGridShared"
+        labelText={t('patientGridDetailsShareGridCheckboxLabel', 'Share this grid with others')}
+        checked={state.shared}
+        onChange={(_, { checked }) => setState((state) => ({ ...state, shared: checked }))}
+      />
 
-        <Hr />
-        <PatientGridBuilderContinueButton disabled={!canContinue} onClick={goToNext}>
-          {t('patientGridDetailsContinueButton', 'Continue by configuring grid sections')}
-        </PatientGridBuilderContinueButton>
-      </Stack>
-    </Form>
+      <Hr />
+      <PatientGridBuilderContinueButton disabled={!canContinue} onClick={goToNext}>
+        {t('patientGridDetailsContinueButton', 'Continue by configuring grid sections')}
+      </PatientGridBuilderContinueButton>
+    </Stack>
   );
 }

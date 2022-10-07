@@ -1,7 +1,15 @@
 import { createContext, useMemo } from 'react';
-import { useGetAllPatientGridFilters, useMergedSwr } from '../api';
+import {
+  MutateFn,
+  useGetAllPatientGridFilters,
+  useGetAllPatientGrids,
+  useGetPatientGrid,
+  useMergedSwr,
+  useMutation,
+} from '../api';
 import { ColumnNameToHiddenStateMap, useColumnHiddenStates } from '.';
 import { UndoRedo, useUndoRedo } from './useUndoRedo';
+import { openmrsFetch } from '@openmrs/esm-framework';
 
 export interface LocalFilter {
   uuid?: string;
@@ -32,6 +40,9 @@ export interface InlinePatientGridEditingContextState extends UndoRedo<InlinePat
    * May be the original value if nothing was edited.
    */
   filters: PatientGridFilters;
+  saveChanges: MutateFn<void, unknown, Error>;
+  isSavingChanges: boolean;
+  canSaveChanges: boolean;
 }
 
 export const InlinePatientGridEditingContext = createContext<InlinePatientGridEditingContextState>(null);
@@ -39,6 +50,8 @@ export const InlinePatientGridEditingContext = createContext<InlinePatientGridEd
 export function useInlinePatientGridEditingContextState(patientGridId: string): InlinePatientGridEditingContextState {
   const originalColumnHiddenStatesSwr = useColumnHiddenStates(patientGridId);
   const originalFiltersSwr = useGetAllPatientGridFilters(patientGridId);
+  const { mutate: mutateAllPatientGrids } = useGetAllPatientGrids();
+  const { data: patientGrid, mutate: mutatePatientGrid } = useGetPatientGrid(patientGridId);
   const { data: original } = useMergedSwr<InlinePatientGridEditingState>(
     () => ({
       columnHiddenStates: originalColumnHiddenStatesSwr.data,
@@ -53,8 +66,42 @@ export function useInlinePatientGridEditingContextState(patientGridId: string): 
     }),
     [originalColumnHiddenStatesSwr, originalFiltersSwr],
   );
-
   const { canUndo, canRedo, current, undo, redo, push, clear } = useUndoRedo<InlinePatientGridEditingState>();
+  const columnHiddenStates = current?.columnHiddenStates ?? original?.columnHiddenStates;
+  const filters = current?.filters ?? original?.filters;
+
+  const { mutate: saveChanges, isLoading: isSavingChanges } = useMutation(
+    async () => {
+      // Should practically never happen, but better be save.
+      if (!patientGrid) {
+        return;
+      }
+
+      const requests: Array<Promise<unknown>> = [];
+
+      // Cross check the column hidden states. Every column that changed from the original must be updated.
+      for (const column of patientGrid.columns) {
+        if (original.columnHiddenStates[column.name] !== columnHiddenStates[column.name]) {
+          requests.push(
+            openmrsFetch(`/ws/rest/v1/patientgrid/patientgrid/${patientGridId}/column/${column.uuid}`, {
+              headers: { 'Content-Type': 'application/json' },
+              method: 'POST',
+              body: {
+                hidden: columnHiddenStates[column.name],
+              },
+            }),
+          );
+        }
+      }
+
+      await Promise.all(requests);
+    },
+    {
+      onSettled() {
+        Promise.all([mutatePatientGrid(), mutateAllPatientGrids()]).then(clear);
+      },
+    },
+  );
 
   return useMemo(
     () => ({
@@ -66,9 +113,25 @@ export function useInlinePatientGridEditingContextState(patientGridId: string): 
       push,
       clear,
       original,
-      columnHiddenStates: current?.columnHiddenStates ?? original?.columnHiddenStates ?? {},
-      filters: current?.filters ?? original?.filters ?? [],
+      columnHiddenStates,
+      filters,
+      saveChanges,
+      isSavingChanges,
+      canSaveChanges: !!current,
     }),
-    [canUndo, canRedo, current, undo, redo, push, clear, original],
+    [
+      canUndo,
+      canRedo,
+      current,
+      undo,
+      redo,
+      push,
+      clear,
+      original,
+      saveChanges,
+      isSavingChanges,
+      columnHiddenStates,
+      filters,
+    ],
   );
 }

@@ -65,13 +65,13 @@ export function EditPatientGridModal({ patientGridToEdit, setPatientGridToEdit }
       onRequestClose={() => setPatientGridToEdit(undefined)}>
       <Stack gap={6}>
         <TextInput
-          id="gridName"
+          id={`${patientGridToEdit?.uuid}-edit-name`}
           labelText={t('editPatientGridModalNameInputLabel', 'Grid name')}
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
         <TextArea
-          id="gridDescription"
+          id={`${patientGridToEdit?.uuid}-edit-description`}
           enableCounter
           maxCount={300}
           labelText={t('editPatientGridModalDescriptionInputLabel', 'Describe the purpose of this grid in a few words')}
@@ -79,7 +79,7 @@ export function EditPatientGridModal({ patientGridToEdit, setPatientGridToEdit }
           onChange={(e) => setDescription(e.target.value)}
         />
         <Checkbox
-          id="shareGrid"
+          id={`${patientGridToEdit?.uuid}-edit-shared`}
           labelText={t('patientGridDetailsShareGridCheckboxLabel', 'Share this grid with others')}
           checked={shared}
           onChange={(_, { checked }) => setShared(checked)}
