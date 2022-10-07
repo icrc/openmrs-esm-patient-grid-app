@@ -155,19 +155,19 @@ function mapReportEntriesToGridData(report: PatientGridReportGet) {
       __reportRow: reportRow,
     };
 
-    for (const [key, value] of Object.entries(reportRow)) {
-      if (typeof value === 'string') {
+    for (const [key, reportRowCell] of Object.entries(reportRow)) {
+      if (typeof reportRowCell === 'string') {
         // The cell is already a raw string.
-        result[key] = value;
-      } else if (value === null || value === undefined) {
+        result[key] = reportRowCell;
+      } else if (reportRowCell === null || reportRowCell === undefined) {
         // The cell is null/undefined. -> Use empty strings here to enable filtering/sorting.
         result[key] = '';
-      } else if (typeof value === 'object') {
+      } else if (typeof reportRowCell === 'object') {
         // The cell is an obs.
-        result[key] = `${value.value}`;
+        result[key] = `${typeof reportRowCell.value === 'object' ? reportRowCell.value.display : reportRowCell.value}`;
       } else {
         // Anything else (e.g. numbers) is just optimistically converted to a string.
-        result[key] = `${value}`;
+        result[key] = `${reportRowCell}`;
       }
       // TODO: What about other obs values? (Could there be UUIDs? Probably...)
     }

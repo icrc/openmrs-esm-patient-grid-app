@@ -16,7 +16,14 @@ export interface PatientGridReportRowGet
 export interface PatientGridReportObsGet {
   uuid: string;
   concept: string;
-  value: string;
+  value:
+    | string
+    | number
+    | boolean
+    | {
+        uuid: string;
+        display: string;
+      };
   formFieldPath?: string;
   formFieldNamespace?: string;
   encounter: {
