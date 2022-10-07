@@ -5,7 +5,6 @@ import useSWR from 'swr';
 import {
   ColumnNameToHeaderLabelMap,
   useColumnNameToHeaderLabelMap,
-  ColumnNameToHiddenStateMap,
   InlinePatientGridEditingContext,
 } from '../grid-utils';
 import { FormGet, useGetAllPublishedPrivilegeFilteredForms } from './form';

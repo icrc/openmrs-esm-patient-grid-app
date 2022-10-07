@@ -7,7 +7,6 @@ import {
   patientDetailsAgeCategoryColumnName,
   getFormSchemaQuestionColumnName,
   getFormAgeColumnName,
-  getFormDateColumnName,
 } from './columnNames';
 import { getFormSchemaReferenceUuid, getFormSchemaQuestionsMappableToColumns } from './formSchema';
 
