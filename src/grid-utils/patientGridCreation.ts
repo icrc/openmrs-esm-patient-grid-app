@@ -72,9 +72,10 @@ export function getPatientGridColumnPostResourcesForForms(
     }
 
     const specialColumns: Array<PatientGridColumnPost> = [
+      // TODO: Uncomment once it exists on the BE.
       // {
       //   name: getFormDateColumnName(form),
-      //   type: 'agecolumn',
+      //   type: 'encounterdatecolumn',
       //   datatype: 'ENC_DATE',
       //   encounterType: form.encounterType.uuid,
       // },
