@@ -100,13 +100,13 @@ export function PatientGridsTable({ type }: PatientGridsTableProps) {
                           <OverflowMenuItem
                             itemText={t('patientGridEditRowMenuItem', 'Edit')}
                             onClick={() => setPatientGridToEdit(patientGrid)}
-                            disabled={patientGrid.owner?.uuid !== session.user?.uuid}
+                            disabled={patientGrid?.owner?.uuid !== session.user?.uuid}
                           />
                           <OverflowMenuItem
                             isDelete
                             itemText={t('patientGridDeleteRowMenuItem', 'Delete')}
                             onClick={() => setPatientGridToDelete(patientGrid)}
-                            disabled={patientGrid.owner?.uuid !== session.user?.uuid}
+                            disabled={patientGrid?.owner?.uuid !== session.user?.uuid}
                           />
                         </OverflowMenu>
                       </TableCell>

@@ -70,6 +70,7 @@ export function useInlinePatientGridEditingContextState(patientGridId: string): 
   const columnHiddenStates = current?.columnHiddenStates ?? original?.columnHiddenStates;
   const filters = current?.filters ?? original?.filters;
 
+  // TODO: This should not be in this file. Or alternatively be split up into smaller parts that live in the "api" folder.
   const { mutate: saveChanges, isLoading: isSavingChanges } = useMutation(
     async () => {
       // Should practically never happen, but better be save.
@@ -94,11 +95,51 @@ export function useInlinePatientGridEditingContextState(patientGridId: string): 
         }
       }
 
+      // Filters. We have two tasks:
+      // 1) Remove deleted filters.
+      // 2) Create new filters.
+      const deletedFilters = original.filters.filter(
+        (filter) =>
+          !filters.some(
+            (localFilter) => localFilter.columnName === filter.columnName && localFilter.operand === filter.operand,
+          ),
+      );
+
+      const newFilters = filters.filter(
+        (localFilter) =>
+          !original.filters.find(
+            (originalFilter) =>
+              originalFilter.columnName === localFilter.columnName && originalFilter.operand === localFilter.operand,
+          ),
+      );
+
+      for (const filter of deletedFilters) {
+        requests.push(
+          openmrsFetch(`/ws/rest/v1/patientgrid/patientgrid/${patientGridId}/filter/${filter.uuid}`, {
+            method: 'DELETE',
+          }),
+        );
+      }
+
+      for (const filter of newFilters) {
+        requests.push(
+          openmrsFetch(`/ws/rest/v1/patientgrid/patientgrid/${patientGridId}/filter`, {
+            headers: { 'Content-Type': 'application/json' },
+            method: 'POST',
+            body: {
+              name: filter.name,
+              column: patientGrid.columns.find((column) => column.name === filter.columnName)?.uuid,
+              operand: filter.operand,
+            },
+          }),
+        );
+      }
+
       await Promise.all(requests);
     },
     {
       onSettled() {
-        Promise.all([mutatePatientGrid(), mutateAllPatientGrids()]).then(clear);
+        Promise.allSettled([mutatePatientGrid(), mutateAllPatientGrids(), originalFiltersSwr.mutate()]).then(clear);
       },
     },
   );

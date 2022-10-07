@@ -1,4 +1,4 @@
-import { ExtensionSlot, showToast, useSession } from '@openmrs/esm-framework';
+import { ErrorState, ExtensionSlot, showToast, useSession } from '@openmrs/esm-framework';
 import React, { ReactNode, useEffect, useState } from 'react';
 import { Hr, PageWithSidePanel, PageWithSidePanelProps } from '../components';
 import { PatientGridDetailsHeader } from './PatientGridDetailsHeader';
@@ -88,7 +88,7 @@ export function PatientGridDetailsPage() {
     }
   }, [t, error]);
 
-  if (!data || refreshPatientGridMutation.isLoading) {
+  if ((!data && !error) || refreshPatientGridMutation.isLoading) {
     return <PatientGridReportLoadingIndicator />;
   }
 
@@ -115,15 +115,22 @@ export function PatientGridDetailsPage() {
           </div>
 
           <div className={styles.gridContainer}>
-            <PatientGrid
-              patientGridId={patientGridId}
-              columns={data?.columns ?? []}
-              data={data?.data ?? []}
-              showReloadGrid={showReloadGrid}
-              showEditSidePanel={showEditSidePanel}
-              showToggleColumnsSidePanel={showToggleColumnsSidePanel}
-              refreshPatientGrid={refreshGrid}
-            />
+            {data ? (
+              <PatientGrid
+                patientGridId={patientGridId}
+                columns={data?.columns ?? []}
+                data={data?.data ?? []}
+                showReloadGrid={showReloadGrid}
+                showEditSidePanel={showEditSidePanel}
+                showToggleColumnsSidePanel={showToggleColumnsSidePanel}
+                refreshPatientGrid={refreshGrid}
+              />
+            ) : (
+              <ErrorState
+                error={error}
+                headerTitle={t('patientGridDetailsPageErrorTitle', 'Failed to load the patient grid report')}
+              />
+            )}
           </div>
         </Stack>
 

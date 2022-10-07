@@ -169,6 +169,7 @@ export function PatientGrid({
                                 onClick={header.column.getToggleSortingHandler()}
                               />
                               <PatientGridColumnFiltersButton
+                                patientGridId={patientGridId}
                                 columnDisplayName={header.column.columnDef.header?.toString() ?? ''}
                                 column={header.column}
                               />

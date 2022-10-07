@@ -11,3 +11,4 @@ export * from './useColumnNameToHeaderLabelMap';
 export * from './useInlinePatientGridEditing';
 export * from './useUndoRedo';
 export * from './useVisibleColumnsOnly';
+export * from './usePossiblePatientGridFiltersForColumn';

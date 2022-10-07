@@ -1,18 +1,24 @@
-import React, { useState } from 'react';
-import { Popover, PopoverContent, Button, ButtonSet, Checkbox } from '@carbon/react';
+import React, { useContext, useState } from 'react';
+import { Popover, PopoverContent, Button, ButtonSet, Checkbox, SkeletonText } from '@carbon/react';
 import { Filter, Close, TrashCan, Checkmark } from '@carbon/react/icons';
 import { useTranslation } from 'react-i18next';
 import { useOnClickOutside } from '@openmrs/esm-framework';
 import styles from './PatientGridColumnFiltersButton.scss';
 import { Column } from '@tanstack/react-table';
 import { PatientGridDataRow } from './usePatientGrid';
+import { InlinePatientGridEditingContext, LocalFilter, usePossiblePatientGridFiltersForColumn } from '../grid-utils';
 
 export interface PatientGridColumnFiltersButtonProps {
+  patientGridId: string;
   columnDisplayName: string;
   column: Column<PatientGridDataRow, unknown>;
 }
 
-export function PatientGridColumnFiltersButton({ columnDisplayName, column }: PatientGridColumnFiltersButtonProps) {
+export function PatientGridColumnFiltersButton({
+  patientGridId,
+  columnDisplayName,
+  column,
+}: PatientGridColumnFiltersButtonProps) {
   const { t } = useTranslation();
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const onClickOutsideRef = useOnClickOutside(() => setIsPopoverOpen(false), isPopoverOpen);
@@ -31,6 +37,7 @@ export function PatientGridColumnFiltersButton({ columnDisplayName, column }: Pa
         {isPopoverOpen && (
           // Conditionally rendering this on demand noticeably improves performance during the initial load of the grid.
           <FiltersPopoverContent
+            patientGridId={patientGridId}
             column={column}
             columnDisplayName={columnDisplayName}
             close={() => setIsPopoverOpen(false)}
@@ -45,9 +52,34 @@ interface FiltersPopoverContentProps extends PatientGridColumnFiltersButtonProps
   close(): void;
 }
 
-function FiltersPopoverContent({ column, columnDisplayName, close }: FiltersPopoverContentProps) {
+function FiltersPopoverContent({ patientGridId, column, columnDisplayName, close }: FiltersPopoverContentProps) {
   const { t } = useTranslation();
-  const uniqueValues = [...column.getFacetedUniqueValues().keys()].filter((x) => x?.length).sort();
+  const { data: possibleFilters } = usePossiblePatientGridFiltersForColumn(patientGridId, column.id);
+  const { original, filters, push } = useContext(InlinePatientGridEditingContext);
+  const [localFilters, setLocalFilters] = useState(filters);
+
+  const handleFilterClick = (filter: LocalFilter, checked: boolean) => {
+    if (checked) {
+      setLocalFilters([...localFilters, filter]);
+    } else {
+      setLocalFilters(localFilters.filter((x) => x.columnName !== filter.columnName && x.operand !== filter.operand));
+    }
+  };
+
+  const handleApply = () => {
+    push((state) => ({
+      ...state,
+      filters: localFilters,
+    }));
+    close();
+  };
+
+  const handleResetToDefault = () => {
+    setLocalFilters([
+      ...original.filters.filter((x) => x.columnName === column.id),
+      ...filters.filter((x) => x.columnName !== column.id),
+    ]);
+  };
 
   return (
     <aside className={styles.popoverContentAligner}>
@@ -58,25 +90,41 @@ function FiltersPopoverContent({ column, columnDisplayName, close }: FiltersPopo
       </p>
 
       <div className={styles.mainContentContainer}>
-        {uniqueValues.length ? (
-          uniqueValues.map((columnValue) => (
-            <Checkbox key={column} id={`${column.id}-${columnValue}`} labelText={columnValue} />
+        {possibleFilters?.length ? (
+          possibleFilters.map((possibleFilter) => (
+            <Checkbox
+              key={possibleFilter.operand}
+              id={`${column.id}-${possibleFilter.operand}`}
+              labelText={possibleFilter.name}
+              checked={localFilters.some(
+                (filter) =>
+                  filter.columnName === possibleFilter.columnName && filter.operand === possibleFilter.operand,
+              )}
+              onChange={(_, { checked }) => handleFilterClick(possibleFilter, checked)}
+            />
           ))
-        ) : (
+        ) : possibleFilters ? (
           <span className={styles.noFiltersAvailable}>
-            {t('patientGridColumnFiltersNoFiltersAvailable', 'No filters available.')}
+            {t('patientGridColumnFiltersNoFiltersAvailable', 'No filters available for the current grid report.')}
           </span>
+        ) : (
+          <SkeletonText paragraph />
         )}
       </div>
 
       <ButtonSet className={styles.buttonSet}>
-        <Button className={styles.popoverButton} size="sm" kind="ghost" renderIcon={Close}>
+        <Button
+          className={styles.popoverButton}
+          size="sm"
+          kind="ghost"
+          renderIcon={Close}
+          onClick={handleResetToDefault}>
           {t('patientGridColumnFiltersResetToDefault', 'Reset to default')}
         </Button>
         <Button className={styles.popoverButton} size="sm" kind="secondary" renderIcon={TrashCan} onClick={close}>
           {t('patientGridColumnFiltersResetToDefault', 'Cancel')}
         </Button>
-        <Button className={styles.popoverButton} size="sm" kind="primary" renderIcon={Checkmark}>
+        <Button className={styles.popoverButton} size="sm" kind="primary" renderIcon={Checkmark} onClick={handleApply}>
           {t('patientGridColumnFiltersResetToDefault', 'Apply')}
         </Button>
       </ButtonSet>
