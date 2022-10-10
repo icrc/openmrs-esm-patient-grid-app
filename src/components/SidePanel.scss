@@ -1,0 +1,47 @@
+@use '@carbon/layout';
+@use '@carbon/type';
+@import '~@openmrs/esm-styleguide/src/vars';
+
+.sidePanel {
+  border: 0 solid $color-gray-30;
+  border-left-width: thin;
+  background-color: $ui-background;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidePanelChildrenContainer {
+  flex: 1;
+  overflow-y: auto;
+}
+
+// We must overwrite Carbon here. Carbon's header is always fixed to the top by default
+// and has different colors schemes/behavior by default.
+.header {
+  position: initial;
+  background-color: $ui-03;
+  margin-top: 3rem;
+  border-bottom: thin solid $text-03;
+  z-index: 1000;
+
+  a {
+    @include type.type-style('heading-compact-02');
+
+    &:hover {
+      color: inherit;
+    }
+  }
+}
+
+// We must overwrite Carbon here. The styling is different than Carbon's default one.
+.headerGlobalBar {
+  &>button {
+    min-height: layout.$spacing-08;
+    background-color: $ui-02;
+    border-color: $color-gray-30;
+    border-style: solid;
+    border-width: 0 thin 0 0;
+  }
+}

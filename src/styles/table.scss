@@ -1,0 +1,50 @@
+@use '@carbon/layout';
+@import "~@openmrs/esm-styleguide/src/vars";
+
+@mixin carbon-table-overrides-tr {
+    border-top: 0px;
+    border-bottom: thin solid #c4c4c4;
+    background-color: $ui-03;
+    color: $text-02;
+    white-space: nowrap;
+}
+
+@mixin carbon-table-overrides-th {
+  background-color: $ui-03;
+  color: $text-02;
+  white-space: nowrap;
+}
+
+@mixin carbon-table-overrides-td {
+  white-space: nowrap;
+}
+
+@mixin carbon-table-overrides {
+  > thead > tr, tbody > tr {
+    @include carbon-table-overrides-tr;
+  }
+
+  > thead > tr > th {
+    @include carbon-table-overrides-th;
+  }
+
+  > tbody > tr > td {
+    @include carbon-table-overrides-td;
+  }
+
+  tr:hover {
+    :global(.cds--data-table) {
+      > thead > tr, tbody > tr {
+        @include carbon-table-overrides-tr;
+      }
+
+      > thead > tr > th {
+        @include carbon-table-overrides-th;
+      }
+
+      > tbody > tr > td {
+        @include carbon-table-overrides-td;
+      }
+    }
+  }
+}

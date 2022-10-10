@@ -1,0 +1,5 @@
+@use '@carbon/type';
+
+.patientDetailsHeader {
+  @include type.type-style('heading-compact-01');
+}

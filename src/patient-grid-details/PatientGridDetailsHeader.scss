@@ -1,0 +1,10 @@
+@use '@carbon/type';
+@use '@carbon/layout';
+
+.title {
+  @include type.type-style('body-compact-02');
+}
+
+.subTitle {
+  @include type.type-style('body-compact-01');
+}

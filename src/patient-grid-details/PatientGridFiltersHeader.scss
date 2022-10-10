@@ -1,0 +1,21 @@
+@use '@carbon/type';
+
+.filtersContainer {
+  align-items: center;
+}
+
+.filterTag {
+  white-space: nowrap;
+}
+
+.localFilterTag {
+  opacity: 0.6;
+}
+
+.filtersCaption {
+  @include type.type-style('heading-compact-01');
+}
+
+.filtersFallback {
+  @include type.type-style('body-compact-01');
+}

@@ -1,0 +1,84 @@
+@use '@carbon/layout';
+@use '@carbon/type';
+@use '../styles/table.scss';
+@import "~@openmrs/esm-styleguide/src/vars";
+
+.tableHeaderContainer {
+  display: flex;
+  justify-content: flex-end;
+  padding: layout.$spacing-06 layout.$spacing-05 0 layout.$spacing-05;
+
+  .tableSearchLayer {
+    width: 20%;
+    min-width: 12.5rem;
+  }
+}
+
+.reloadContainer {
+  margin-right: auto;
+  align-items: center;
+}
+
+.reloadMessage {
+  @include type.type-style('helper-text-02');
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.reloadWarningIcon {
+  fill: $inverse-support-03;
+}
+
+.relativeTablePositioner {
+  // This alignment/positioning ensures that only the table itself scrolls to the right (when it overflows).
+  position: relative;
+
+  .rawTableContainer {
+    background-color: #ededed;
+    overflow: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+}
+
+table.table {
+  @include table.carbon-table-overrides;
+  margin: 0 layout.$spacing-05 layout.$spacing-05 layout.$spacing-05;
+}
+
+.expandCell {
+  display: flex;
+  align-items: center;
+}
+
+// This is a workaround™ which essentially allows to make the background of an expanded row white.
+// This is done by placing a full-size div with a white background in the row, thereby hiding
+// the "default" background of Carbon's expandable row.
+// This approach was chosen because the only realistic alternative is to override Carbon's default
+// styles and that is a pain. It would require finding and overriding the right classes from
+// the following file, which is a lot of code for the same behavior that can be achieved with
+// this relatively simple "hack": https://github.com/carbon-design-system/carbon/blob/dcf802a75caf0201ac831826f611d24dbe508859/packages/styles/scss/components/data-table/expandable/_data-table-expandable.scss#L106
+tr.expandRow {
+  > td {
+    padding: 0;
+  }
+
+  .expandRowBackdrop {
+    background-color: $ui-background;
+  }
+}
+
+.hiddenTableRowForContinuousZebra {
+  display: none;
+}
+
+.headerWithActions {
+  display: flex;
+  align-items: center;
+}
+
+.clickableCell {
+  cursor: pointer;
+}
