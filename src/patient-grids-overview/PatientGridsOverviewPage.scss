@@ -1,0 +1,16 @@
+@use '@carbon/layout';
+@import "~@openmrs/esm-styleguide/src/vars";
+
+.pageContainer {
+  display: flex;
+  align-items: stretch;
+}
+
+.mainContentContainer {
+  width: 100%;
+}
+
+.headerContainer {
+  padding: layout.$spacing-05 0 layout.$spacing-05 layout.$spacing-05;
+  background-color: $ui-background;
+}

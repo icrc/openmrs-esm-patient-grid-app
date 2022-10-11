@@ -1,0 +1,20 @@
+@use '@carbon/layout';
+@use '@carbon/type';
+
+.contentContainer {
+  padding: layout.$spacing-05;
+}
+
+.header {
+  @include type.type-style('heading-compact-02');
+}
+
+.columnCheckboxContainer {
+  padding-top: layout.$spacing-05;
+}
+
+.nestedColumnGroupContainer {
+  display: flex;
+  flex-direction: column;
+  padding-left: layout.$spacing-07;
+}

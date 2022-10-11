@@ -1,0 +1,10 @@
+@use '../styles/table.scss';
+
+table.table {
+  @include table.carbon-table-overrides;
+}
+
+.headerWithActions {
+  display: flex;
+  align-items: center;
+}
