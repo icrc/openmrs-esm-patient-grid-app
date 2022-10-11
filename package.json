@@ -36,11 +36,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/icrc/openmrs-esm-patient-grid.git"
+    "url": "https://github.com/icrc/openmrs-esm-patient-grid-app.git"
   },
-  "homepage": "https://github.com/icrc/openmrs-esm-patient-grid",
+  "homepage": "https://github.com/icrc/openmrs-esm-patient-grid-app",
   "bugs": {
-    "url": "https://github.com/icrc/openmrs-esm-patient-grid/issues"
+    "url": "https://github.com/icrc/openmrs-esm-patient-grid-app/issues"
   },
   "resolutions": {
     "ejs": "^3.1.7",
