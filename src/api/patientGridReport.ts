@@ -52,6 +52,6 @@ export function useRefreshPatientGridReportMutation() {
     const newReport = await openmrsFetch<FetchAllResponse<PatientGridReportGet>>(
       `/ws/rest/v1/patientgrid/patientgrid/${id}/report?refresh=true`,
     ).then(({ data }) => data.results[0]);
-    mutate(`/ws/rest/v1/patientgrid/patientgrid/${id}/report`, () => newReport);
+    mutate(`/ws/rest/v1/patientgrid/patientgrid/${id}/report`, newReport, { revalidate: false });
   });
 }
