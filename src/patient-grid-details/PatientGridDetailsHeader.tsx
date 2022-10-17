@@ -2,25 +2,23 @@ import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageHeader } from '../components';
 import { Button, ButtonSkeleton, OverflowMenu, OverflowMenuItem, SkeletonText } from '@carbon/react';
-import { Save, Undo, Redo } from '@carbon/react/icons';
+import { Redo, Save, Undo } from '@carbon/react/icons';
 import styles from './PatientGridDetailsHeader.scss';
-import { useGetPatientGrid, useGetPatientGridReport } from '../api';
+import { PatientGridGet, useGetPatientGrid, useGetPatientGridReport } from '../api';
 import { useParams } from 'react-router-dom';
 import { PatientGridDetailsParams } from '../routes';
 import { InlinePatientGridEditingContext } from '../grid-utils';
-import { useSession } from '@openmrs/esm-framework';
+import { showToast, useSession } from '@openmrs/esm-framework';
 
 export interface PatientGridDetailsHeaderProps {
-  canEdit?: boolean;
-  canDelete?: boolean;
-  onEditClick?(): void;
-  onRefreshGridClick?(): void;
-  onDeleteClick?(): void;
+  onRefreshGridClick(): void;
+
+  onEditClick(patientGrid: PatientGridGet): void;
+
+  onDeleteClick(patientGrid: PatientGridGet): void;
 }
 
 export function PatientGridDetailsHeader({
-  canEdit,
-  canDelete,
   onEditClick,
   onRefreshGridClick,
   onDeleteClick,
@@ -33,10 +31,33 @@ export function PatientGridDetailsHeader({
   const { canUndo, canRedo, undo, redo, saveChanges, isSavingChanges, canSaveChanges } = useContext(
     InlinePatientGridEditingContext,
   );
+  const canEdit = session.user?.uuid === patientGrid.owner?.uuid;
+  const canDelete = session.user?.uuid === patientGrid.owner?.uuid;
 
   const handleSaveClick = async () => {
-    // TODO: Error handling.
-    await saveChanges();
+    await saveChanges(undefined, {
+      onSuccess: () => {
+        showToast({
+          kind: 'success',
+          title: t('patientGridDetailsHeaderSaveSuccessToastTitle', 'Grid saved successfully'),
+          description: t(
+            'patientGridDetailsHeaderSaveSuccessToastDescription',
+            'Successfully saved the grid "{name}".',
+            {
+              name: patientGrid?.name,
+            },
+          ),
+        });
+      },
+      onError: () =>
+        showToast({
+          kind: 'error',
+          title: t('patientGridDetailsHeaderSaveErrorToastTitle', 'Grid saving failed'),
+          description: t('patientGridDetailsHeaderSaveErrorToastDescription', 'Saving the grid "{name}" failed.', {
+            name: patientGrid?.name,
+          }),
+        }),
+    });
   };
 
   return (
@@ -78,7 +99,7 @@ export function PatientGridDetailsHeader({
               <OverflowMenuItem
                 itemText={t('patientGridDetailsHeaderEditNameDescriptionMenuItem', 'Edit name / description')}
                 disabled={!canEdit}
-                onClick={onEditClick}
+                onClick={() => onEditClick(patientGrid)}
               />
               <OverflowMenuItem
                 itemText={t('patientGridDetailsHeaderRefreshGridMenuItem', 'Reload grid')}
@@ -88,7 +109,7 @@ export function PatientGridDetailsHeader({
                 isDelete
                 itemText={t('patientGridDetailsHeaderDeleteGridMenuItem', 'Delete')}
                 disabled={!canDelete}
-                onClick={onDeleteClick}
+                onClick={() => onDeleteClick(patientGrid)}
               />
             </OverflowMenu>
           </>

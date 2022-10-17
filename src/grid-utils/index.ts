@@ -6,7 +6,6 @@ export * from './gridColumns';
 export * from './patientGridCreation';
 export * from './reactTable';
 export * from './report';
-export * from './useColumnHiddenStates';
 export * from './useColumnNameToHeaderLabelMap';
 export * from './useInlinePatientGridEditing';
 export * from './useUndoRedo';

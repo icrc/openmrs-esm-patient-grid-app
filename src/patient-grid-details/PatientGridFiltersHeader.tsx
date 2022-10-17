@@ -4,25 +4,21 @@ import { Stack, ButtonSkeleton, Tag } from '@carbon/react';
 import styles from './PatientGridFiltersHeader.scss';
 import { InlinePatientGridEditingContext, LocalFilter, useColumnNameToHeaderLabelMap } from '../grid-utils';
 
-export interface PatientGridFiltersHeaderProps {
-  patientGridId: string;
-}
-
-export function PatientGridFiltersHeader({ patientGridId }: PatientGridFiltersHeaderProps) {
+export function PatientGridFiltersHeader() {
   const { t } = useTranslation();
   const { data: columnNameToHeaderLabelMap } = useColumnNameToHeaderLabelMap();
-  const { filters } = useContext(InlinePatientGridEditingContext);
+  const { localPatientGridState } = useContext(InlinePatientGridEditingContext);
 
   // Every filter with a UUID must come from the backend.
   // Those should appear before the local ones.
-  const originalFilters = filters.filter((x) => 'uuid' in x);
-  const localFilters = filters.filter((x) => !('uuid' in x));
+  const originalFilters = localPatientGridState.filters.filter((x) => 'uuid' in x);
+  const localFilters = localPatientGridState.filters.filter((x) => !('uuid' in x));
 
   return (
     <Stack as="section" orientation="horizontal" gap={4} className={styles.filtersContainer}>
       <span className={styles.filtersCaption}>{t('patientGridFiltersHeaderFilterCaption', 'Filters:')}</span>
 
-      {filters?.length && columnNameToHeaderLabelMap ? (
+      {localPatientGridState.filters?.length && columnNameToHeaderLabelMap ? (
         <>
           {originalFilters.map((filter) => (
             <FilterTag key={filter.uuid} filter={filter} columnNameToHeaderLabelMap={columnNameToHeaderLabelMap} />
@@ -35,7 +31,7 @@ export function PatientGridFiltersHeader({ patientGridId }: PatientGridFiltersHe
             />
           ))}
         </>
-      ) : filters && columnNameToHeaderLabelMap ? (
+      ) : localPatientGridState.filters && columnNameToHeaderLabelMap ? (
         <span className={styles.filtersFallback}>{t('patientGridFiltersHeaderNoFiltersFallback', '--')}</span>
       ) : (
         <>
@@ -58,12 +54,15 @@ function FilterTag({ filter, columnNameToHeaderLabelMap }: FilterTagProps) {
   const filterName = `${columnNameToHeaderLabelMap[filter.columnName] ?? filter.columnName}: ${
     filter.name ?? filter.operand
   }`;
-  const { filters } = useContext(InlinePatientGridEditingContext);
+  const { localPatientGridState } = useContext(InlinePatientGridEditingContext);
   const { push } = useContext(InlinePatientGridEditingContext);
+
   const handleDelete = () => {
     push((state) => ({
       ...state,
-      filters: filters.filter((x) => x.columnName !== filter.columnName && x.operand !== filter.operand),
+      filters: localPatientGridState.filters.filter(
+        (x) => x.columnName !== filter.columnName && x.operand !== filter.operand,
+      ),
     }));
   };
 

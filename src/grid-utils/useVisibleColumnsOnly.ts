@@ -8,7 +8,7 @@ import { InlinePatientGridEditingContext } from './useInlinePatientGridEditing';
  * according to the given `hidden` map.
  */
 export function useVisibleColumnsOnly<T = unknown>(columns: Array<GroupColumnDef<T>>) {
-  const { columnHiddenStates } = useContext(InlinePatientGridEditingContext);
+  const { localPatientGridState } = useContext(InlinePatientGridEditingContext);
 
   return useMemo(() => {
     const impl = (columnGroup: GroupColumnDef<T>) => {
@@ -18,7 +18,9 @@ export function useVisibleColumnsOnly<T = unknown>(columns: Array<GroupColumnDef
           ?.map((childColumn) => {
             if (isAccessorKeyColumnDef(childColumn)) {
               // Hidden accessor columns will be removed.
-              return columnHiddenStates[childColumn.accessorKey.toString()] ? undefined : childColumn;
+              return localPatientGridState.columnHiddenStates[childColumn.accessorKey.toString()]
+                ? undefined
+                : childColumn;
             } else if (isGroupColumnDef(childColumn)) {
               return impl(childColumn);
             } else {
@@ -33,5 +35,5 @@ export function useVisibleColumnsOnly<T = unknown>(columns: Array<GroupColumnDef
     };
 
     return columns.map(impl).filter(Boolean);
-  }, [columns, columnHiddenStates]);
+  }, [columns, localPatientGridState]);
 }

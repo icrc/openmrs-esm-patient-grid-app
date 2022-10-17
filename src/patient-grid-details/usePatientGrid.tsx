@@ -1,29 +1,32 @@
 import { GroupColumnDef } from '@tanstack/react-table';
 import {
-  useGetAllPublishedPrivilegeFilteredForms,
-  useMergedSwr,
-  PatientGridReportRowGet,
-  useGetPatientGridReport,
   FormGet,
   FormSchema,
   PatientGridReportGet,
+  PatientGridReportRowGet,
   useFormSchemasOfForms,
+  useGetAllPublishedPrivilegeFilteredForms,
+  useGetPatientGridReport,
+  useMergedSwr,
 } from '../api';
 import {
-  getFormSchemaReferenceUuid,
-  patientDetailsNameColumnName,
-  patientDetailsCountryColumnName,
-  patientDetailsStructureColumnName,
-  patientDetailsGenderColumnName,
-  patientDetailsAgeCategoryColumnName,
-  useColumnNameToHeaderLabelMap,
-  getReactTableColumnDefForForm,
   ColumnNameToHeaderLabelMap,
   getAllReportColumnNames,
+  getFormSchemaReferenceUuid,
+  getReactTableColumnDefForForm,
+  InlinePatientGridEditingContext,
   LocalFilter,
+  patientDetailsAgeCategoryColumnName,
+  patientDetailsCountryColumnName,
+  patientDetailsGenderColumnName,
+  patientDetailsNameColumnName,
+  patientDetailsStructureColumnName,
+  useColumnNameToHeaderLabelMap,
 } from '../grid-utils';
 import { TFunction, useTranslation } from 'react-i18next';
-import { getLocallyFilteredReportRows } from '../grid-utils/localRowFiltering';
+import { useParams } from 'react-router-dom';
+import { PatientGridDetailsParams } from '../routes';
+import { useContext } from 'react';
 
 export interface PatientGridDataRow extends Record<string, unknown> {
   __report: PatientGridReportGet;
@@ -31,13 +34,14 @@ export interface PatientGridDataRow extends Record<string, unknown> {
 }
 
 /**
- * The central hook fetching and manipulating the data that is required for rendering a patient grid.
- * @param id The ID of the patient grid report for which data should be returned.
- * @returns The columns and data to be forwarded to the `useReactTable` hook that renders the actual patient grid.
+ * The central hook fetching and manipulating the data that is required for
+ * rendering the current patient grid.
  */
-export function usePatientGrid(id: string, filters: Array<LocalFilter>) {
+export function usePatientGrid() {
   const { t } = useTranslation();
-  const reportSwr = useGetPatientGridReport(id);
+  const { id: patientGridId } = useParams<PatientGridDetailsParams>();
+  const { localPatientGridState } = useContext(InlinePatientGridEditingContext);
+  const reportSwr = useGetPatientGridReport(patientGridId);
   const formsSwr = useGetAllPublishedPrivilegeFilteredForms();
   const formSchemasSwr = useFormSchemasOfForms(formsSwr.data);
   const columnNameToHeaderLabelMapSwr = useColumnNameToHeaderLabelMap();
@@ -48,13 +52,13 @@ export function usePatientGrid(id: string, filters: Array<LocalFilter>) {
       const { data: formSchemas } = formSchemasSwr;
       const { data: columnNameToHeaderLabelMap } = columnNameToHeaderLabelMapSwr;
       const { data: report } = reportSwr;
-      const locallyFilteredReportRows = getLocallyFilteredReportRows(report.report, filters);
+      const locallyFilteredReportRows = getLocallyFilteredReportRows(report.report, localPatientGridState.filters);
       const columns = getColumns(forms, formSchemas, columnNameToHeaderLabelMap, report, t);
       const data = mapReportEntriesToGridData(report, locallyFilteredReportRows);
       return { columns, data };
     },
     [formsSwr, formSchemasSwr, columnNameToHeaderLabelMapSwr, reportSwr],
-    [t, filters],
+    [t, localPatientGridState],
   );
 }
 
@@ -177,4 +181,31 @@ function mapReportEntriesToGridData(report: PatientGridReportGet, reportRows: Ar
 
     return result;
   });
+}
+
+function getLocallyFilteredReportRows(rows: Array<PatientGridReportRowGet>, filters: Array<LocalFilter>) {
+  const localFilters = filters.filter((filter) => !('uuid' in filter));
+
+  if (!localFilters.length) {
+    return rows;
+  }
+
+  return rows.filter((row) =>
+    localFilters.some((filter) => {
+      const rowValue = row[filter.columnName];
+      if (!rowValue) {
+        return false;
+      }
+
+      if (typeof rowValue === 'object') {
+        if (rowValue.value && typeof rowValue.value === 'object') {
+          return rowValue.value.uuid === filter.operand;
+        } else {
+          return `${rowValue.value}` === filter.operand;
+        }
+      }
+
+      return `${rowValue}` === filter.operand;
+    }),
+  );
 }

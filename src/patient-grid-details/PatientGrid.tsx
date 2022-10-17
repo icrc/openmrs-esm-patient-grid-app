@@ -49,13 +49,14 @@ import {
   patientDetailsNameColumnName,
   getFormEngineDataRequiredForEditing,
   InlinePatientGridEditingContext,
+  useVisibleColumnsOnly,
 } from '../grid-utils';
 import { interpolateUrl } from '@openmrs/esm-framework';
-import { useVisibleColumnsOnly } from '../grid-utils/useVisibleColumnsOnly';
 import { useGetPatientGrid } from '../api';
+import { useParams } from 'react-router-dom';
+import { PatientGridDetailsParams } from '../routes';
 
 export interface PatientGridProps {
-  patientGridId: string;
   columns: Array<GroupColumnDef<PatientGridDataRow, unknown>>;
   data: Array<PatientGridDataRow>;
   showReloadGrid: boolean;
@@ -65,7 +66,6 @@ export interface PatientGridProps {
 }
 
 export function PatientGrid({
-  patientGridId,
   columns,
   data,
   showReloadGrid,
@@ -74,6 +74,7 @@ export function PatientGrid({
   refreshPatientGrid,
 }: PatientGridProps) {
   const { t } = useTranslation();
+  const { id: patientGridId } = useParams<PatientGridDetailsParams>();
   const { data: patientGrid } = useGetPatientGrid(patientGridId);
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
   const [globalFilter, setGlobalFilter] = useState('');
@@ -95,7 +96,7 @@ export function PatientGrid({
     },
   });
   const headerGroups = table.getHeaderGroups();
-  const { columnHiddenStates } = useContext(InlinePatientGridEditingContext);
+  const { localPatientGridState } = useContext(InlinePatientGridEditingContext);
 
   const handleCellClick = (cell: Cell<PatientGridDataRow, unknown>, row: Row<PatientGridDataRow>) => {
     const columnName = cell.column.id;
@@ -123,7 +124,7 @@ export function PatientGrid({
           </Button>
           <Button size="sm" kind="ghost" renderIcon={OpenPanelRight} onClick={showToggleColumnsSidePanel}>
             {t('patientGridColumnsButton', 'Columns ({actual}/{total})', {
-              actual: Object.values(columnHiddenStates).filter((x) => !x).length,
+              actual: Object.values(localPatientGridState.columnHiddenStates).filter((x) => !x).length,
               total: patientGrid?.columns.length,
             })}
           </Button>
@@ -169,7 +170,6 @@ export function PatientGrid({
                                 onClick={header.column.getToggleSortingHandler()}
                               />
                               <PatientGridColumnFiltersButton
-                                patientGridId={patientGridId}
                                 columnDisplayName={header.column.columnDef.header?.toString() ?? ''}
                                 column={header.column}
                               />
@@ -245,11 +245,7 @@ export function PatientGrid({
         </section>
       </div>
 
-      <DownloadModal
-        patientGridId={patientGridId}
-        isOpen={isDownloadModalOpen}
-        onClose={() => setIsDownloadModalOpen(false)}
-      />
+      <DownloadModal isOpen={isDownloadModalOpen} onClose={() => setIsDownloadModalOpen(false)} />
     </main>
   );
 }

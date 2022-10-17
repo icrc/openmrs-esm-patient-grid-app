@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
-import { Popover, PopoverContent, Button, ButtonSet, Checkbox, SkeletonText } from '@carbon/react';
-import { Filter, Close, TrashCan, Checkmark } from '@carbon/react/icons';
+import { Button, ButtonSet, Checkbox, Popover, PopoverContent, SkeletonText } from '@carbon/react';
+import { Checkmark, Close, Filter, TrashCan } from '@carbon/react/icons';
 import { useTranslation } from 'react-i18next';
 import { useOnClickOutside } from '@openmrs/esm-framework';
 import styles from './PatientGridColumnFiltersButton.scss';
@@ -9,16 +9,11 @@ import { PatientGridDataRow } from './usePatientGrid';
 import { InlinePatientGridEditingContext, LocalFilter, usePossiblePatientGridFiltersForColumn } from '../grid-utils';
 
 export interface PatientGridColumnFiltersButtonProps {
-  patientGridId: string;
   columnDisplayName: string;
   column: Column<PatientGridDataRow, unknown>;
 }
 
-export function PatientGridColumnFiltersButton({
-  patientGridId,
-  columnDisplayName,
-  column,
-}: PatientGridColumnFiltersButtonProps) {
+export function PatientGridColumnFiltersButton({ columnDisplayName, column }: PatientGridColumnFiltersButtonProps) {
   const { t } = useTranslation();
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const onClickOutsideRef = useOnClickOutside(() => setIsPopoverOpen(false), isPopoverOpen);
@@ -37,7 +32,6 @@ export function PatientGridColumnFiltersButton({
         {isPopoverOpen && (
           // Conditionally rendering this on demand noticeably improves performance during the initial load of the grid.
           <FiltersPopoverContent
-            patientGridId={patientGridId}
             column={column}
             columnDisplayName={columnDisplayName}
             close={() => setIsPopoverOpen(false)}
@@ -52,11 +46,11 @@ interface FiltersPopoverContentProps extends PatientGridColumnFiltersButtonProps
   close(): void;
 }
 
-function FiltersPopoverContent({ patientGridId, column, columnDisplayName, close }: FiltersPopoverContentProps) {
+function FiltersPopoverContent({ column, columnDisplayName, close }: FiltersPopoverContentProps) {
   const { t } = useTranslation();
-  const { data: possibleFilters } = usePossiblePatientGridFiltersForColumn(patientGridId, column.id);
-  const { original, filters, push } = useContext(InlinePatientGridEditingContext);
-  const [localFilters, setLocalFilters] = useState(filters);
+  const { data: possibleFilters } = usePossiblePatientGridFiltersForColumn(column.id);
+  const { originalPatientGridState, localPatientGridState, push } = useContext(InlinePatientGridEditingContext);
+  const [localFilters, setLocalFilters] = useState(localPatientGridState.filters);
 
   const handleFilterClick = (filter: LocalFilter, checked: boolean) => {
     if (checked) {
@@ -76,8 +70,8 @@ function FiltersPopoverContent({ patientGridId, column, columnDisplayName, close
 
   const handleResetToDefault = () => {
     setLocalFilters([
-      ...original.filters.filter((x) => x.columnName === column.id),
-      ...filters.filter((x) => x.columnName !== column.id),
+      ...originalPatientGridState.filters.filter((x) => x.columnName === column.id),
+      ...localPatientGridState.filters.filter((x) => x.columnName !== column.id),
     ]);
   };
 

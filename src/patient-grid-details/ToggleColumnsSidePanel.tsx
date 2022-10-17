@@ -19,11 +19,11 @@ export interface ToggleColumnsSidePanelProps {
 
 export function ToggleColumnsSidePanel({ columns, onClose }: ToggleColumnsSidePanelProps) {
   const { t } = useTranslation();
-  const { columnHiddenStates, push } = useContext(InlinePatientGridEditingContext);
-  const [localColumnHiddenStates, setLocalColumnHiddenStates] = useState(columnHiddenStates);
+  const { localPatientGridState, push } = useContext(InlinePatientGridEditingContext);
+  const [localColumnHiddenStates, setLocalColumnHiddenStates] = useState(localPatientGridState.columnHiddenStates);
 
   // Sync undo/redo while the panel is open.
-  useEffect(() => setLocalColumnHiddenStates(columnHiddenStates), [columnHiddenStates]);
+  useEffect(() => setLocalColumnHiddenStates(localPatientGridState.columnHiddenStates), [localPatientGridState]);
 
   const submit = () => {
     push((current) => ({

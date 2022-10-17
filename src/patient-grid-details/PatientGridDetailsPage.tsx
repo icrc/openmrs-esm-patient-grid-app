@@ -1,12 +1,12 @@
-import { ErrorState, ExtensionSlot, showToast, useSession } from '@openmrs/esm-framework';
-import React, { ReactNode, useEffect, useState } from 'react';
+import { ErrorState, ExtensionSlot, showToast } from '@openmrs/esm-framework';
+import React, { ReactNode, useState } from 'react';
 import { Hr, PageWithSidePanel, PageWithSidePanelProps } from '../components';
 import { PatientGridDetailsHeader } from './PatientGridDetailsHeader';
 import { Stack } from '@carbon/react';
 import { PatientGridFiltersHeader } from './PatientGridFiltersHeader';
 import { PatientGrid } from './PatientGrid';
 import { DeletePatientGridModal, EditPatientGridModal } from '../crosscutting-features';
-import { PatientGridGet, useGetPatientGrid, useRefreshPatientGridReportMutation } from '../api';
+import { PatientGridGet, useRefreshPatientGridReportMutation } from '../api';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PatientGridDetailsParams, routes } from '../routes';
 import { PatientGridReportLoadingIndicator } from './PatientGridReportLoadingIndicator';
@@ -15,22 +15,18 @@ import { useTranslation } from 'react-i18next';
 import styles from './PatientGridDetailsPage.scss';
 import { EditSidePanel, EditSidePanelProps } from './EditSidePanel';
 import { ToggleColumnsSidePanel } from './ToggleColumnsSidePanel';
-import { InlinePatientGridEditingContext, useInlinePatientGridEditingContextState } from '../grid-utils';
 
 export type EditSidePanelValues = Omit<EditSidePanelProps, 'onClose'>;
 
 export function PatientGridDetailsPage() {
   const { t } = useTranslation();
-  const session = useSession();
   const navigate = useNavigate();
   const { id: patientGridId } = useParams<PatientGridDetailsParams>();
-  const inlinePatientGridEditingState = useInlinePatientGridEditingContextState(patientGridId);
   const [patientGridToDelete, setPatientGridToDelete] = useState<PatientGridGet | undefined>(undefined);
   const [patientGridToEdit, setPatientGridToEdit] = useState<PatientGridGet | undefined>(undefined);
   const [sidePanel, setSidePanel] = useState<ReactNode | undefined>(undefined);
   const [sidePanelSize, setSidePanelSize] = useState<PageWithSidePanelProps['sidePanelSize']>(undefined);
-  const { data: patientGrid } = useGetPatientGrid(patientGridId);
-  const { data, error } = usePatientGrid(patientGridId, inlinePatientGridEditingState.filters);
+  const { data, error } = usePatientGrid();
   const [showReloadGrid, setShowReloadGrid] = useState(false);
   const refreshPatientGridMutation = useRefreshPatientGridReportMutation();
 
@@ -78,69 +74,54 @@ export function PatientGridDetailsPage() {
     );
   };
 
-  useEffect(() => {
-    if (error) {
-      showToast({
-        title: t('patientGridErrorToastTitle', 'Patient grid loading failed'),
-        description: t('patientGridErrorToastDescription', 'There was an error while loading the patient grid.'),
-        kind: 'error',
-      });
-    }
-  }, [t, error]);
-
   if ((!data && !error) || refreshPatientGridMutation.isLoading) {
     return <PatientGridReportLoadingIndicator />;
   }
 
   return (
-    <InlinePatientGridEditingContext.Provider value={inlinePatientGridEditingState}>
-      <PageWithSidePanel sidePanel={sidePanel} showSidePanel={!!sidePanel} sidePanelSize={sidePanelSize}>
-        <ExtensionSlot extensionSlotName="breadcrumbs-slot" />
+    <PageWithSidePanel sidePanel={sidePanel} showSidePanel={!!sidePanel} sidePanelSize={sidePanelSize}>
+      <ExtensionSlot name="breadcrumbs-slot" />
+      <Hr />
+
+      <Stack gap={4}>
+        <div className={styles.headerContainer}>
+          <PatientGridDetailsHeader
+            onRefreshGridClick={refreshGrid}
+            onEditClick={setPatientGridToEdit}
+            onDeleteClick={setPatientGridToDelete}
+          />
+        </div>
         <Hr />
 
-        <Stack gap={4}>
-          <div className={styles.headerContainer}>
-            <PatientGridDetailsHeader
-              canEdit={session.user?.uuid === patientGrid.owner?.uuid}
-              canDelete={session.user?.uuid === patientGrid.owner?.uuid}
-              onEditClick={() => setPatientGridToEdit(patientGrid)}
-              onRefreshGridClick={refreshGrid}
-              onDeleteClick={() => setPatientGridToDelete(patientGrid)}
+        <div className={styles.headerContainer}>
+          <PatientGridFiltersHeader />
+        </div>
+
+        <div className={styles.gridContainer}>
+          {data ? (
+            <PatientGrid
+              columns={data?.columns ?? []}
+              data={data?.data ?? []}
+              showReloadGrid={showReloadGrid}
+              showEditSidePanel={showEditSidePanel}
+              showToggleColumnsSidePanel={showToggleColumnsSidePanel}
+              refreshPatientGrid={refreshGrid}
             />
-          </div>
-          <Hr />
+          ) : (
+            <ErrorState
+              error={error}
+              headerTitle={t('patientGridDetailsPageErrorTitle', 'Failed to load the patient grid report')}
+            />
+          )}
+        </div>
+      </Stack>
 
-          <div className={styles.headerContainer}>
-            <PatientGridFiltersHeader patientGridId={patientGridId} />
-          </div>
-
-          <div className={styles.gridContainer}>
-            {data ? (
-              <PatientGrid
-                patientGridId={patientGridId}
-                columns={data?.columns ?? []}
-                data={data?.data ?? []}
-                showReloadGrid={showReloadGrid}
-                showEditSidePanel={showEditSidePanel}
-                showToggleColumnsSidePanel={showToggleColumnsSidePanel}
-                refreshPatientGrid={refreshGrid}
-              />
-            ) : (
-              <ErrorState
-                error={error}
-                headerTitle={t('patientGridDetailsPageErrorTitle', 'Failed to load the patient grid report')}
-              />
-            )}
-          </div>
-        </Stack>
-
-        <EditPatientGridModal patientGridToEdit={patientGridToEdit} setPatientGridToEdit={setPatientGridToEdit} />
-        <DeletePatientGridModal
-          patientGridToDelete={patientGridToDelete}
-          setPatientGridToDelete={setPatientGridToDelete}
-          onDeleted={() => navigate(routes.patientGridsOverview.interpolate())}
-        />
-      </PageWithSidePanel>
-    </InlinePatientGridEditingContext.Provider>
+      <EditPatientGridModal patientGridToEdit={patientGridToEdit} setPatientGridToEdit={setPatientGridToEdit} />
+      <DeletePatientGridModal
+        patientGridToDelete={patientGridToDelete}
+        setPatientGridToDelete={setPatientGridToDelete}
+        onDeleted={() => navigate(routes.patientGridsOverview.interpolate())}
+      />
+    </PageWithSidePanel>
   );
 }

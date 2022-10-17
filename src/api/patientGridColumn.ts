@@ -1,4 +1,4 @@
-import { OpenmrsResource } from '@openmrs/esm-framework';
+import { openmrsFetch, OpenmrsResource } from '@openmrs/esm-framework';
 import { PatientGridFilterPost } from './patientGridFilter';
 
 export type PatientGridColumnDataType =
@@ -49,4 +49,12 @@ export interface PatientGridColumnPost {
   convertToAgeRange?: boolean;
   filters?: Array<PatientGridFilterPost>;
   hidden?: boolean;
+}
+
+export function postPatientGridColumn(patientGridId: string, columnId: string, body: PatientGridColumnPost) {
+  return openmrsFetch(`/ws/rest/v1/patientgrid/patientgrid/${patientGridId}/column/${columnId}`, {
+    headers: { 'Content-Type': 'application/json' },
+    method: 'POST',
+    body,
+  });
 }

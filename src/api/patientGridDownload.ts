@@ -1,12 +1,14 @@
 import { openmrsFetch, OpenmrsResource } from '@openmrs/esm-framework';
 import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import useSWR from 'swr';
 import {
   ColumnNameToHeaderLabelMap,
   useColumnNameToHeaderLabelMap,
   InlinePatientGridEditingContext,
 } from '../grid-utils';
+import { PatientGridDetailsParams } from '../routes';
 import { FormGet, useGetAllPublishedPrivilegeFilteredForms } from './form';
 import { FormSchema, useFormSchemasOfForms } from './formSchema';
 import { PatientGridGet, useGetPatientGrid } from './patientGrid';
@@ -77,14 +79,15 @@ export interface DownloadGridData {
   fileName: string;
 }
 
-export function useDownloadGridData(patientGridId: string) {
+export function useDownloadGridData() {
   const { t } = useTranslation();
+  const { id: patientGridId } = useParams<PatientGridDetailsParams>();
   const downloadSwr = useGetPatientGridDownload(patientGridId);
   const patientGridSwr = useGetPatientGrid(patientGridId);
   const formsSwr = useGetAllPublishedPrivilegeFilteredForms();
   const formSchemasSwr = useFormSchemasOfForms(formsSwr.data);
   const columnNameToHeaderLabelMapSwr = useColumnNameToHeaderLabelMap();
-  const { columnHiddenStates } = useContext(InlinePatientGridEditingContext);
+  const { localPatientGridState } = useContext(InlinePatientGridEditingContext);
 
   return useMergedSwr<Omit<DownloadGridData, 'fileName'>>(
     () => {
@@ -96,11 +99,11 @@ export function useDownloadGridData(patientGridId: string) {
         columnNameToHeaderLabelMap: columnNameToHeaderLabelMapSwr.data,
         columnNamesToInclude: patientGridSwr.data.columns
           .map((column) => column.name)
-          .filter((name) => !columnHiddenStates[name]),
+          .filter((name) => !localPatientGridState.columnHiddenStates[name]),
         patientDetailsGroupHeader: t('patientDetailsDownloadGroupHeader', 'Healthcare user'),
       };
     },
     [downloadSwr, patientGridSwr, formsSwr, formSchemasSwr, columnNameToHeaderLabelMapSwr],
-    [t],
+    [t, localPatientGridState],
   );
 }

@@ -3,19 +3,17 @@ import { useGetPatientGrid, useGetPatientGridReport, useMergedSwr } from '../api
 import { LocalFilter } from './useInlinePatientGridEditing';
 import uniqBy from 'lodash-es/uniqBy';
 import sortBy from 'lodash-es/sortBy';
+import { useParams } from 'react-router-dom';
+import { PatientGridDetailsParams } from '../routes';
 
-export function usePossiblePatientGridFiltersForColumn(
-  patientGridId: string,
-  columnName: string,
-): SWRResponse<Array<LocalFilter>> {
+export function usePossiblePatientGridFiltersForColumn(columnName: string): SWRResponse<Array<LocalFilter>> {
+  const { id: patientGridId } = useParams<PatientGridDetailsParams>();
   const patientGridSwr = useGetPatientGrid(patientGridId);
   const reportSwr = useGetPatientGridReport(patientGridId);
 
   return useMergedSwr(
     () => {
-      // const { data: patientGrid } = patientGridSwr;
       const { data: report } = reportSwr;
-
       const allColumnValues = report.report.map((row) => row[columnName]);
       const allFiltersFromRows = allColumnValues
         .map<LocalFilter>((columnValue) => {

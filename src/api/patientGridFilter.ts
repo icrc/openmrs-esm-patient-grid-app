@@ -2,7 +2,6 @@ import { openmrsFetch, OpenmrsResource } from '@openmrs/esm-framework';
 import useSWR from 'swr';
 import { PatientGridColumnGet } from './patientGridColumn';
 import { FetchAllResponse } from './shared';
-import { useMutation } from './useMutation';
 
 export interface PatientGridFilterGet extends OpenmrsResource {
   name: string;
@@ -13,6 +12,7 @@ export interface PatientGridFilterGet extends OpenmrsResource {
 export interface PatientGridFilterPost {
   name?: string;
   operand?: unknown;
+  column?: string;
 }
 
 export function useGetAllPatientGridFilters(patientGridId: string) {
@@ -21,15 +21,16 @@ export function useGetAllPatientGridFilters(patientGridId: string) {
   );
 }
 
-export function useDeletePatientGridFilterMutation(patientGridId: string) {
-  const { mutate: mutateGetAllPatientGridFilters } = useGetAllPatientGridFilters(patientGridId);
-  return useMutation<{ patientGridId: string; filterId: string }>(
-    ({ patientGridId, filterId }) =>
-      openmrsFetch(`/ws/rest/v1/patientgrid/patientgrid/${patientGridId}/filter/${filterId}`, {
-        method: 'DELETE',
-      }),
-    {
-      onSuccess: () => mutateGetAllPatientGridFilters(),
-    },
-  );
+export function postPatientGridFilter(patientGridId: string, body: PatientGridFilterPost) {
+  return openmrsFetch(`/ws/rest/v1/patientgrid/patientgrid/${patientGridId}/filter`, {
+    headers: { 'Content-Type': 'application/json' },
+    method: 'POST',
+    body,
+  });
+}
+
+export function deletePatientGridFilter(patientGridId: string, filterId: string) {
+  return openmrsFetch(`/ws/rest/v1/patientgrid/patientgrid/${patientGridId}/filter/${filterId}`, {
+    method: 'DELETE',
+  });
 }
