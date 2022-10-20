@@ -48,3 +48,7 @@ export function getFormDateColumnName(form: FormGet) {
 export function getFormAgeColumnName(form: FormGet) {
   return `form--${form.uuid}--age`;
 }
+
+export function isFormAgeColumnName(columnName: string) {
+  return columnName.startsWith('form--') && columnName.endsWith('--age');
+}

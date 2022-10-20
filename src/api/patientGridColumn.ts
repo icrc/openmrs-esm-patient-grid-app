@@ -35,7 +35,16 @@ interface PatientGridAgeColumnGet extends PatientGridBaseColumnGet {
   convertToAgeRange: boolean;
 }
 
-export type PatientGridColumnGet = PatientGridNormalColumnGet | PatientGridObsColumnGet | PatientGridAgeColumnGet;
+interface PatientGridEncounterDateColumnGet extends PatientGridBaseColumnGet {
+  type: 'encounterdatecolumn';
+  encounterType: OpenmrsResource;
+}
+
+export type PatientGridColumnGet =
+  | PatientGridNormalColumnGet
+  | PatientGridObsColumnGet
+  | PatientGridAgeColumnGet
+  | PatientGridEncounterDateColumnGet;
 export type PatientGridColumnType = PatientGridColumnGet['type'];
 
 export interface PatientGridColumnPost {

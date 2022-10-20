@@ -7,6 +7,7 @@ import {
   patientDetailsAgeCategoryColumnName,
   getFormSchemaQuestionColumnName,
   getFormAgeColumnName,
+  getFormDateColumnName,
 } from './columnNames';
 import { getFormSchemaReferenceUuid, getFormSchemaQuestionsMappableToColumns } from './formSchema';
 
@@ -72,13 +73,12 @@ export function getPatientGridColumnPostResourcesForForms(
     }
 
     const specialColumns: Array<PatientGridColumnPost> = [
-      // TODO: Uncomment once it exists on the BE.
-      // {
-      //   name: getFormDateColumnName(form),
-      //   type: 'encounterdatecolumn',
-      //   datatype: 'ENC_DATE',
-      //   encounterType: form.encounterType.uuid,
-      // },
+      {
+        name: getFormDateColumnName(form),
+        type: 'encounterdatecolumn',
+        datatype: 'ENC_DATE',
+        encounterType: form.encounterType.uuid,
+      },
       {
         name: getFormAgeColumnName(form),
         type: 'agecolumn',

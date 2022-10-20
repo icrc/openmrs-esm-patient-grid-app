@@ -15,6 +15,7 @@ import {
   getReactTableColumnDefForForm,
   useColumnNameToHeaderLabelMap,
   getAllReportColumnNames,
+  isFormAgeColumnName,
 } from '../grid-utils';
 
 export function useHistoricEncountersGrid(
@@ -29,7 +30,9 @@ export function useHistoricEncountersGrid(
     () => {
       const { data: historicEncounters } = historicEncountersSwr;
       const { data: columnNameToHeaderLabelMap } = columnNameToHeaderLabelMapSwr;
-      const columnNamesToInclude = getAllReportColumnNames(report);
+      const columnNamesToInclude = getAllReportColumnNames(report).filter(
+        (columnName) => !isFormAgeColumnName(columnName),
+      );
       const columns = [
         getReactTableColumnDefForForm(form, formSchema, columnNameToHeaderLabelMap, columnNamesToInclude),
       ];
