@@ -116,10 +116,10 @@ function FiltersPopoverContent({ column, columnDisplayName, close }: FiltersPopo
           {t('patientGridColumnFiltersResetToDefault', 'Reset to default')}
         </Button>
         <Button className={styles.popoverButton} size="sm" kind="secondary" renderIcon={TrashCan} onClick={close}>
-          {t('patientGridColumnFiltersResetToDefault', 'Cancel')}
+          {t('patientGridColumnFiltersCancel', 'Cancel')}
         </Button>
         <Button className={styles.popoverButton} size="sm" kind="primary" renderIcon={Checkmark} onClick={handleApply}>
-          {t('patientGridColumnFiltersResetToDefault', 'Apply')}
+          {t('patientGridColumnFiltersApply', 'Apply')}
         </Button>
       </ButtonSet>
     </aside>
