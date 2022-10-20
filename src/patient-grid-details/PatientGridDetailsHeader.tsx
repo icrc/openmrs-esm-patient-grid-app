@@ -31,8 +31,8 @@ export function PatientGridDetailsHeader({
   const { canUndo, canRedo, undo, redo, saveChanges, isSavingChanges, canSaveChanges } = useContext(
     InlinePatientGridEditingContext,
   );
-  const canEdit = session.user?.uuid === patientGrid.owner?.uuid;
-  const canDelete = session.user?.uuid === patientGrid.owner?.uuid;
+  const canEdit = session.user?.uuid === patientGrid?.owner?.uuid;
+  const canDelete = session.user?.uuid === patientGrid?.owner?.uuid;
 
   const handleSaveClick = async () => {
     await saveChanges(undefined, {
