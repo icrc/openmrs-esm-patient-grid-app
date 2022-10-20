@@ -27,6 +27,7 @@ import { TFunction, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PatientGridDetailsParams } from '../routes';
 import { useContext } from 'react';
+import { formatDate } from '@openmrs/esm-framework';
 
 export interface PatientGridDataRow extends Record<string, unknown> {
   __report: PatientGridReportGet;
@@ -164,8 +165,15 @@ function mapReportEntriesToGridData(report: PatientGridReportGet, reportRows: Ar
 
     for (const [key, reportRowCell] of Object.entries(reportRow)) {
       if (typeof reportRowCell === 'string') {
-        // The cell is already a raw string.
-        result[key] = reportRowCell;
+        // The cell is string. Strings could either be raw or UTC date strings.
+        const possibleDate = new Date(reportRowCell);
+        if (isNaN(possibleDate.getTime())) {
+          // Raw string.
+          result[key] = reportRowCell;
+        } else {
+          // Date.
+          result[key] = formatDate(possibleDate);
+        }
       } else if (reportRowCell === null || reportRowCell === undefined) {
         // The cell is null/undefined. -> Use empty strings here to enable filtering/sorting.
         result[key] = '';
