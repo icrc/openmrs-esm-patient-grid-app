@@ -1,6 +1,5 @@
 import {
   Button,
-  Search,
   Table,
   TableHead,
   TableRow,
@@ -8,22 +7,10 @@ import {
   TableExpandedRow,
   TableBody,
   TableCell,
-  Layer,
   Link,
-  Stack,
 } from '@carbon/react';
-import {
-  ChevronDown,
-  ChevronUp,
-  ChevronSort,
-  ArrowUp,
-  ArrowDown,
-  Download,
-  OpenPanelRight,
-  Renew,
-  WarningAltFilled,
-} from '@carbon/react/icons';
-import React, { Fragment, useContext, useMemo, useState } from 'react';
+import { ChevronDown, ChevronUp, ChevronSort, ArrowUp, ArrowDown } from '@carbon/react/icons';
+import React, { Fragment, useMemo, useState } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -42,19 +29,16 @@ import debounce from 'lodash-es/debounce';
 import { PatientGridColumnFiltersButton } from './PatientGridColumnFiltersButton';
 import { HistoricEncountersTabs } from './HistoricEncountersTabs';
 import { PatientGridDataRow } from './usePatientGrid';
-import { DownloadModal } from './DownloadModal';
 import { EditSidePanelValues } from './PatientGridDetailsPage';
 import {
   isFormSchemaQuestionColumnName,
   patientDetailsNameColumnName,
   getFormEngineDataRequiredForEditing,
-  InlinePatientGridEditingContext,
   useVisibleColumnsOnly,
 } from '../grid-utils';
 import { interpolateUrl } from '@openmrs/esm-framework';
-import { useGetPatientGrid } from '../api';
-import { useParams } from 'react-router-dom';
-import { PatientGridDetailsParams } from '../routes';
+import { PatientGridHeader } from './PatientGridHeader';
+import { DownloadModal } from './DownloadModal';
 
 export interface PatientGridProps {
   columns: Array<GroupColumnDef<PatientGridDataRow, unknown>>;
@@ -74,8 +58,6 @@ export function PatientGrid({
   refreshPatientGrid,
 }: PatientGridProps) {
   const { t } = useTranslation();
-  const { id: patientGridId } = useParams<PatientGridDetailsParams>();
-  const { data: patientGrid } = useGetPatientGrid(patientGridId);
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
   const [globalFilter, setGlobalFilter] = useState('');
   const handleGlobalFilterChange = useMemo(() => debounce(setGlobalFilter, 300), []);
@@ -96,7 +78,6 @@ export function PatientGrid({
     },
   });
   const headerGroups = table.getHeaderGroups();
-  const { localPatientGridState } = useContext(InlinePatientGridEditingContext);
 
   const handleCellClick = (cell: Cell<PatientGridDataRow, unknown>, row: Row<PatientGridDataRow>) => {
     const columnName = cell.column.id;
@@ -106,38 +87,13 @@ export function PatientGrid({
 
   return (
     <main>
-      <section className={styles.tableHeaderContainer}>
-        <>
-          {showReloadGrid && (
-            <Stack className={styles.reloadContainer} orientation="horizontal" gap={3}>
-              <WarningAltFilled className={styles.reloadWarningIcon} />
-              <span className={styles.reloadMessage}>
-                {t('patientGridReloadWarning', 'The list contains changes that are not visible.')}
-              </span>
-              <Button size="sm" kind="ghost" renderIcon={Renew} onClick={refreshPatientGrid}>
-                {t('patientGridReloadButton', 'Reload')}
-              </Button>
-            </Stack>
-          )}
-          <Button size="sm" kind="ghost" renderIcon={Download} onClick={() => setIsDownloadModalOpen(true)}>
-            {t('patientGridDownloadButton', 'Download')}
-          </Button>
-          <Button size="sm" kind="ghost" renderIcon={OpenPanelRight} onClick={showToggleColumnsSidePanel}>
-            {t('patientGridColumnsButton', 'Columns ({actual}/{total})', {
-              actual: Object.values(localPatientGridState.columnHiddenStates).filter((x) => !x).length,
-              total: patientGrid?.columns.length,
-            })}
-          </Button>
-          <Layer className={styles.tableSearchLayer}>
-            <Search
-              size="sm"
-              placeholder={t('patientGridSearchPlaceholder', 'Search')}
-              labelText={t('patientGridSearchLabel', 'Search')}
-              onChange={(e) => handleGlobalFilterChange(e.target.value)}
-            />
-          </Layer>
-        </>
-      </section>
+      <PatientGridHeader
+        showReloadGrid={showReloadGrid}
+        onFilterChange={handleGlobalFilterChange}
+        onRefreshPatientGridClick={refreshPatientGrid}
+        onShowToggleColumnsSidePanelClick={showToggleColumnsSidePanel}
+        onDownloadClick={() => setIsDownloadModalOpen(true)}
+      />
       <div className={styles.relativeTablePositioner}>
         <section className={styles.rawTableContainer}>
           <Table className={styles.table} useZebraStyles>

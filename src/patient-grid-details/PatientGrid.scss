@@ -3,32 +3,6 @@
 @use '../styles/table.scss';
 @import "~@openmrs/esm-styleguide/src/vars";
 
-.tableHeaderContainer {
-  display: flex;
-  justify-content: flex-end;
-  padding: layout.$spacing-06 layout.$spacing-05 0 layout.$spacing-05;
-
-  .tableSearchLayer {
-    width: 20%;
-    min-width: 12.5rem;
-  }
-}
-
-.reloadContainer {
-  margin-right: auto;
-  align-items: center;
-}
-
-.reloadMessage {
-  @include type.type-style('helper-text-02');
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.reloadWarningIcon {
-  fill: $inverse-support-03;
-}
-
 .relativeTablePositioner {
   // This alignment/positioning ensures that only the table itself scrolls to the right (when it overflows).
   position: relative;
