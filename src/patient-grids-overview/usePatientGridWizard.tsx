@@ -14,7 +14,7 @@ export interface PatientGridWizardState {
   name?: string;
   description?: string;
   shared?: boolean;
-  countryFilter?: PatientGridFilterPost;
+  countryFilter: PatientGridFilterPost;
   structureFilter?: PatientGridFilterPost;
   genderFilter?: PatientGridFilterPost;
   ageCategoryFilter?: PatientGridFilterPost;
@@ -31,6 +31,7 @@ export interface WizardPageProps {
 }
 
 const initialWizardState: PatientGridWizardState = {
+  countryFilter: {},
   selectedForms: [],
 };
 
@@ -66,7 +67,7 @@ export function usePatientGridWizard(formSchemas: Record<string, FormSchema>) {
   );
 
   const isStateValidForSubmission = useMemo(() => {
-    return state.name?.trim().length && state.selectedForms.length;
+    return state.name?.trim().length && state.selectedForms.length && state.countryFilter?.name;
   }, [state]);
 
   const createPostBody = useCallback(() => {

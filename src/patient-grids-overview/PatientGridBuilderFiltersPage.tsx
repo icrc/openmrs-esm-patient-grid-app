@@ -32,7 +32,7 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
         <Select
           id="country"
           defaultValue={state.countryFilter ?? ''}
-          labelText={t('patientGridDetailsCountryLabel', 'Country')}
+          labelText={t('patientGridDetailsCountryLabel', 'Country (required)')}
           onChange={(e) =>
             setState((state) => ({
               ...state,
