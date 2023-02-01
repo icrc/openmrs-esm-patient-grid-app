@@ -7,6 +7,7 @@ export const patientDetailsCountryColumnName = 'patientDetails--country';
 export const patientDetailsStructureColumnName = 'patientDetails--structure';
 export const patientDetailsGenderColumnName = 'patientDetails--Gender';
 export const patientDetailsAgeCategoryColumnName = 'patientDetails--ageCategory';
+export const patientDetailsPeriodColumnName = 'patientDetails--Period';
 
 /**
  * Returns a unique patient grid column name for a given form schema question.

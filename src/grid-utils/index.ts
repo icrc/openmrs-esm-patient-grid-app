@@ -12,3 +12,4 @@ export * from './useInlinePatientGridEditing';
 export * from './useUndoRedo';
 export * from './useVisibleColumnsOnly';
 export * from './usePossiblePatientGridFiltersForColumn';
+export * from './formatDate';
