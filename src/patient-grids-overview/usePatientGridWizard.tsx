@@ -19,6 +19,8 @@ export interface PatientGridWizardState {
   genderFilter?: PatientGridFilterPost;
   ageCategoryFilter?: PatientGridFilterPost;
   selectedForms: Array<FormGet>;
+  periodFilterType?: string;
+  periodFilter?: PatientGridFilterPost;
 }
 
 export interface WizardPageProps {
@@ -88,6 +90,7 @@ export function usePatientGridWizard(formSchemas: Record<string, FormSchema>) {
           state.structureFilter ? [state.structureFilter] : undefined,
           state.genderFilter ? [state.genderFilter] : undefined,
           state.ageCategoryFilter ? [state.ageCategoryFilter] : undefined,
+          state.periodFilter ? [state.periodFilter] : undefined,
         ),
         ...getPatientGridColumnPostResourcesForForms(state.selectedForms, formSchemas),
       ],
