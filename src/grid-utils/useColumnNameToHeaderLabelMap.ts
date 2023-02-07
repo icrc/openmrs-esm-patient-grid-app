@@ -71,7 +71,7 @@ export function useColumnNameToHeaderLabelMap(): SWRResponse<ColumnNameToHeaderL
         [patientDetailsStructureColumnName]: t('patientGridColumnHeaderStructure', 'Structure'),
         [patientDetailsGenderColumnName]: t('patientGridColumnHeaderGender', 'Gender'),
         [patientDetailsAgeCategoryColumnName]: t('patientGridColumnHeaderAgeCategory', 'Age category'),
-        [patientDetailsPeriodColumnName]: 'Period',
+        [patientDetailsPeriodColumnName]: t('patientGridColumnHeaderPeriod', 'Period'),
       };
 
       for (const form of forms) {
