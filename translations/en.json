@@ -32,7 +32,7 @@
     "patientGridColumnHeaderStructure": "Structure",
     "patientGridColumnHeaderGender": "Gender",
     "patientGridColumnHeaderAgeCategory": "Age category",
-    "": "Period",
+    "patientGridColumnHeaderPeriod": "Period",
     "patientGridColumnHeaderFormAge": "Age",
     "patientGridColumnHeaderFormDate": "Date",
     "patientGridExportFileName": "export.{extension}",
