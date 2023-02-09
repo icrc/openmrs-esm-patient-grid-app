@@ -90,9 +90,12 @@ export function usePatientGridWizard(formSchemas: Record<string, FormSchema>) {
           state.structureFilter ? [state.structureFilter] : undefined,
           state.genderFilter ? [state.genderFilter] : undefined,
           state.ageCategoryFilter ? [state.ageCategoryFilter] : undefined,
+        ),
+        ...getPatientGridColumnPostResourcesForForms(
+          state.selectedForms,
+          formSchemas,
           state.periodFilter ? [state.periodFilter] : undefined,
         ),
-        ...getPatientGridColumnPostResourcesForForms(state.selectedForms, formSchemas),
       ],
     };
 
