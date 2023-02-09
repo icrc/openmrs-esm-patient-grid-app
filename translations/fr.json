@@ -10,7 +10,7 @@
   "deletePatientGridModalCancel": "Annuler",
   "deletePatientGridModalBody": "Voulez-vous vraiment supprimer la grille {name} ? Cette action ne peut pas être annulée.",
   "genderMale": "Mâle",
-  "genderFemale": "Femelle",
+  "genderFemale": "Femme",
   "genderUnknown": "Inconnu",
   "genderOther": "Autre",
   "patientDetailsDownloadGroupHeader": "Utilisateur de soins de santé",
