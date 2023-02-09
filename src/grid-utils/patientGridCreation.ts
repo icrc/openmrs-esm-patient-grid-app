@@ -8,7 +8,6 @@ import {
   getFormSchemaQuestionColumnName,
   getFormAgeColumnName,
   getFormDateColumnName,
-  patientDetailsPeriodColumnName,
 } from './columnNames';
 import { getFormSchemaReferenceUuid, getFormSchemaQuestionsMappableToColumns } from './formSchema';
 
@@ -21,7 +20,6 @@ export function getPatientDetailsPatientGridColumnPostResources(
   structureFilter?: Array<PatientGridFilterPost>,
   genderFilter?: Array<PatientGridFilterPost>,
   ageCategoryFilters?: Array<PatientGridFilterPost>,
-  periodFilter?: Array<PatientGridFilterPost>,
 ): Array<PatientGridColumnPost> {
   return [
     {
@@ -55,13 +53,6 @@ export function getPatientDetailsPatientGridColumnPostResources(
       convertToAgeRange: true,
       filters: ageCategoryFilters,
     },
-    {
-      name: patientDetailsPeriodColumnName,
-      type: 'encounterdatecolumn',
-      datatype: 'ENC_DATE',
-      encounterType: ageCategoryEncounterType,
-      filters: periodFilter,
-    },
   ];
 }
 
@@ -73,6 +64,7 @@ export function getPatientDetailsPatientGridColumnPostResources(
 export function getPatientGridColumnPostResourcesForForms(
   forms: Array<FormGet>,
   formSchemas: Record<string, FormSchema>,
+  periodFilter?: Array<PatientGridFilterPost>,
 ): Array<PatientGridColumnPost> {
   return forms.flatMap((form) => {
     const schemaId = getFormSchemaReferenceUuid(form);
@@ -88,6 +80,7 @@ export function getPatientGridColumnPostResourcesForForms(
         type: 'encounterdatecolumn',
         datatype: 'ENC_DATE',
         encounterType: form.encounterType.uuid,
+        filters: periodFilter,
       },
       {
         name: getFormAgeColumnName(form),
