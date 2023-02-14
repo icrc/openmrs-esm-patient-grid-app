@@ -11,6 +11,7 @@ import {
   Layer,
   Link,
   Stack,
+  Pagination,
 } from '@carbon/react';
 import {
   ChevronDown,
@@ -35,6 +36,7 @@ import {
   Cell,
   Row,
   GroupColumnDef,
+  RowSelection,
 } from '@tanstack/react-table';
 import styles from './PatientGrid.scss';
 import { useTranslation } from 'react-i18next';
@@ -102,7 +104,13 @@ export function PatientGrid({
     const formEngineData = getFormEngineDataRequiredForEditing(row.original.__reportRow, columnName);
     showEditSidePanel(formEngineData);
   };
-
+  const [page,setPage] = useState(1);
+  const pageSize = 50;
+  const changePaginationState = (pageInfo)=>{
+    if(page != pageInfo.pageSize){
+      setPage(pageInfo.page)
+    }
+  }
   return (
     <main>
       <section className={styles.tableHeaderContainer}>
@@ -184,7 +192,8 @@ export function PatientGrid({
             </TableHead>
 
             <TableBody>
-              {table.getRowModel().rows.map((row, index) => (
+              
+              {table.getRowModel().rows.slice((page-1)*pageSize).slice(0,pageSize).map((row, index) => (
                 <Fragment key={row.id}>
                   <TableRow>
                     <TableCell>
@@ -241,7 +250,10 @@ export function PatientGrid({
                 </Fragment>
               ))}
             </TableBody>
+            
           </Table>
+          <Pagination onChange={changePaginationState} page={page} pageSizes={[50]} totalItems={table.getRowModel().rows.length} />
+
         </section>
       </div>
 
