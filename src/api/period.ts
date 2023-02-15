@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export type PeriodRepresentation = 'last' | 'custom';
+export type PeriodRepresentation = 'relative' | 'custom';
 
 export interface PeriodDetails {
   period: PeriodRepresentation;
@@ -14,8 +14,8 @@ export function useAllPeriods() {
   return useMemo<Array<PeriodDetails>>(
     () => [
       {
-        period: 'last',
-        display: t('lastPeriod', 'Last'),
+        period: 'relative',
+        display: t('relativePeriod', 'Relative'),
       },
       {
         period: 'custom',

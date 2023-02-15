@@ -41,43 +41,96 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
     };
     const now: Date = new Date();
     switch (value) {
-      case 'lastDay':
-        periodFilter.name = 'Last Day';
+      case 'today':
+        periodFilter.name = 'Today';
         periodFilter.operand = JSON.stringify({
-          fromDate: formatDate(new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1)),
-          toDate: formatDate(now),
+          fromDate: '',
+          toDate: '',
+          code: 'TODAY',
         });
         break;
 
-      case 'lastWeek':
-        periodFilter.name = 'Last Week';
+      case 'yesterday':
+        periodFilter.name = 'Yesterday';
         periodFilter.operand = JSON.stringify({
-          fromDate: formatDate(new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7)),
-          toDate: formatDate(now),
+          fromDate: '',
+          toDate: '',
+          code: 'YESTERDAY',
         });
         break;
 
-      case 'lastMonth':
-        periodFilter.name = 'Last Month';
+      case 'lastSevenDays':
+        periodFilter.name = 'Last 7 days';
         periodFilter.operand = JSON.stringify({
-          fromDate: formatDate(new Date(now.getFullYear(), now.getMonth() - 1, now.getDate())),
-          toDate: formatDate(now),
+          fromDate: '',
+          toDate: '',
+          code: 'LAST_SEVEN_DAYS',
         });
         break;
 
-      case 'lastQuarter':
-        periodFilter.name = 'Last Quarter';
+      case 'lastThirtyDays':
+        periodFilter.name = 'Last 30 days';
         periodFilter.operand = JSON.stringify({
-          fromDate: formatDate(new Date(now.getFullYear(), now.getMonth() - 3, now.getDate())),
-          toDate: formatDate(now),
+          fromDate: '',
+          toDate: '',
+          code: 'LAST_THIRTY_DAYS',
         });
         break;
 
-      case 'lastYear':
-        periodFilter.name = 'Last Year';
+      case 'weekToDate':
+        periodFilter.name = 'Week to date';
         periodFilter.operand = JSON.stringify({
-          fromDate: formatDate(new Date(now.getFullYear() - 1, now.getMonth(), now.getDate())),
-          toDate: formatDate(now),
+          fromDate: '',
+          toDate: '',
+          code: 'WEEK_TO_DATE',
+        });
+        break;
+      case 'monthToDate':
+        periodFilter.name = 'Month to date';
+        periodFilter.operand = JSON.stringify({
+          fromDate: '',
+          toDate: '',
+          code: 'MONTH_TO_DATE',
+        });
+        break;
+      case 'yearToDate':
+        periodFilter.name = 'Year to date';
+        periodFilter.operand = JSON.stringify({
+          fromDate: '',
+          toDate: '',
+          code: 'YEAR_TO_DATE',
+        });
+        break;
+      case 'previousWeek':
+        periodFilter.name = 'Previous Week';
+        periodFilter.operand = JSON.stringify({
+          fromDate: '',
+          toDate: '',
+          code: 'PREVIOUS_WEEK',
+        });
+        break;
+      case 'previousMonth':
+        periodFilter.name = 'Previous Month';
+        periodFilter.operand = JSON.stringify({
+          fromDate: '',
+          toDate: '',
+          code: 'PREVIOUS_MONTH',
+        });
+        break;
+      case 'previousQuarter':
+        periodFilter.name = 'Previous Quarter';
+        periodFilter.operand = JSON.stringify({
+          fromDate: '',
+          toDate: '',
+          code: 'PREVIOUS_QUARTER',
+        });
+        break;
+      case 'previousYear':
+        periodFilter.name = 'Previous Year';
+        periodFilter.operand = JSON.stringify({
+          fromDate: '',
+          toDate: '',
+          code: 'PREVIOUS_YEAR',
         });
         break;
 
@@ -91,6 +144,7 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
     const periodFilter: PatientGridFilterPost = {
       name: 'Custom Range',
       operand: JSON.stringify({
+        code: 'CUSTOM_DAYS_INCLUSIVE',
         fromDate: formatDate(new Date(value[0])),
         toDate: formatDate(new Date(value[1])),
       }),
@@ -233,10 +287,10 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
           <SelectItem key={period} value={period} text={display} />
         ))}
       </Select>
-      {state.periodFilterType === 'last' && (
+      {state.periodFilterType === 'relative' && (
         <RadioButtonGroup
-          legendText="Last period"
-          name="last-period-options"
+          legendText={t('filterRelativePeriod', 'Relative Period')}
+          name="relative-period-options"
           orientation="vertical"
           onChange={(value) =>
             setState((state) => ({
@@ -244,11 +298,29 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
               periodFilter: value ? setLastPeriodFilter(value) : undefined,
             }))
           }>
-          <RadioButton id="lastDay" labelText="Last Day" value="lastDay" />
-          <RadioButton id="lastWeek" labelText="Last Week" value="lastWeek" />
-          <RadioButton id="lastMonth" labelText="Last Month" value="lastMonth" />
-          <RadioButton id="lastQuarter" labelText="Last Quarter" value="lastQuarter" />
-          <RadioButton id="lastYear" labelText="Last Year" value="lastYear" />
+          <RadioButton id="today" labelText={t('filterToday', 'Today')} value="today" />
+          <RadioButton id="yesterday" labelText={t('filterYesterday', 'Yesterday')} value="yesterday" />
+          <RadioButton id="lastSevenDays" labelText={t('filterLastSevenDays', 'Last 7 days')} value="lastSevenDays" />
+          <RadioButton
+            id="lastThirtyDays"
+            labelText={t('filterLastThirtyDays', 'Last 30 days')}
+            value="lastThirtyDays"
+          />
+          <RadioButton id="weekToDate" labelText={t('filterWeekToDate', 'Week to date')} value="weekToDate" />
+          <RadioButton id="monthToDate" labelText={t('filterMonthToDate', 'Month to date')} value="monthToDate" />
+          <RadioButton id="yearToDate" labelText={t('filterYearToDate', 'Year to date')} value="yearToDate" />
+          <RadioButton id="previousWeek" labelText={t('filterPreviousWeek', 'Previous Week')} value="previousWeek" />
+          <RadioButton
+            id="previousMonth"
+            labelText={t('filterPreviousMonth', 'Previous Month')}
+            value="previousMonth"
+          />
+          <RadioButton
+            id="previousQuarter"
+            labelText={t('filterPreviousQuarter', 'Previous Quarter')}
+            value="previousQuarter"
+          />
+          <RadioButton id="previousYear" labelText={t('filterPreviousYear', 'Previous Year')} value="previousYear" />
         </RadioButtonGroup>
       )}
       {state.periodFilterType === 'custom' && (
@@ -262,8 +334,18 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
                 periodFilter: value ? setCustomPeriodFilter(value) : undefined,
               }))
             }>
-            <DatePickerInput id="startDate" placeholder="mm/dd/yyyy" labelText="Start date(inclusive)" size="md" />
-            <DatePickerInput id="endDate" placeholder="mm/dd/yyyy" labelText="End date(inclusive)" size="md" />
+            <DatePickerInput
+              id="startDate"
+              placeholder="mm/dd/yyyy"
+              labelText={t('filterStartDate', 'Start date (inclusive)')}
+              size="md"
+            />
+            <DatePickerInput
+              id="endDate"
+              placeholder="mm/dd/yyyy"
+              labelText={t('filterEndDate', 'End date (inclusive)')}
+              size="md"
+            />
           </DatePicker>
         </div>
       )}
