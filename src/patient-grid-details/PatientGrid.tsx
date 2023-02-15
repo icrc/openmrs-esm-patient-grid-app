@@ -103,13 +103,13 @@ export function PatientGrid({
     const formEngineData = getFormEngineDataRequiredForEditing(row.original.__reportRow, columnName);
     showEditSidePanel(formEngineData);
   };
-  const [page,setPage] = useState(1);
+  const [page, setPage] = useState(1);
   const pageSize = 50;
-  const changePaginationState = (pageInfo)=>{
-    if(page !== pageInfo.pageSize){
-      setPage(pageInfo.page)
+  const changePaginationState = (pageInfo) => {
+    if (page !== pageInfo.pageSize) {
+      setPage(pageInfo.page);
     }
-  }
+  };
   return (
     <main>
       <section className={styles.tableHeaderContainer}>
@@ -191,68 +191,79 @@ export function PatientGrid({
             </TableHead>
 
             <TableBody>
-
-              {table.getRowModel().rows.slice((page-1)*pageSize).slice(0,pageSize).map((row, index) => (
-                <Fragment key={row.id}>
-                  <TableRow>
-                    <TableCell>
-                      <div className={styles.expandCell}>
-                        Show all forms{' '}
-                        <Button
-                          hasIconOnly
-                          renderIcon={row.getIsExpanded() ? ChevronUp : ChevronDown}
-                          size="sm"
-                          kind="ghost"
-                          iconDescription={t('patientGridShowAllForms', 'Show all forms')}
-                          onClick={() => row.toggleExpanded()}
-                        />
-                      </div>
-                    </TableCell>
-
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell
-                        key={cell.id}
-                        onClick={
-                          isFormSchemaQuestionColumnName(cell.column.id)
-                            ? () => handleCellClick(cell, row)
-                            : () => undefined
-                        }
-                        className={isFormSchemaQuestionColumnName(cell.column.id) ? styles.clickableCell : undefined}>
-                        {cell.column.id === patientDetailsNameColumnName ? (
-                          <Link
-                            href={interpolateUrl(`\${openmrsSpaBase}/patient/${row.original.__reportRow.uuid}/chart`)}>
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </Link>
-                        ) : (
-                          flexRender(cell.column.columnDef.cell, cell.getContext())
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                  {row.getIsExpanded() && (
-                    // Carbon isn't designed, at all, for having a nested table.
-                    // The nested tables' rows count towards the current zebra count of this outer table.
-                    // To prevent the zebra style from being switched up by the inner table
-                    // (and to also ensure that the inner table always "starts" with a light zebra row),
-                    // hidden filler rows are inserted here at a location where they ensure that the
-                    // outer zebra style appears in continuous colors.
-                    <>
-                      {index % 2 === 0 && <tr className={styles.hiddenTableRowForContinuousZebra} />}
-                      <TableExpandedRow className={styles.expandRow} colSpan="100%">
-                        <div className={styles.expandRowBackdrop}>
-                          <HistoricEncountersTabs report={row.original.__report} reportRow={row.original.__reportRow} />
+              {table
+                .getRowModel()
+                .rows.slice((page - 1) * pageSize)
+                .slice(0, pageSize)
+                .map((row, index) => (
+                  <Fragment key={row.id}>
+                    <TableRow>
+                      <TableCell>
+                        <div className={styles.expandCell}>
+                          Show all forms{' '}
+                          <Button
+                            hasIconOnly
+                            renderIcon={row.getIsExpanded() ? ChevronUp : ChevronDown}
+                            size="sm"
+                            kind="ghost"
+                            iconDescription={t('patientGridShowAllForms', 'Show all forms')}
+                            onClick={() => row.toggleExpanded()}
+                          />
                         </div>
-                      </TableExpandedRow>
-                      {index % 2 === 1 && <tr className={styles.hiddenTableRowForContinuousZebra} />}
-                    </>
-                  )}
-                </Fragment>
-              ))}
+                      </TableCell>
+
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell
+                          key={cell.id}
+                          onClick={
+                            isFormSchemaQuestionColumnName(cell.column.id)
+                              ? () => handleCellClick(cell, row)
+                              : () => undefined
+                          }
+                          className={isFormSchemaQuestionColumnName(cell.column.id) ? styles.clickableCell : undefined}>
+                          {cell.column.id === patientDetailsNameColumnName ? (
+                            <Link
+                              href={interpolateUrl(
+                                `\${openmrsSpaBase}/patient/${row.original.__reportRow.uuid}/chart`,
+                              )}>
+                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                            </Link>
+                          ) : (
+                            flexRender(cell.column.columnDef.cell, cell.getContext())
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                    {row.getIsExpanded() && (
+                      // Carbon isn't designed, at all, for having a nested table.
+                      // The nested tables' rows count towards the current zebra count of this outer table.
+                      // To prevent the zebra style from being switched up by the inner table
+                      // (and to also ensure that the inner table always "starts" with a light zebra row),
+                      // hidden filler rows are inserted here at a location where they ensure that the
+                      // outer zebra style appears in continuous colors.
+                      <>
+                        {index % 2 === 0 && <tr className={styles.hiddenTableRowForContinuousZebra} />}
+                        <TableExpandedRow className={styles.expandRow} colSpan="100%">
+                          <div className={styles.expandRowBackdrop}>
+                            <HistoricEncountersTabs
+                              report={row.original.__report}
+                              reportRow={row.original.__reportRow}
+                            />
+                          </div>
+                        </TableExpandedRow>
+                        {index % 2 === 1 && <tr className={styles.hiddenTableRowForContinuousZebra} />}
+                      </>
+                    )}
+                  </Fragment>
+                ))}
             </TableBody>
-
           </Table>
-          <Pagination onChange={changePaginationState} page={page} pageSizes={[50]} totalItems={table.getRowModel().rows.length} />
-
+          <Pagination
+            onChange={changePaginationState}
+            page={page}
+            pageSizes={[50]}
+            totalItems={table.getRowModel().rows.length}
+          />
         </section>
       </div>
 
