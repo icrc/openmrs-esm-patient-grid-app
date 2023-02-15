@@ -11,7 +11,7 @@ To run the microfrontend locally:
 yarn  # to install dependencies
 yarn start  # to run the dev server
 ```
-Also possible to use a docker container to run yarn:
+Also, possible to use a docker container to run yarn:
 
 
 ```sh
