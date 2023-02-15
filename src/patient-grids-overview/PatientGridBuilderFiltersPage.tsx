@@ -39,7 +39,6 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
       name: '',
       operand: '',
     };
-    const now: Date = new Date();
     switch (value) {
       case 'today':
         periodFilter.name = 'Today';
