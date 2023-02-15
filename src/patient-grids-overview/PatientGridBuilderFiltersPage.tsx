@@ -182,7 +182,7 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
       )}
       <Select
         id="periodType"
-        defaultValue={state.periodFilterType ?? 'relative'}
+        defaultValue={state.periodFilterType ?? 'Period'}
         labelText={t('patientGridDetailsPeriodTypeLabel', 'Period')}
         onChange={(e) =>
           setState((state) => ({
@@ -190,17 +190,17 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
             periodFilterType: e.target.value ? e.target.value : undefined,
           }))
         }>
-        {/*<SelectItem value="" text={t('patientGridDetailsPeriodPlaceholder', 'Period')} />*/}
+        <SelectItem value="" text={t('patientGridDetailsPeriodPlaceholder', 'Period')} />
         {periods.map(({ period, display }) => (
           <SelectItem key={period} value={period} text={display} />
         ))}
       </Select>
+
       {state.periodFilterType === 'relative' && (
         <RadioButtonGroup
           legendText={t('filterRelativePeriod', 'Relative Period')}
           name="relative-period-options"
           orientation="vertical"
-          defaultSelected="lastThirtyDays"
           onChange={(value) =>
             setState((state) => ({
               ...state,
