@@ -146,6 +146,7 @@
   "filterLastThirtyDays": "Last 30 days",
   "filterWeekToDate": "Week to date",
   "filterMonthToDate": "Month to date",
+  "filterQuarterToDate": "Quarter to date",
   "filterYearToDate": "Year to date",
   "filterPreviousWeek": "Previous Week",
   "filterPreviousMonth": "Previous Month",

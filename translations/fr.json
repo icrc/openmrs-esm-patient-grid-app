@@ -146,6 +146,7 @@
   "filterLastThirtyDays": "30 derniers jours",
   "filterWeekToDate": "Semaine en cours",
   "filterMonthToDate": "Mois en cours",
+  "filterQuarterToDate": "Trimestre en cours",
   "filterYearToDate": "Année en cours",
   "filterPreviousWeek": "Semaine précédente",
   "filterPreviousMonth": "Mois précédent",
