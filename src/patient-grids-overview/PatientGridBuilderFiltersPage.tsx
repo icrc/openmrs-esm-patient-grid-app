@@ -214,7 +214,6 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
             id="lastThirtyDays"
             labelText={t('filterLastThirtyDays', 'Last 30 days')}
             value="lastThirtyDays"
-
           />
           <RadioButton id="weekToDate" labelText={t('filterWeekToDate', 'Week to date')} value="weekToDate" />
           <RadioButton id="monthToDate" labelText={t('filterMonthToDate', 'Month to date')} value="monthToDate" />
