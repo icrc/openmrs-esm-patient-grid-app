@@ -17,17 +17,11 @@
     "test": "jest --config jest.config.json --passWithNoTests",
     "verify": "concurrently 'yarn:lint' 'yarn:test' 'yarn:typescript'",
     "coverage": "yarn test -- --coverage ",
-    "prepare": "husky install",
     "postinstall": "husky install",
     "extract-translations": "i18next 'src/**/*.tsx' --config ./tools/i18next-parser.config.js"
   },
   "publishConfig": {
     "access": "public"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged && yarn verify"
-    }
   },
   "browserslist": [
     "extends browserslist-config-openmrs"
@@ -100,5 +94,9 @@
     "webpack": "^5.73.0",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.18.12/xlsx-0.18.12.tgz"
   },
-  "packageManager": "yarn@3.2.2"
+  "packageManager": "yarn@3.2.2",
+  "dependencies": {
+    "i18next": "^21.10.0",
+    "i18next-parser": "^6.6.0"
+  }
 }
