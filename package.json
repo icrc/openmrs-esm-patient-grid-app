@@ -17,7 +17,9 @@
     "test": "jest --config jest.config.json --passWithNoTests",
     "verify": "concurrently 'yarn:lint' 'yarn:test' 'yarn:typescript'",
     "coverage": "yarn test -- --coverage ",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "postinstall": "husky install",
+    "extract-translations": "i18next 'src/**/*.tsx' --config ./tools/i18next-parser.config.js"
   },
   "publishConfig": {
     "access": "public"
