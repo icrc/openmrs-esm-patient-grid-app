@@ -20,11 +20,11 @@ export interface PastEncounterObsGet extends OpenmrsResource {
   encounter: OpenmrsResource;
 }
 
-export function useGetAllPastEncounters(patientId: string, encounterType: string) {
+export function useGetAllPastEncounters(patientId: string, encounterType: string, reportUuid: string) {
   const v =
     'custom:uuid,display,encounterDatetime,obs:(uuid,concept:ref,value,formFieldNamespace,formFieldPath,encounter:(uuid,encounterType:ref)))';
   return useSWR(
-    `/ws/rest/v1/encounter?s=patientgridGetEncounterHistory&patient=${patientId}&encounterType=${encounterType}&v=${v}`,
+    `/ws/rest/v1/encounter?s=patientgridGetEncounterHistory&patientGridUuid=${reportUuid}&patient=${patientId}&encounterType=${encounterType}&v=${v}`,
     (url) => openmrsFetch<FetchAllResponse<PastEncounterGet>>(url).then(({ data }) => data.results),
   );
 }
