@@ -23,7 +23,7 @@ export function useHistoricEncountersGrid(
   formSchema: FormSchema,
   report: PatientGridReportGet,
 ) {
-  const historicEncountersSwr = useGetAllPastEncounters(patientId, form.encounterType.uuid);
+  const historicEncountersSwr = useGetAllPastEncounters(patientId, form.encounterType.uuid, report.patientGrid.uuid);
   const columnNameToHeaderLabelMapSwr = useColumnNameToHeaderLabelMap();
   return useMergedSwr(
     () => {
