@@ -4,7 +4,11 @@ import { configSchema } from './config-schema';
 
 declare let __VERSION__: string;
 const version = __VERSION__;
-
+/**
+ * This tells the app shell how to obtain translation files: that they
+ * are JSON files in the directory `../translations` (which you should
+ * see in the directory structure).
+ */
 const importTranslation = require.context('../translations', false, /.json$/, 'lazy');
 
 const backendDependencies = {
