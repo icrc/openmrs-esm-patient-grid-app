@@ -31,10 +31,24 @@ export interface WizardPageProps {
   goToNext(): void;
   goToPrevious(): void;
 }
-
+const setLastPeriodFilter = (value: string) => {
+  const periodFilter: PatientGridFilterPost = {
+    name: '',
+    operand: '',
+  };
+  periodFilter.name = value;
+  periodFilter.operand = JSON.stringify({
+    fromDate: '',
+    toDate: '',
+    code: value,
+  });
+  return periodFilter;
+};
 const initialWizardState: PatientGridWizardState = {
   countryFilter: {},
   selectedForms: [],
+  periodFilterType: 'relative',
+  periodFilter: setLastPeriodFilter('lastThirtyDays'),
 };
 
 export function usePatientGridWizard(formSchemas: Record<string, FormSchema>) {
@@ -69,7 +83,7 @@ export function usePatientGridWizard(formSchemas: Record<string, FormSchema>) {
   );
 
   const isStateValidForSubmission = useMemo(() => {
-    return state.name?.trim().length && state.selectedForms.length && state.countryFilter?.name;
+    return state.name?.trim().length && state.selectedForms.length && state.countryFilter?.name && state.periodFilter?.name;
   }, [state]);
 
   const createPostBody = useCallback(() => {

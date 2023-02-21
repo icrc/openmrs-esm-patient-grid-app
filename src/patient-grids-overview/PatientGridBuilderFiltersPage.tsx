@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Select,
   SelectSkeleton,
@@ -33,7 +33,7 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
   const genders = useAllGenders();
   const periods = useAllPeriods();
   const { data: ageRanges } = useGetAllAgeRanges();
-
+  
   const setLastPeriodFilter = (value: string) => {
     const periodFilter: PatientGridFilterPost = {
       name: '',
@@ -181,16 +181,17 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
         <SelectSkeleton />
       )}
       <Select
+        required
         id="periodType"
-        defaultValue={state.periodFilterType ?? 'Period'}
-        labelText={t('patientGridDetailsPeriodTypeLabel', 'Period')}
+        defaultValue={state.periodFilterType ?? 'relative'}
+        labelText={t('patientGridDetailsPeriodTypeLabel', 'Period (required)')}
         onChange={(e) =>
           setState((state) => ({
             ...state,
             periodFilterType: e.target.value ? e.target.value : undefined,
+            periodFilter:null
           }))
         }>
-        <SelectItem value="" text={t('patientGridDetailsPeriodPlaceholder', 'Period')} />
         {periods.map(({ period, display }) => (
           <SelectItem key={period} value={period} text={display} />
         ))}
@@ -201,6 +202,8 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
           legendText={t('filterRelativePeriod', 'Relative Period')}
           name="relative-period-options"
           orientation="vertical"
+          defaultSelected="lastThirtyDays"
+          valueSelected="lastThirtyDays"
           onChange={(value) =>
             setState((state) => ({
               ...state,
@@ -210,7 +213,7 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
           <RadioButton id="today" labelText={t('filterToday', 'Today')} value="today" />
           <RadioButton id="yesterday" labelText={t('filterYesterday', 'Yesterday')} value="yesterday" />
           <RadioButton id="lastSevenDays" labelText={t('filterLastSevenDays', 'Last 7 days')} value="lastSevenDays" />
-          <RadioButton
+          <RadioButton 
             id="lastThirtyDays"
             labelText={t('filterLastThirtyDays', 'Last 30 days')}
             value="lastThirtyDays"
@@ -241,6 +244,7 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
         <div>
           <DatePicker
             datePickerType="range"
+            required="true"
             onChange={(value: Array<Date>) =>
               value.length === 2 &&
               setState((state) => ({
@@ -250,12 +254,14 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
             }>
             <DatePickerInput
               id="startDate"
+              required= "true"
               placeholder="mm/dd/yyyy"
               labelText={t('filterStartDate', 'Start date (inclusive)')}
               size="md"
             />
             <DatePickerInput
               id="endDate"
+              required="true"
               placeholder="mm/dd/yyyy"
               labelText={t('filterEndDate', 'End date (inclusive)')}
               size="md"
