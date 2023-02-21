@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Select,
   SelectSkeleton,
@@ -181,7 +181,6 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
         <SelectSkeleton />
       )}
       <Select
-        required
         id="periodType"
         defaultValue={state.periodFilterType ?? 'relative'}
         labelText={t('patientGridDetailsPeriodTypeLabel', 'Period (required)')}
@@ -244,7 +243,6 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
         <div>
           <DatePicker
             datePickerType="range"
-            required="true"
             onChange={(value: Array<Date>) =>
               value.length === 2 &&
               setState((state) => ({
@@ -254,14 +252,12 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
             }>
             <DatePickerInput
               id="startDate"
-              required= "true"
               placeholder="mm/dd/yyyy"
               labelText={t('filterStartDate', 'Start date (inclusive)')}
               size="md"
             />
             <DatePickerInput
               id="endDate"
-              required="true"
               placeholder="mm/dd/yyyy"
               labelText={t('filterEndDate', 'End date (inclusive)')}
               size="md"
