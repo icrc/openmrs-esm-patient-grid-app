@@ -12,6 +12,7 @@ import {
   Link,
   Stack,
   Pagination,
+  Loading,
 } from '@carbon/react';
 import {
   ChevronDown,
@@ -23,8 +24,9 @@ import {
   OpenPanelRight,
   Renew,
   WarningAltFilled,
+  CloudOffline,
 } from '@carbon/react/icons';
-import React, { Fragment, useContext, useMemo, useState } from 'react';
+import React, { Fragment, useContext, useMemo, useState, useEffect } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -51,7 +53,12 @@ import {
   getFormEngineDataRequiredForEditing,
   InlinePatientGridEditingContext,
 } from '../grid-utils';
-import { interpolateUrl } from '@openmrs/esm-framework';
+import {
+  interpolateUrl,
+  putDynamicOfflineData,
+  syncDynamicOfflineData,
+  getDynamicOfflineDataEntries,
+} from '@openmrs/esm-framework';
 import { useVisibleColumnsOnly } from '../grid-utils/useVisibleColumnsOnly';
 import { useGetPatientGrid } from '../api';
 
@@ -77,6 +84,7 @@ export function PatientGrid({
   const { t } = useTranslation();
   const { data: patientGrid } = useGetPatientGrid(patientGridId);
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
+  const [isOfflineLoading, setIsOfflineLoading] = useState(false);
   const [globalFilter, setGlobalFilter] = useState('');
   const handleGlobalFilterChange = useMemo(() => debounce(setGlobalFilter, 300), []);
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -110,6 +118,50 @@ export function PatientGrid({
       setPage(pageInfo.page);
     }
   };
+
+  const [offlinePatients, setOfflinePatients] = useState([]);
+  const [offlinePatientsUUID, setOfflinePatientsUUID] = useState([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const offlinePatientData = await getDynamicOfflineDataEntries('patient');
+      setOfflinePatients(offlinePatientData);
+    }
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const offlinePatientIDs = offlinePatients.map((patient) => patient.identifier);
+    setOfflinePatientsUUID(offlinePatientIDs);
+  }, [offlinePatients]);
+
+  const handleOffline = async () => {
+    setIsOfflineLoading(true);
+    data.map(async (e) => {
+      const uuid = e.uuid.toString();
+      await putDynamicOfflineData('patient', uuid);
+      await syncDynamicOfflineData('patient', uuid);
+    });
+
+    setTimeout(() => {
+      setIsOfflineLoading(false);
+    }, 3000);
+  };
+
+  if (isOfflineLoading) {
+    return (
+      <section className={styles.loadingIndicatorContainer}>
+        <Loading description="Making patients available offline" withOverlay={false} />
+        <span className={styles.loadingDescription}>
+          {t(
+            'patientGridOfflineLoadingIndicator',
+            'Please wait while we are making patients available offline. Please do not close this page.',
+          )}
+        </span>
+      </section>
+    );
+  }
+
   return (
     <main>
       <section className={styles.tableHeaderContainer}>
@@ -125,6 +177,9 @@ export function PatientGrid({
               </Button>
             </Stack>
           )}
+          <Button size="sm" kind="ghost" onClick={handleOffline}>
+            {t('patientGridAddToOfflineButton', 'Add to Offline Patients List')}
+          </Button>
           <Button size="sm" kind="ghost" renderIcon={Download} onClick={() => setIsDownloadModalOpen(true)}>
             {t('patientGridDownloadButton', 'Download')}
           </Button>
@@ -222,12 +277,15 @@ export function PatientGrid({
                           }
                           className={isFormSchemaQuestionColumnName(cell.column.id) ? styles.clickableCell : undefined}>
                           {cell.column.id === patientDetailsNameColumnName ? (
-                            <Link
-                              href={interpolateUrl(
-                                `\${openmrsSpaBase}/patient/${row.original.__reportRow.uuid}/chart`,
-                              )}>
-                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                            </Link>
+                            <>
+                              <Link
+                                href={interpolateUrl(
+                                  `\${openmrsSpaBase}/patient/${row.original.__reportRow.uuid}/chart`,
+                                )}>
+                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                              </Link>
+                              {offlinePatientsUUID.includes(row.original.__reportRow.uuid) ? <CloudOffline /> : <></>}
+                            </>
                           ) : (
                             flexRender(cell.column.columnDef.cell, cell.getContext())
                           )}

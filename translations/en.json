@@ -143,5 +143,6 @@
   "toggleColumnsSidePanelCancel": "Cancel",
   "toggleColumnsSidePanelHeader": "Enable/Disable columns",
   "toggleColumnsSidePanelSubmit": "Accept",
-  "toggleColumnsSidePanelTitle": "Grid columns"
+  "toggleColumnsSidePanelTitle": "Grid columns",
+  "patientGridAddToOfflineButton": "Add to Offline Patients List"
 }
