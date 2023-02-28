@@ -6,11 +6,22 @@ import { useMutation } from './useMutation';
 export interface PatientGridReportGet {
   patientGrid: OpenmrsResource;
   report: Array<PatientGridReportRowGet>;
+  reportMetadata : PatientGridReportMetaData;
 }
 
 export interface PatientGridReportRowGet
   extends Record<string, undefined | null | string | number | boolean | PatientGridReportObsGet> {
   uuid: string;
+}
+export interface PatientGridReportMetaData{
+  truncated: string;
+  rowsCountLimit: number;
+  initialRowsCount: number;
+  periodOperand:{
+    fromDate: string;
+    toDate: string;
+    code: string;
+  };
 }
 
 export interface PatientGridReportObsGet {
