@@ -8,3 +8,8 @@
 .subTitle {
   @include type.type-style('body-compact-01');
 }
+.truncateText {
+  @include type.type-style('body-compact-01');
+  font-weight: 800;
+  color: red;
+}

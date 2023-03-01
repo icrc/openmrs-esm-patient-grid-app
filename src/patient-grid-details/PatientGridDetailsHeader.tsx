@@ -4,6 +4,7 @@ import { PageHeader } from '../components';
 import { Button, ButtonSkeleton, OverflowMenu, OverflowMenuItem, SkeletonText } from '@carbon/react';
 import { Save, Undo, Redo } from '@carbon/react/icons';
 import styles from './PatientGridDetailsHeader.scss';
+
 import { useGetPatientGrid, useGetPatientGridReport } from '../api';
 import { useParams } from 'react-router-dom';
 import { PatientGridDetailsParams } from '../routes';
@@ -40,6 +41,7 @@ export function PatientGridDetailsHeader({
   };
 
   return (
+    
     <PageHeader
       title={
         <h1 className={styles.title}>
@@ -52,7 +54,12 @@ export function PatientGridDetailsHeader({
       }
       subTitle={
         patientGridReport ? (
-          <span className={styles.subTitle}>{patientGridReport.report.length} patients</span>
+          <div>
+          <span className={styles.subTitle}>{patientGridReport.report.length} patients   </span>
+          <span >{patientGridReport.reportMetadata.truncated && 
+            <span className={styles.truncateText}>           Your response has been truncated to {patientGridReport.reportMetadata.rowsCountLimit} records. The actual response has {patientGridReport.reportMetadata.initialRowsCount} records.</span>
+          }</span>
+          </div>
         ) : (
           <SkeletonText width="30%" />
         )
