@@ -20,7 +20,7 @@ export function useGetAllStructureLocations(countryLocationName: string | undefi
 }
 
 function useFilteredLocations(filter: string, enabled = true, maxCount = 100) {
-  const url = `/ws/fhir2/R4/Location${filter}`;
+  const url = `/ws/fhir2/R4/Location${filter}_sort=name&`;
   const swrKey = enabled ? url : null;
 
   return useSWRImmutable(swrKey, async (url) => {
