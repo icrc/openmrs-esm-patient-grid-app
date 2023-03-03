@@ -1,5 +1,5 @@
 {
-  "name": "@icrc/openmrs-esm-patient-grid-app",
+  "name": "@icrc/esm-patient-grid-app",
   "version": "1.0.1",
   "license": "BSD-3-Clause",
   "description": "The microfrontend module providing the patient grid feature.",

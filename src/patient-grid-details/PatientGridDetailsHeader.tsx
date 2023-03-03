@@ -41,7 +41,6 @@ export function PatientGridDetailsHeader({
   };
 
   return (
-    
     <PageHeader
       title={
         <h1 className={styles.title}>
@@ -55,10 +54,16 @@ export function PatientGridDetailsHeader({
       subTitle={
         patientGridReport ? (
           <div>
-          <span className={styles.subTitle}>{patientGridReport.report.length} patients   </span>
-          <span >{patientGridReport.reportMetadata.truncated && 
-            <span className={styles.truncateText}>           Your response has been truncated to {patientGridReport.reportMetadata.rowsCountLimit} records. The actual response has {patientGridReport.reportMetadata.initialRowsCount} records.</span>
-          }</span>
+            <span className={styles.subTitle}>{patientGridReport.report.length} patients </span>
+            <span>
+              {patientGridReport.reportMetadata.truncated && (
+                <span className={styles.truncateText}>
+                  {' '}
+                  Your response has been truncated to {patientGridReport.reportMetadata.rowsCountLimit} records. The
+                  actual response has {patientGridReport.reportMetadata.initialRowsCount} records.
+                </span>
+              )}
+            </span>
           </div>
         ) : (
           <SkeletonText width="30%" />

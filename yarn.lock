@@ -1884,9 +1884,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@icrc/openmrs-esm-patient-grid-app@workspace:.":
+"@icrc/esm-patient-grid-app@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@icrc/openmrs-esm-patient-grid-app@workspace:."
+  resolution: "@icrc/esm-patient-grid-app@workspace:."
   dependencies:
     "@carbon/react": ^1.9.0
     "@openmrs/esm-framework": next
