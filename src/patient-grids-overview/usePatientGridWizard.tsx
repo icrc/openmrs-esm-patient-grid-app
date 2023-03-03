@@ -83,7 +83,9 @@ export function usePatientGridWizard(formSchemas: Record<string, FormSchema>) {
   );
 
   const isStateValidForSubmission = useMemo(() => {
-    return state.name?.trim().length && state.selectedForms.length && state.countryFilter?.name && state.periodFilter?.name;
+    return (
+      state.name?.trim().length && state.selectedForms.length && state.countryFilter?.name && state.periodFilter?.name
+    );
   }, [state]);
 
   const createPostBody = useCallback(() => {

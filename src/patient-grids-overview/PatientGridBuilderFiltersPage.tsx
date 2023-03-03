@@ -33,7 +33,7 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
   const genders = useAllGenders();
   const periods = useAllPeriods();
   const { data: ageRanges } = useGetAllAgeRanges();
-  
+
   const setLastPeriodFilter = (value: string) => {
     const periodFilter: PatientGridFilterPost = {
       name: '',
@@ -188,7 +188,7 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
           setState((state) => ({
             ...state,
             periodFilterType: e.target.value ? e.target.value : undefined,
-            periodFilter:null
+            periodFilter: null,
           }))
         }>
         {periods.map(({ period, display }) => (
@@ -212,7 +212,7 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
           <RadioButton id="today" labelText={t('filterToday', 'Today')} value="today" />
           <RadioButton id="yesterday" labelText={t('filterYesterday', 'Yesterday')} value="yesterday" />
           <RadioButton id="lastSevenDays" labelText={t('filterLastSevenDays', 'Last 7 days')} value="lastSevenDays" />
-          <RadioButton 
+          <RadioButton
             id="lastThirtyDays"
             labelText={t('filterLastThirtyDays', 'Last 30 days')}
             value="lastThirtyDays"
