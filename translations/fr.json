@@ -105,7 +105,7 @@
   "patientGridFiltersHeaderFilterCaption": "Filtres:",
   "patientGridFiltersHeaderNoFiltersFallback": "--",
   "patientGridFiltersHeaderRemoveFilter": "Supprimer le filtre",
-  "patientGridLoadingIndicator": "Please wait while we are generating a\nnew patient grid report. This may take a\nwhile. Please do not close this page.",
+  "patientGridLoadingIndicator": "Merci de patienter pendant que nous générons\nune nouvelle grille de patients. Cette action peut prendre du temps\nMerci de ne pas fermer la fenêtre.",
   "patientGridRefreshFailedToastDescription": "L'actualisation de la grille a échoué. La grille n'affichera pas les dernières données.",
   "patientGridRefreshFailedToastTitle": "Actualisation de la grille impossible",
   "patientGridReloadButton": "Recharger",
@@ -143,5 +143,7 @@
   "toggleColumnsSidePanelCancel": "Annuler",
   "toggleColumnsSidePanelHeader": "Activer/Désactiver",
   "toggleColumnsSidePanelSubmit": "Accepter",
-  "toggleColumnsSidePanelTitle": "Colonnes de la grille"
+  "toggleColumnsSidePanelTitle": "Colonnes de la grille",
+  "patientGridAddToOfflineButton": "Ajouter à la liste des patients accessibles hors-ligne",
+  "patientGridOfflineLoadingIndicator": "Merci d'attendre la sauvegarde en mode hors-ligne des patients.\nMerci de ne pas fermer cette fenêtre."
 }

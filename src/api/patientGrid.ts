@@ -28,7 +28,7 @@ export interface PatientGridPost {
 export type PatientGridType = 'my' | 'system' | 'other';
 
 export function useGetAllPatientGrids() {
-  return useSWR('/ws/rest/v1/patientgrid/patientgrid?v=full', (url) =>
+  return useSWR('/ws/rest/v1/patientgrid/patientgrid?v=default', (url) =>
     openmrsFetch<FetchAllResponse<PatientGridGet>>(url).then(({ data }) => data.results),
   );
 }
