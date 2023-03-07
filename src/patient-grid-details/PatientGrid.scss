@@ -32,7 +32,11 @@
 .relativeTablePositioner {
   // This alignment/positioning ensures that only the table itself scrolls to the right (when it overflows).
   position: relative;
-
+  background-color: #f4f4f4;
+  border-radius: 20px;
+  height: 600px;
+  padding: 0 10px 10px 10px;
+  
   .rawTableContainer {
     background-color: #ededed;
     overflow: auto;
@@ -46,6 +50,7 @@
 table.table {
   @include table.carbon-table-overrides;
   margin: 0 layout.$spacing-05 layout.$spacing-05 layout.$spacing-05;
+  display: block;
 }
 
 .expandCell {
