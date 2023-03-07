@@ -29,7 +29,7 @@ export function getReactTableColumnDefForForm(
   const formAgeColumnName = getFormAgeColumnName(form);
   const formDateColumnName = getFormDateColumnName(form);
   const formColumn: GroupColumnDef<Record<string, string>> = {
-    header: form.name,
+    header: form.display,
     columns: [],
   };
 

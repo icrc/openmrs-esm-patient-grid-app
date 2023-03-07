@@ -145,5 +145,14 @@
   "toggleColumnsSidePanelSubmit": "Accepter",
   "toggleColumnsSidePanelTitle": "Colonnes de la grille",
   "patientGridAddToOfflineButton": "Ajouter à la liste des patients accessibles hors-ligne",
-  "patientGridOfflineLoadingIndicator": "Merci d'attendre la sauvegarde en mode hors-ligne des patients.\nMerci de ne pas fermer cette fenêtre."
+  "patientGridOfflineLoadingIndicator": "Merci d'attendre la sauvegarde en mode hors-ligne des patients.\nMerci de ne pas fermer cette fenêtre.",
+  "patientGridColumnHeaderPatientName": "Nom du patient",
+  "patientGridColumnHeaderCountry": "Pays",
+  "patientGridColumnHeaderStructure": "Structure",
+  "patientGridColumnHeaderGender": "Genre",
+  "patientGridColumnHeaderAgeCategory": "Catégorie d'âge",
+  "patientGridColumnHeaderPeriod": "Période",
+  "patientGridColumnHeaderFormAge": "Age",
+  "patientGridColumnHeaderFormDate": "Date",
+  "patientDetailsDownloadGroupHeader": "Utilisateur de soins de santé"
 }

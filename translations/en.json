@@ -145,5 +145,15 @@
   "toggleColumnsSidePanelSubmit": "Accept",
   "toggleColumnsSidePanelTitle": "Grid columns",
   "patientGridAddToOfflineButton": "Add to Offline Patients List",
-  "patientGridOfflineLoadingIndicator": "Please wait while we are making patients available offline.\nPlease do not close this page."
+  "patientGridOfflineLoadingIndicator": "Please wait while we are making patients available offline.\nPlease do not close this page.",
+  "patientGridColumnHeaderPatientName": "Patient name",
+  "patientGridColumnHeaderCountry": "Country",
+  "patientGridColumnHeaderStructure": "Structure",
+  "patientGridColumnHeaderGender": "Gender",
+  "patientGridColumnHeaderAgeCategory": "Age category",
+  "patientGridColumnHeaderPeriod": "Period",
+  "patientGridColumnHeaderFormAge": "Age",
+  "patientGridColumnHeaderFormDate": "Date",
+  "patientDetailsDownloadGroupHeader": "Healthcare user"
+
 }

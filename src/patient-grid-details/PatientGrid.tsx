@@ -255,7 +255,7 @@ export function PatientGrid({
                     <TableRow>
                       <TableCell>
                         <div className={styles.expandCell}>
-                          Show all forms{' '}
+                          {t('patientGridShowAllForms', 'Show all forms')}{' '}
                           <Button
                             hasIconOnly
                             renderIcon={row.getIsExpanded() ? ChevronUp : ChevronDown}
