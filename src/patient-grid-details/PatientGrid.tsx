@@ -163,7 +163,6 @@ export function PatientGrid({
     );
   }
   const windowSize = useWindowSize();
-  console.log(windowSize);
   return (
     <main>
       <section className={styles.tableHeaderContainer}>
@@ -201,9 +200,9 @@ export function PatientGrid({
           </Layer>
         </>
       </section>
-      <div style = {{height:windowSize.height-400}} className={styles.relativeTablePositioner}>
+      <div style={{ height: windowSize.height - 400 }} className={styles.relativeTablePositioner}>
         <section className={styles.rawTableContainer}>
-          <Table height = {windowSize.height-500} className={styles.table} useZebraStyles>
+          <Table height={windowSize.height - 500} className={styles.table} useZebraStyles>
             <TableHead>
               {headerGroups.map((headerGroup, headerGroupIndex) => (
                 <TableRow key={headerGroup.id}>
@@ -323,6 +322,24 @@ export function PatientGrid({
             page={page}
             pageSizes={[25]}
             totalItems={table.getRowModel().rows.length}
+            itemsPerPageText={t('patientGridPaginationItemsPerPage', 'Items per page:')}
+            pageNumberText={t('patientGridPaginationPageNumber', 'Page Number')}
+            pageRangeText={(_current, total) =>
+              t(total === 1 ? 'patientGridPaginationOfOnePage' : 'patientGridPaginationOf', 'of {total} pages', {
+                total: total,
+              })
+            }
+            itemRangeText={(min, max, total) =>
+              t(
+                total === 1 ? 'patientGridPaginationItemRangeText' : 'patientGridPaginationItemRangesText',
+                '{min}–{max} of {total} items',
+                {
+                  min: min,
+                  max: max,
+                  total: total,
+                },
+              )
+            }
           />
         </section>
       </div>

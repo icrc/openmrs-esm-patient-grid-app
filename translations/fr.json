@@ -154,5 +154,12 @@
   "patientGridColumnHeaderPeriod": "Période",
   "patientGridColumnHeaderFormAge": "Age",
   "patientGridColumnHeaderFormDate": "Date",
-  "patientDetailsDownloadGroupHeader": "Utilisateur de soins de santé"
+  "patientDetailsDownloadGroupHeader": "Utilisateur de soins de santé",
+  "patientGridPaginationItemsPerPage": "Lignes par page:",
+  "patientGridPaginationPageNumber": "Numéro de page",
+  "patientGridPaginationOf": "sur {total} pages",
+  "patientGridPaginationOfOnePage": "sur 1 page",
+  "patientGridPaginationPages": "pages",
+  "patientGridPaginationItemRangeText": "{min}–{max} sur {total} ligne",
+  "patientGridPaginationItemRangesText": "{min}–{max} sur {total} lignes"
 }
