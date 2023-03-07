@@ -47,6 +47,7 @@ import { HistoricEncountersTabs } from './HistoricEncountersTabs';
 import { PatientGridDataRow } from './usePatientGrid';
 import { DownloadModal } from './DownloadModal';
 import { EditSidePanelValues } from './PatientGridDetailsPage';
+import useWindowSize from './useWindowSize';
 import {
   isFormSchemaQuestionColumnName,
   patientDetailsNameColumnName,
@@ -112,7 +113,7 @@ export function PatientGrid({
     showEditSidePanel(formEngineData);
   };
   const [page, setPage] = useState(1);
-  const pageSize = 50;
+  const pageSize = 25;
   const changePaginationState = (pageInfo) => {
     if (page !== pageInfo.pageSize) {
       setPage(pageInfo.page);
@@ -161,7 +162,8 @@ export function PatientGrid({
       </section>
     );
   }
-
+  const windowSize = useWindowSize();
+  console.log(windowSize);
   return (
     <main>
       <section className={styles.tableHeaderContainer}>
@@ -199,9 +201,9 @@ export function PatientGrid({
           </Layer>
         </>
       </section>
-      <div className={styles.relativeTablePositioner}>
+      <div style = {{height:windowSize.height-400}} className={styles.relativeTablePositioner}>
         <section className={styles.rawTableContainer}>
-          <Table className={styles.table} useZebraStyles>
+          <Table height = {windowSize.height-500} className={styles.table} useZebraStyles>
             <TableHead>
               {headerGroups.map((headerGroup, headerGroupIndex) => (
                 <TableRow key={headerGroup.id}>
@@ -319,7 +321,7 @@ export function PatientGrid({
           <Pagination
             onChange={changePaginationState}
             page={page}
-            pageSizes={[50]}
+            pageSizes={[25]}
             totalItems={table.getRowModel().rows.length}
           />
         </section>
