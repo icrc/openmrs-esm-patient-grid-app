@@ -95,7 +95,7 @@ function FiltersPopoverContent({ patientGridId, column, columnDisplayName, close
             <Checkbox
               key={possibleFilter.operand}
               id={`${column.id}-${possibleFilter.operand}`}
-              labelText={possibleFilter.name}
+              labelText={possibleFilter.display}
               checked={localFilters.some(
                 (filter) =>
                   filter.columnName === possibleFilter.columnName && filter.operand === possibleFilter.operand,
