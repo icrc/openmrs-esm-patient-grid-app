@@ -119,6 +119,7 @@ export function PatientGrid({
       setPage(pageInfo.page);
     }
   };
+  const windowSize = useWindowSize();
 
   const [offlinePatients, setOfflinePatients] = useState([]);
   const [offlinePatientsUUID, setOfflinePatientsUUID] = useState([]);
@@ -162,7 +163,7 @@ export function PatientGrid({
       </section>
     );
   }
-  const windowSize = useWindowSize();
+
   return (
     <main>
       <section className={styles.tableHeaderContainer}>
