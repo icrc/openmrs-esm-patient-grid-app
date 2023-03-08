@@ -150,7 +150,7 @@ function getGroups(
     // Form columns must be generated multiple times if there are multiple past encounters.
     for (let repetition = 0; repetition < requiredFormRepetitions[form.uuid]; repetition++) {
       const group = {
-        header: form.name,
+        header: form.display,
         sections: [],
       };
 

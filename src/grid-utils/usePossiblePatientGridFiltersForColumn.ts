@@ -24,12 +24,14 @@ export function usePossiblePatientGridFiltersForColumn(
             if (columnValue.value && typeof columnValue.value === 'object') {
               return {
                 name: columnValue.value.display,
+                display: columnValue.value.display,
                 operand: columnValue.value.uuid,
                 columnName,
               };
             } else {
               return {
                 name: `${columnValue.value}`,
+                display: `${columnValue.value}`,
                 operand: `${columnValue.value}`,
                 columnName,
               };
@@ -37,6 +39,7 @@ export function usePossiblePatientGridFiltersForColumn(
           } else if (columnValue !== null && columnValue !== undefined) {
             return {
               name: `${columnValue}`,
+              display: `${columnValue}`,
               operand: `${columnValue}`,
               columnName,
             };
