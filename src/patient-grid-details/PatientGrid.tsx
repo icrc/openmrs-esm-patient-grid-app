@@ -119,6 +119,7 @@ export function PatientGrid({
       setPage(pageInfo.page);
     }
   };
+  const windowSize = useWindowSize();
 
   const [offlinePatients, setOfflinePatients] = useState([]);
   const [offlinePatientsUUID, setOfflinePatientsUUID] = useState([]);
@@ -162,8 +163,7 @@ export function PatientGrid({
       </section>
     );
   }
-  const windowSize = useWindowSize();
-  console.log(windowSize);
+
   return (
     <main>
       <section className={styles.tableHeaderContainer}>
@@ -201,9 +201,9 @@ export function PatientGrid({
           </Layer>
         </>
       </section>
-      <div style = {{height:windowSize.height-400}} className={styles.relativeTablePositioner}>
+      <div style={{ height: windowSize.height - 400 }} className={styles.relativeTablePositioner}>
         <section className={styles.rawTableContainer}>
-          <Table height = {windowSize.height-500} className={styles.table} useZebraStyles>
+          <Table height={windowSize.height - 500} className={styles.table} useZebraStyles>
             <TableHead>
               {headerGroups.map((headerGroup, headerGroupIndex) => (
                 <TableRow key={headerGroup.id}>
