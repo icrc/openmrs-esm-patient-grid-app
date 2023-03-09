@@ -56,7 +56,7 @@ function FilterTag({ filter, columnNameToHeaderLabelMap }: FilterTagProps) {
   const { t } = useTranslation();
   const isLocalFilter = !('uuid' in filter);
   const filterName = `${columnNameToHeaderLabelMap[filter.columnName] ?? filter.columnName}: ${
-    filter.name ?? filter.operand
+    filter.display ?? filter.operand
   }`;
   const { filters } = useContext(InlinePatientGridEditingContext);
   const { push } = useContext(InlinePatientGridEditingContext);

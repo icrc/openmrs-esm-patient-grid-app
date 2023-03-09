@@ -14,6 +14,7 @@ import { openmrsFetch } from '@openmrs/esm-framework';
 export interface LocalFilter {
   uuid?: string;
   name: string;
+  display: string;
   operand: string;
   columnName: string;
 }
@@ -59,6 +60,7 @@ export function useInlinePatientGridEditingContextState(patientGridId: string): 
         uuid: filter.uuid,
         name: filter.name,
         operand: filter.operand,
+        display: filter.display,
         // In the filter representation, "display" holds the column name.
         // May be brittle. Should perhaps be improved eventually.
         columnName: filter.column.display,

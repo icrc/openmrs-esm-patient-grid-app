@@ -37,7 +37,7 @@ export function HistoricEncountersTabs({ report, reportRow }: HistoricEncounters
         <Tabs>
           <TabList aria-label={t('historicEncountersTabsAriaLabel', 'Historic forms')} activation="manual" contained>
             {formsReferencedInGridReport.map((form) => (
-              <Tab key={form.uuid}>{form.name}</Tab>
+              <Tab key={form.uuid}>{form.display}</Tab>
             ))}
           </TabList>
           <TabPanels>

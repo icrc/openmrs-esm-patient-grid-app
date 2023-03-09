@@ -257,7 +257,7 @@ export function PatientGrid({
                     <TableRow>
                       <TableCell>
                         <div className={styles.expandCell}>
-                          Show all forms{' '}
+                          {t('patientGridShowAllForms', 'Show all forms')}{' '}
                           <Button
                             hasIconOnly
                             renderIcon={row.getIsExpanded() ? ChevronUp : ChevronDown}
@@ -323,6 +323,24 @@ export function PatientGrid({
             page={page}
             pageSizes={[25]}
             totalItems={table.getRowModel().rows.length}
+            itemsPerPageText={t('patientGridPaginationItemsPerPage', 'Items per page:')}
+            pageNumberText={t('patientGridPaginationPageNumber', 'Page Number')}
+            pageRangeText={(_current, total) =>
+              t(total === 1 ? 'patientGridPaginationOfOnePage' : 'patientGridPaginationOf', 'of {total} pages', {
+                total: total,
+              })
+            }
+            itemRangeText={(min, max, total) =>
+              t(
+                total === 1 ? 'patientGridPaginationItemRangeText' : 'patientGridPaginationItemRangesText',
+                '{min}–{max} of {total} items',
+                {
+                  min: min,
+                  max: max,
+                  total: total,
+                },
+              )
+            }
           />
         </section>
       </div>
