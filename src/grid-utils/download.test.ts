@@ -25,13 +25,13 @@ const patientGrid: PatientGridGet = {
       uuid: patientDetailsCountryColumnName,
       name: patientDetailsCountryColumnName,
       type: 'column',
-      datatype: 'DATAFILTER_LOCATION',
+      datatype: 'ENC_LOCATION',
     },
     {
       uuid: patientDetailsStructureColumnName,
       name: patientDetailsStructureColumnName,
       type: 'column',
-      datatype: 'DATAFILTER_LOCATION',
+      datatype: 'ENC_LOCATION',
     },
     {
       uuid: patientDetailsGenderColumnName,

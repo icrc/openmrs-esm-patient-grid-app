@@ -7,8 +7,8 @@ export type PatientGridColumnDataType =
   | 'ENC_AGE'
   | 'ENC_DATE'
   | 'OBS'
-  | 'DATAFILTER_LOCATION'
-  | 'DATAFILTER_COUNTRY';
+  | 'ENC_LOCATION'
+  | 'ENC_COUNTRY';
 
 // Columns are a union type with a `type` discriminator.
 // Depending on the type, the column resource has different attributes.

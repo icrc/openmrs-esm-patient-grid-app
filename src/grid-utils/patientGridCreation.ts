@@ -30,13 +30,13 @@ export function getPatientDetailsPatientGridColumnPostResources(
     {
       name: patientDetailsCountryColumnName,
       type: 'column',
-      datatype: 'DATAFILTER_COUNTRY',
+      datatype: 'ENC_COUNTRY',
       filters: countryFilter,
     },
     {
       name: patientDetailsStructureColumnName,
       type: 'column',
-      datatype: 'DATAFILTER_LOCATION',
+      datatype: 'ENC_LOCATION',
       filters: structureFilter,
     },
     {
