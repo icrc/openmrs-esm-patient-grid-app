@@ -1,6 +1,6 @@
 import { GroupColumnDef } from '@tanstack/react-table';
 import {
-  useGetAllPublishedPrivilegeFilteredForms,
+  useGetAllPrivilegeFilteredForms,
   useMergedSwr,
   PatientGridReportRowGet,
   useGetPatientGridReport,
@@ -38,7 +38,7 @@ export interface PatientGridDataRow extends Record<string, unknown> {
 export function usePatientGrid(id: string, filters: Array<LocalFilter>) {
   const { t } = useTranslation();
   const reportSwr = useGetPatientGridReport(id);
-  const formsSwr = useGetAllPublishedPrivilegeFilteredForms();
+  const formsSwr = useGetAllPrivilegeFilteredForms();
   const formSchemasSwr = useFormSchemasOfForms(formsSwr.data);
   const columnNameToHeaderLabelMapSwr = useColumnNameToHeaderLabelMap();
 
