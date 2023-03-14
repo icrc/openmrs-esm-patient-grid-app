@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SWRResponse } from 'swr';
 import {
-  useGetAllPublishedPrivilegeFilteredForms,
+  useGetAllPrivilegeFilteredForms,
   useGetBulkConceptsByReferences,
   useMergedSwr,
   useFormSchemasOfForms,
@@ -48,7 +48,7 @@ export type ColumnNameToHeaderLabelMap = Record<string, string>;
  */
 export function useColumnNameToHeaderLabelMap(): SWRResponse<ColumnNameToHeaderLabelMap> {
   const { t } = useTranslation();
-  const formsSwr = useGetAllPublishedPrivilegeFilteredForms();
+  const formsSwr = useGetAllPrivilegeFilteredForms();
   const formSchemasSwr = useFormSchemasOfForms(formsSwr.data);
   const formLabelConceptIds = useMemo(
     () =>
