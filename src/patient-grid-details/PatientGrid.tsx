@@ -203,7 +203,7 @@ export function PatientGrid({
       </section>
       <div style={{ height: windowSize.height - 400 }} className={styles.relativeTablePositioner}>
         <section className={styles.rawTableContainer}>
-          <Table height={windowSize.height - 500} className={styles.table} useZebraStyles>
+          <Table height={windowSize.height - 380} className={styles.table} useZebraStyles>
             <TableHead>
               {headerGroups.map((headerGroup, headerGroupIndex) => (
                 <TableRow key={headerGroup.id}>
