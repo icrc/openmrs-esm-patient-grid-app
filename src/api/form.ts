@@ -32,11 +32,33 @@ export function useGetAllPublishedPrivilegeFilteredForms() {
   const filteredForms = useMemo(() => {
     return getAllFormsSwr.data?.filter(
       (form) =>
-        // TODO: Verify/Let someone review that this filter is doing the right thing.
         form.published &&
         form.resources?.some((resource) => resource.name === 'JSON schema' && resource.valueReference) &&
         !/component/i.test(form.name) &&
-        Boolean(userHasAccess(form.encounterType?.editPrivilege?.display, session?.user)),
+        Boolean(
+          userHasAccess(form.encounterType?.editPrivilege?.display, session?.user) ||
+            userHasAccess(form.encounterType?.viewPrivilege?.display, session?.user),
+        ),
+    );
+  }, [getAllFormsSwr.data, session]);
+
+  return {
+    ...getAllFormsSwr,
+    data: filteredForms,
+  };
+}
+export function useGetAllPrivilegeFilteredForms() {
+  const session = useSession();
+  const getAllFormsSwr = useGetAllForms();
+  const filteredForms = useMemo(() => {
+    return getAllFormsSwr.data?.filter(
+      (form) =>
+        form.resources?.some((resource) => resource.name === 'JSON schema' && resource.valueReference) &&
+        !/component/i.test(form.name) &&
+        Boolean(
+          userHasAccess(form.encounterType?.editPrivilege?.display, session?.user) ||
+            userHasAccess(form.encounterType?.viewPrivilege?.display, session?.user),
+        ),
     );
   }, [getAllFormsSwr.data, session]);
 

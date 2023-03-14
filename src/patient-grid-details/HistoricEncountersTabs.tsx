@@ -5,7 +5,7 @@ import {
   PatientGridReportGet,
   PatientGridReportRowGet,
   useFormSchemasOfForms,
-  useGetAllPublishedPrivilegeFilteredForms,
+  useGetAllPrivilegeFilteredForms,
   useMergedSwr,
 } from '../api';
 import { getFormsReferencedInGridReport, getFormSchemaReferenceUuid } from '../grid-utils';
@@ -19,7 +19,7 @@ export interface HistoricEncountersTabsProps {
 
 export function HistoricEncountersTabs({ report, reportRow }: HistoricEncountersTabsProps) {
   const { t } = useTranslation();
-  const formsSwr = useGetAllPublishedPrivilegeFilteredForms();
+  const formsSwr = useGetAllPrivilegeFilteredForms();
   const formSchemasSwr = useFormSchemasOfForms(formsSwr.data);
   const { data: formsReferencedInGridReport } = useMergedSwr(
     () => {

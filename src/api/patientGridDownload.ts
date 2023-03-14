@@ -7,7 +7,7 @@ import {
   useColumnNameToHeaderLabelMap,
   InlinePatientGridEditingContext,
 } from '../grid-utils';
-import { FormGet, useGetAllPublishedPrivilegeFilteredForms } from './form';
+import { FormGet, useGetAllPrivilegeFilteredForms } from './form';
 import { FormSchema, useFormSchemasOfForms } from './formSchema';
 import { PatientGridGet, useGetPatientGrid } from './patientGrid';
 import { FetchAllResponse } from './shared';
@@ -81,7 +81,7 @@ export function useDownloadGridData(patientGridId: string) {
   const { t } = useTranslation();
   const downloadSwr = useGetPatientGridDownload(patientGridId);
   const patientGridSwr = useGetPatientGrid(patientGridId);
-  const formsSwr = useGetAllPublishedPrivilegeFilteredForms();
+  const formsSwr = useGetAllPrivilegeFilteredForms();
   const formSchemasSwr = useFormSchemasOfForms(formsSwr.data);
   const columnNameToHeaderLabelMapSwr = useColumnNameToHeaderLabelMap();
   const { columnHiddenStates } = useContext(InlinePatientGridEditingContext);

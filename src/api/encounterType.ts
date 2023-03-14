@@ -5,4 +5,5 @@ export interface EncounterTypeGet extends OpenmrsResource {
   description?: string;
   retired: boolean;
   editPrivilege?: OpenmrsResource;
+  viewPrivilege?: OpenmrsResource;
 }
