@@ -22,7 +22,7 @@ export interface FormResourceGet extends OpenmrsResource {
 
 export function useGetAllForms() {
   return useSWRImmutable(
-    '/ws/rest/v1/form?v=custom:(uuid,name,display,encounterType:(uuid,name,viewPrivilege,editPrivilege),version,published,retired,resources:(uuid,name,dataType,valueReference))',
+    '/ws/rest/v1/form?includeAll=true&v=custom:(uuid,name,display,encounterType:(uuid,name,viewPrivilege,editPrivilege),version,published,retired,resources:(uuid,name,dataType,valueReference))',
     (url) => openmrsFetch<FetchAllResponse<FormGet>>(url).then(({ data }) => data.results),
   );
 }
@@ -34,6 +34,7 @@ export function useGetAllPublishedPrivilegeFilteredForms() {
     return getAllFormsSwr.data?.filter(
       (form) =>
         form.published &&
+        !form.retired &&
         form.resources?.some((resource) => resource.name === 'JSON schema' && resource.valueReference) &&
         !/component/i.test(form.name) &&
         Boolean(
