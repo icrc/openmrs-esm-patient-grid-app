@@ -21,8 +21,9 @@ export interface FormResourceGet extends OpenmrsResource {
 }
 
 export function useGetAllForms() {
-  return useSWRImmutable('/ws/rest/v1/form?v=full', (url) =>
-    openmrsFetch<FetchAllResponse<FormGet>>(url).then(({ data }) => data.results),
+  return useSWRImmutable(
+    '/ws/rest/v1/form?v=custom:(uuid,name,display,encounterType:(uuid,name,viewPrivilege,editPrivilege),version,published,retired,resources:(uuid,name,dataType,valueReference))',
+    (url) => openmrsFetch<FetchAllResponse<FormGet>>(url).then(({ data }) => data.results),
   );
 }
 
