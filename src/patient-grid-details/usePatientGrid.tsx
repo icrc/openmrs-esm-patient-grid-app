@@ -24,6 +24,7 @@ import {
 } from '../grid-utils';
 import { TFunction, useTranslation } from 'react-i18next';
 import { getLocallyFilteredReportRows } from '../grid-utils/localRowFiltering';
+import { formatDate } from '@openmrs/esm-framework';
 
 export interface PatientGridDataRow extends Record<string, unknown> {
   __report: PatientGridReportGet;
@@ -173,6 +174,11 @@ function mapReportEntriesToGridData(report: PatientGridReportGet, reportRows: Ar
         result[key] = `${reportRowCell}`;
       }
       // TODO: What about other obs values? (Could there be UUIDs? Probably...)
+      if (key.includes('formDate')) {
+        result[key] = formatDate(new Date(reportRowCell.toString()), {
+          time: true,
+        });
+      }
     }
 
     return result;
