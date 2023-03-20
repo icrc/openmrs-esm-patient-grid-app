@@ -17,7 +17,7 @@ export function PatientGridBuilderSectionsPage({
 }: WizardPageProps) {
   const { t } = useTranslation();
   const { data: allForms } = useGetAllPublishedPrivilegeFilteredForms();
-  const sortedForms = [...allForms].sort((a, b) => (a.display > b.display ? 1 : -1));
+  const sortedForms = [...allForms].sort((formA, formB) => (formA.display > formB.display ? 1 : -1));
   const canContinue = state.selectedForms.length > 0;
 
   return (

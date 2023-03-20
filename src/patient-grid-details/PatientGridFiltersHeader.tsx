@@ -58,6 +58,7 @@ function FilterTag({ filter, columnNameToHeaderLabelMap }: FilterTagProps) {
   const filterName = `${columnNameToHeaderLabelMap[filter.columnName] ?? filter.columnName}: ${
     filter.display ?? filter.operand
   }`;
+
   const { filters } = useContext(InlinePatientGridEditingContext);
   const { push } = useContext(InlinePatientGridEditingContext);
   const handleDelete = () => {
@@ -66,13 +67,21 @@ function FilterTag({ filter, columnNameToHeaderLabelMap }: FilterTagProps) {
       filters: filters.filter((x) => x.columnName !== filter.columnName && x.operand !== filter.operand),
     }));
   };
-
+  {
+    console.log(filter);
+  }
   return (
     <Tag
       className={`${styles.filterTag} ${isLocalFilter ? styles.localFilterTag : ''}`}
       size="md"
       type="gray"
-      filter
+      filter={
+        filter.columnName.includes('formQuestion') ||
+        filter.columnName.includes('Gender') ||
+        filter.columnName.includes('ageCategory')
+          ? true
+          : false
+      }
       title={t('patientGridFiltersHeaderRemoveFilter', 'Remove filter')}
       onClose={handleDelete}>
       {filterName}
