@@ -17,6 +17,7 @@ export function PatientGridBuilderSectionsPage({
 }: WizardPageProps) {
   const { t } = useTranslation();
   const { data: allForms } = useGetAllPublishedPrivilegeFilteredForms();
+  const sortedForms = [...allForms].sort((a, b) => (a.display > b.display ? 1 : -1));
   const canContinue = state.selectedForms.length > 0;
 
   return (
@@ -28,8 +29,8 @@ export function PatientGridBuilderSectionsPage({
         title={t('patientGridSections', 'Grid sections')}
       />
       <FormGroup legendText={t('patientGridSectionsLabel', 'Enable/Disable list sections')}>
-        {allForms ? (
-          allForms.map((form) => (
+        {sortedForms ? (
+          sortedForms.map((form) => (
             <Checkbox
               key={form.uuid}
               id={form.uuid}
