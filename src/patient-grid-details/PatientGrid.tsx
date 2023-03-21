@@ -53,6 +53,8 @@ import {
   patientDetailsNameColumnName,
   getFormEngineDataRequiredForEditing,
   InlinePatientGridEditingContext,
+  patientDetailsGenderColumnName,
+  patientDetailsAgeCategoryColumnName,
 } from '../grid-utils';
 import {
   interpolateUrl,
@@ -232,11 +234,15 @@ export function PatientGrid({
                                 iconDescription={t('patientGridSortColumnDescription', 'Sort')}
                                 onClick={header.column.getToggleSortingHandler()}
                               />
-                              <PatientGridColumnFiltersButton
-                                patientGridId={patientGridId}
-                                columnDisplayName={header.column.columnDef.header?.toString() ?? ''}
-                                column={header.column}
-                              />
+                              {(header.column.id.includes('formQuestion') ||
+                                header.column.id === patientDetailsGenderColumnName ||
+                                header.column.id === patientDetailsAgeCategoryColumnName) && (
+                                <PatientGridColumnFiltersButton
+                                  patientGridId={patientGridId}
+                                  columnDisplayName={header.column.columnDef.header?.toString() ?? ''}
+                                  column={header.column}
+                                />
+                              )}
                             </>
                           )}
                         </div>
