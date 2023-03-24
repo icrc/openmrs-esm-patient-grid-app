@@ -75,7 +75,7 @@
   "patientGridDetailsAgeCategoryLabel": "Age category",
   "patientGridDetailsAgeCategoryPlaceholder": "Age category",
   "patientGridDetailsContinueButton": "Continue by configuring grid sections",
-  "patientGridDetailsCountryLabel": "Country (required)",
+  "patientGridDetailsCountryLabel": "Country",
   "patientGridDetailsCountryPlaceholder": "Country",
   "patientGridDetailsDescriptionInputLabel": "Describe the purpose of this grid in a few words",
   "patientGridDetailsGenderLabel": "Gender",
@@ -160,7 +160,7 @@
   "patientGridPaginationOf": "of {total} pages",
   "patientGridPaginationOfOnePage": "of 1 page",
   "patientGridPaginationItemRangeText": "{min}–{max} of {total} item",
-  "patientGridPaginationItemRangesText": "{min}–{max} of {total} items"
-
+  "patientGridPaginationItemRangesText": "{min}–{max} of {total} items",
+  "patientGridMandatoryFieldMessage":"Please select either country or structure in order to create a grid"
 
 }

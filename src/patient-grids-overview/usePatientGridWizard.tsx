@@ -14,7 +14,7 @@ export interface PatientGridWizardState {
   name?: string;
   description?: string;
   shared?: boolean;
-  countryFilter: PatientGridFilterPost;
+  countryFilter?: PatientGridFilterPost;
   structureFilter?: PatientGridFilterPost;
   genderFilter?: PatientGridFilterPost;
   ageCategoryFilter?: PatientGridFilterPost;
@@ -45,7 +45,6 @@ const setLastPeriodFilter = (value: string) => {
   return periodFilter;
 };
 const initialWizardState: PatientGridWizardState = {
-  countryFilter: {},
   selectedForms: [],
   periodFilterType: 'relative',
   periodFilter: setLastPeriodFilter('lastThirtyDays'),
@@ -84,7 +83,10 @@ export function usePatientGridWizard(formSchemas: Record<string, FormSchema>) {
 
   const isStateValidForSubmission = useMemo(() => {
     return (
-      state.name?.trim().length && state.selectedForms.length && state.countryFilter?.name && state.periodFilter?.name
+      state.name?.trim().length &&
+      state.selectedForms.length &&
+      (state.countryFilter?.name || state.structureFilter?.name) &&
+      state.periodFilter?.name
     );
   }, [state]);
 
