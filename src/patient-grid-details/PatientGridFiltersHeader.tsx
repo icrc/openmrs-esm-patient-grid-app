@@ -2,7 +2,13 @@ import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Stack, ButtonSkeleton, Tag } from '@carbon/react';
 import styles from './PatientGridFiltersHeader.scss';
-import { InlinePatientGridEditingContext, LocalFilter, useColumnNameToHeaderLabelMap } from '../grid-utils';
+import {
+  InlinePatientGridEditingContext,
+  LocalFilter,
+  patientDetailsAgeCategoryColumnName,
+  patientDetailsGenderColumnName,
+  useColumnNameToHeaderLabelMap,
+} from '../grid-utils';
 
 export interface PatientGridFiltersHeaderProps {
   patientGridId: string;
@@ -58,6 +64,7 @@ function FilterTag({ filter, columnNameToHeaderLabelMap }: FilterTagProps) {
   const filterName = `${columnNameToHeaderLabelMap[filter.columnName] ?? filter.columnName}: ${
     filter.display ?? filter.operand
   }`;
+
   const { filters } = useContext(InlinePatientGridEditingContext);
   const { push } = useContext(InlinePatientGridEditingContext);
   const handleDelete = () => {
@@ -66,13 +73,18 @@ function FilterTag({ filter, columnNameToHeaderLabelMap }: FilterTagProps) {
       filters: filters.filter((x) => x.columnName !== filter.columnName && x.operand !== filter.operand),
     }));
   };
-
   return (
     <Tag
       className={`${styles.filterTag} ${isLocalFilter ? styles.localFilterTag : ''}`}
       size="md"
       type="gray"
-      filter
+      filter={
+        filter.columnName.includes('formQuestion') ||
+        filter.columnName === patientDetailsGenderColumnName ||
+        filter.columnName === patientDetailsAgeCategoryColumnName
+          ? true
+          : false
+      }
       title={t('patientGridFiltersHeaderRemoveFilter', 'Remove filter')}
       onClose={handleDelete}>
       {filterName}
