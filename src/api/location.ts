@@ -12,10 +12,10 @@ export function useGetAllCountryLocations() {
   return useFilteredLocations('?_tag=Country Location&');
 }
 
-export function useGetAllStructureLocations(countryLocationName: string | undefined) {
+export function useGetAllStructureLocations(enabled: boolean, countryLocationName: string | undefined) {
   return useFilteredLocations(
     countryLocationName ? `?_tag=Visit Location&address-country=${countryLocationName}&` : '?',
-    !!countryLocationName,
+    enabled || countryLocationName ? true : false,
   );
 }
 

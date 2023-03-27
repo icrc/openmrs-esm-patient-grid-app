@@ -8,6 +8,7 @@ import {
   RadioButton,
   DatePicker,
   DatePickerInput,
+  FormLabel,
 } from '@carbon/react';
 import { useTranslation } from 'react-i18next';
 import { Hr } from '../components';
@@ -28,6 +29,7 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
   const { t } = useTranslation();
   const { data: countryLocations } = useGetAllCountryLocations();
   const { data: structureLocations } = useGetAllStructureLocations(
+    !!(countryLocations?.length <= 0),
     countryLocations?.find((location) => location.id === state.countryFilter?.operand)?.name,
   );
   const genders = useAllGenders();
@@ -71,12 +73,14 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
 
       <Hr />
       <h5 className={styles.patientDetailsHeader}>{t('patientGridDetailsHeader', 'Patient details')}</h5>
-
+      <FormLabel id="locationInfoMessage">
+        {t('patientGridMandatoryFieldMessage', 'Please select either country or structure in order to create a grid')}
+      </FormLabel>
       {countryLocations ? (
         <Select
           id="country"
           defaultValue={state.countryFilter ?? ''}
-          labelText={t('patientGridDetailsCountryLabel', 'Country (required)')}
+          labelText={t('patientGridDetailsCountryLabel', 'Country')}
           onChange={(e) =>
             setState((state) => ({
               ...state,
@@ -98,12 +102,11 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
         <SelectSkeleton />
       )}
 
-      {!state.countryFilter || structureLocations ? (
+      {structureLocations ? (
         <Select
           id="structure"
           defaultValue={state.structureFilter?.operand ?? ''}
           labelText={t('patientGridDetailsStructureLabel', 'Structure')}
-          disabled={!state.countryFilter}
           onChange={(e) =>
             setState((state) => ({
               ...state,
