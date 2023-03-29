@@ -73,15 +73,17 @@ function FilterTag({ filter, columnNameToHeaderLabelMap }: FilterTagProps) {
       filters: filters.filter((x) => x.columnName !== filter.columnName && x.operand !== filter.operand),
     }));
   };
+
   return (
     <Tag
       className={`${styles.filterTag} ${isLocalFilter ? styles.localFilterTag : ''}`}
       size="md"
       type="gray"
       filter={
+        isLocalFilter ||
         filter.columnName.includes('formQuestion') ||
-        filter.columnName === patientDetailsGenderColumnName ||
-        filter.columnName === patientDetailsAgeCategoryColumnName
+        filter.columnName.includes('GENDER') ||
+        filter.columnName.includes('ENC_AGE_RANGE')
           ? true
           : false
       }
