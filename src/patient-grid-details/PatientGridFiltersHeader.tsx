@@ -2,13 +2,7 @@ import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Stack, ButtonSkeleton, Tag } from '@carbon/react';
 import styles from './PatientGridFiltersHeader.scss';
-import {
-  InlinePatientGridEditingContext,
-  LocalFilter,
-  patientDetailsAgeCategoryColumnName,
-  patientDetailsGenderColumnName,
-  useColumnNameToHeaderLabelMap,
-} from '../grid-utils';
+import { InlinePatientGridEditingContext, LocalFilter, useColumnNameToHeaderLabelMap } from '../grid-utils';
 
 export interface PatientGridFiltersHeaderProps {
   patientGridId: string;

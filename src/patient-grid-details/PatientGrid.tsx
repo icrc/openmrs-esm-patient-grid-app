@@ -53,6 +53,8 @@ import {
   patientDetailsNameColumnName,
   getFormEngineDataRequiredForEditing,
   InlinePatientGridEditingContext,
+  patientDetailsGenderColumnName,
+  patientDetailsAgeCategoryColumnName,
 } from '../grid-utils';
 import {
   interpolateUrl,
