@@ -2,13 +2,7 @@ import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Stack, ButtonSkeleton, Tag } from '@carbon/react';
 import styles from './PatientGridFiltersHeader.scss';
-import {
-  InlinePatientGridEditingContext,
-  LocalFilter,
-  patientDetailsAgeCategoryColumnName,
-  patientDetailsGenderColumnName,
-  useColumnNameToHeaderLabelMap,
-} from '../grid-utils';
+import { InlinePatientGridEditingContext, LocalFilter, useColumnNameToHeaderLabelMap } from '../grid-utils';
 
 export interface PatientGridFiltersHeaderProps {
   patientGridId: string;
@@ -79,11 +73,12 @@ function FilterTag({ filter, columnNameToHeaderLabelMap }: FilterTagProps) {
       size="md"
       type="gray"
       filter={
-        filter.columnName.includes('formQuestion') ||
-        filter.columnName === patientDetailsGenderColumnName ||
-        filter.columnName === patientDetailsAgeCategoryColumnName
-          ? true
-          : false
+        filter.columnName.includes('NAME') ||
+        filter.columnName.includes('ENC_COUNTRY') ||
+        filter.columnName.includes('ENC_DATE') ||
+        filter.columnName.includes('ENC_LOCATION')
+          ? false
+          : true
       }
       title={t('patientGridFiltersHeaderRemoveFilter', 'Remove filter')}
       onClose={handleDelete}>
