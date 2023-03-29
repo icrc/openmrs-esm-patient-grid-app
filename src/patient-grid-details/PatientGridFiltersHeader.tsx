@@ -67,7 +67,6 @@ function FilterTag({ filter, columnNameToHeaderLabelMap }: FilterTagProps) {
       filters: filters.filter((x) => x.columnName !== filter.columnName && x.operand !== filter.operand),
     }));
   };
-  console.log(filters);
   return (
     <Tag
       className={`${styles.filterTag} ${isLocalFilter ? styles.localFilterTag : ''}`}
