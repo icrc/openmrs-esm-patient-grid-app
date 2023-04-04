@@ -8,8 +8,8 @@ export function getLocallyFilteredReportRows(rows: Array<PatientGridReportRowGet
     return rows;
   }
 
-  return rows.filter((row) =>
-    localFilters.some((filter) => {
+  localFilters.forEach((filter) => {
+    rows = rows.filter((row) => {
       const rowValue = row[filter.columnName];
       if (!rowValue) {
         return false;
@@ -24,6 +24,8 @@ export function getLocallyFilteredReportRows(rows: Array<PatientGridReportRowGet
       }
 
       return `${rowValue}` === filter.operand;
-    }),
-  );
+    });
+  });
+
+  return rows;
 }
