@@ -1,8 +1,9 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Stack, ButtonSkeleton, Tag } from '@carbon/react';
+import { Stack, ButtonSkeleton, Tag, Modal } from '@carbon/react';
 import styles from './PatientGridFiltersHeader.scss';
 import { InlinePatientGridEditingContext, LocalFilter, useColumnNameToHeaderLabelMap } from '../grid-utils';
+import { MutateFn } from '../api';
 
 export interface PatientGridFiltersHeaderProps {
   patientGridId: string;
@@ -11,7 +12,7 @@ export interface PatientGridFiltersHeaderProps {
 export function PatientGridFiltersHeader({ patientGridId }: PatientGridFiltersHeaderProps) {
   const { t } = useTranslation();
   const { data: columnNameToHeaderLabelMap } = useColumnNameToHeaderLabelMap();
-  const { filters } = useContext(InlinePatientGridEditingContext);
+  const { filters, saveChanges } = useContext(InlinePatientGridEditingContext);
 
   // Every filter with a UUID must come from the backend.
   // Those should appear before the local ones.
@@ -25,12 +26,18 @@ export function PatientGridFiltersHeader({ patientGridId }: PatientGridFiltersHe
       {filters?.length && columnNameToHeaderLabelMap ? (
         <>
           {originalFilters.map((filter) => (
-            <FilterTag key={filter.uuid} filter={filter} columnNameToHeaderLabelMap={columnNameToHeaderLabelMap} />
+            <FilterTag
+              key={filter.uuid}
+              saveChanges={saveChanges}
+              filter={filter}
+              columnNameToHeaderLabelMap={columnNameToHeaderLabelMap}
+            />
           ))}
           {localFilters.map((filter) => (
             <FilterTag
               key={`${filter.name}-${filter.operand}`}
               filter={filter}
+              saveChanges={saveChanges}
               columnNameToHeaderLabelMap={columnNameToHeaderLabelMap}
             />
           ))}
@@ -49,10 +56,11 @@ export function PatientGridFiltersHeader({ patientGridId }: PatientGridFiltersHe
 
 interface FilterTagProps {
   filter: LocalFilter;
+  saveChanges: MutateFn<void, unknown, Error>;
   columnNameToHeaderLabelMap: Record<string, string>;
 }
 
-function FilterTag({ filter, columnNameToHeaderLabelMap }: FilterTagProps) {
+function FilterTag({ filter, saveChanges, columnNameToHeaderLabelMap }: FilterTagProps) {
   const { t } = useTranslation();
   const isLocalFilter = !('uuid' in filter);
   const filterName = `${columnNameToHeaderLabelMap[filter.columnName] ?? filter.columnName}: ${
@@ -61,28 +69,57 @@ function FilterTag({ filter, columnNameToHeaderLabelMap }: FilterTagProps) {
 
   const { filters } = useContext(InlinePatientGridEditingContext);
   const { push } = useContext(InlinePatientGridEditingContext);
-  const handleDelete = () => {
-    push((state) => ({
+  const [showModal, setShowModal] = useState(false);
+
+  const handleDelete = async () => {
+    await push((state) => ({
       ...state,
       filters: filters.filter((x) => x.columnName !== filter.columnName && x.operand !== filter.operand),
     }));
+    await saveChanges();
   };
+
+  const handleModal = () => {
+    setShowModal(true);
+  };
+
+  const handleClose = () => setShowModal(false);
+
   return (
-    <Tag
-      className={`${styles.filterTag} ${isLocalFilter ? styles.localFilterTag : ''}`}
-      size="md"
-      type="gray"
-      filter={
-        filter.columnName.includes('NAME') ||
-        filter.columnName.includes('ENC_COUNTRY') ||
-        filter.columnName.includes('ENC_DATE') ||
-        filter.columnName.includes('ENC_LOCATION')
-          ? false
-          : true
-      }
-      title={t('patientGridFiltersHeaderRemoveFilter', 'Remove filter')}
-      onClose={handleDelete}>
-      {filterName}
-    </Tag>
+    <div>
+      <Tag
+        className={`${styles.filterTag} ${isLocalFilter ? styles.localFilterTag : ''}`}
+        size="md"
+        type="gray"
+        filter={
+          filter.columnName.includes('NAME') ||
+          filter.columnName.includes('ENC_COUNTRY') ||
+          filter.columnName.includes('ENC_DATE') ||
+          filter.columnName.includes('ENC_LOCATION')
+            ? false
+            : true
+        }
+        title={t('patientGridFiltersHeaderRemoveFilter', 'Remove filter')}
+        onClose={handleModal}>
+        {filterName}
+      </Tag>
+
+      <Modal
+        open={showModal}
+        className={styles.filterDeleteModal}
+        modalHeading={t('patientGridFiltersHeaderModalHeading', 'Save Grid')}
+        modalLabel
+        primaryButtonText={t('patientGridFiltersHeaderPrimaryButton', 'Save')}
+        secondaryButtonText={t('patientGridFiltersHeaderSecButton', 'Cancel')}
+        onRequestClose={handleClose}
+        onRequestSubmit={handleDelete}>
+        <p>
+          {t(
+            'patientGridFiltersHeaderModalBody',
+            'You removed some filters. Please, save the grid to retrieve all data',
+          )}
+        </p>
+      </Modal>
+    </div>
   );
 }

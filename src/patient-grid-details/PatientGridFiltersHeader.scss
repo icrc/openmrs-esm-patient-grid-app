@@ -19,3 +19,6 @@
 .filtersFallback {
   @include type.type-style('body-compact-01');
 }
+.filterDeleteModal{
+  z-index: 10000;
+}
