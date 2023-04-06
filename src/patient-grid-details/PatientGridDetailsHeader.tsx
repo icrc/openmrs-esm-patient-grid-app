@@ -37,9 +37,10 @@ export function PatientGridDetailsHeader({
 
   const handleSaveClick = async () => {
     // TODO: Error handling.
-    await saveChanges();
+    await saveChanges().then(() => {
+      onRefreshGridClick();
+    });
   };
-
   return (
     <PageHeader
       title={
