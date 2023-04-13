@@ -88,7 +88,7 @@ function getGroups(
 
   if (columnNamesToInclude.includes(patientDetailsNameColumnName)) {
     patientDetailsGroup.sections[0].columns.push({
-      header: 'Patient Name',
+      header: 'Patient name',
       values: download.report.map((row) => row[patientDetailsNameColumnName]),
     });
   }
@@ -116,7 +116,7 @@ function getGroups(
 
   if (columnNamesToInclude.includes(patientDetailsAgeCategoryColumnName)) {
     patientDetailsGroup.sections[0].columns.push({
-      header: 'Age Category',
+      header: 'Age category',
       values: download.report.map((row) => row[patientDetailsAgeCategoryColumnName]),
     });
   }
