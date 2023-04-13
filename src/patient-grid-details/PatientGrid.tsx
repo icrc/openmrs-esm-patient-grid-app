@@ -55,6 +55,9 @@ import {
   InlinePatientGridEditingContext,
   patientDetailsGenderColumnName,
   patientDetailsAgeCategoryColumnName,
+  patientDetailsCountryColumnName,
+  patientDetailsStructureColumnName,
+  patientDetailsPeriodColumnName,
 } from '../grid-utils';
 import {
   interpolateUrl,
@@ -107,6 +110,37 @@ export function PatientGrid({
     },
   });
   const headerGroups = table.getHeaderGroups();
+  //getting the displayNames for each column correctly along with the static column names
+  for (let i = 0; i < headerGroups.length; i++) {
+    for (let j = 0; j < headerGroups[i].headers.length; j++) {
+      for (let k = 0; k < headerGroups[i].headers[j].column.columns.length; k++) {
+        if (headerGroups[i].headers[j].column.columns[k].id === patientDetailsNameColumnName) {
+          headerGroups[i].headers[j].column.columns[k].columnDef.header = 'Patient name';
+        } else if (headerGroups[i].headers[j].column.columns[k].id === patientDetailsCountryColumnName) {
+          headerGroups[i].headers[j].column.columns[k].columnDef.header = 'Country';
+        } else if (headerGroups[i].headers[j].column.columns[k].id === patientDetailsStructureColumnName) {
+          headerGroups[i].headers[j].column.columns[k].columnDef.header = 'Structure';
+        } else if (headerGroups[i].headers[j].column.columns[k].id === patientDetailsGenderColumnName) {
+          headerGroups[i].headers[j].column.columns[k].columnDef.header = 'Gender';
+        } else if (headerGroups[i].headers[j].column.columns[k].id === patientDetailsAgeCategoryColumnName) {
+          headerGroups[i].headers[j].column.columns[k].columnDef.header = 'Age category';
+        } else if (headerGroups[i].headers[j].column.columns[k].id === patientDetailsPeriodColumnName) {
+          headerGroups[i].headers[j].column.columns[k].columnDef.header = 'Period';
+        } else if (headerGroups[i].headers[j].column.columns[k].id.includes('formDate')) {
+          headerGroups[i].headers[j].column.columns[k].columnDef.header = 'Date';
+        } else if (headerGroups[i].headers[j].column.columns[k].id.includes('age')) {
+          headerGroups[i].headers[j].column.columns[k].columnDef.header = 'Age';
+        } else {
+          for (let l = 0; l < patientGrid.columns.length; l++) {
+            if (headerGroups[i].headers[j].column.columns[k].id === patientGrid.columns[l].name) {
+              headerGroups[i].headers[j].column.columns[k].columnDef.header = patientGrid.columns[l].display;
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
   const { columnHiddenStates } = useContext(InlinePatientGridEditingContext);
 
   const handleCellClick = (cell: Cell<PatientGridDataRow, unknown>, row: Row<PatientGridDataRow>) => {
@@ -314,6 +348,7 @@ export function PatientGrid({
                             <HistoricEncountersTabs
                               report={row.original.__report}
                               reportRow={row.original.__reportRow}
+                              patientGrid={patientGrid}
                             />
                           </div>
                         </TableExpandedRow>

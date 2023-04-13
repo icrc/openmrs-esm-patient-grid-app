@@ -7,7 +7,6 @@ import {
   patientDetailsStructureColumnName,
 } from './columnNames';
 import { getSectionRepetitionsRequiredPerForm, getPatientGridDownloadReportData } from './download';
-import { ColumnNameToHeaderLabelMap } from './useColumnNameToHeaderLabelMap';
 
 const patientGrid: PatientGridGet = {
   uuid: 'patient-grid',
@@ -91,14 +90,6 @@ const forms: Array<FormGet> = [
 
 const formSchemas: Record<string, FormSchema> = {};
 
-const columnNameToHeaderLabelMap: ColumnNameToHeaderLabelMap = {
-  [patientDetailsNameColumnName]: 'Patient name',
-  [patientDetailsCountryColumnName]: 'Country',
-  [patientDetailsStructureColumnName]: 'Structure',
-  [patientDetailsGenderColumnName]: 'Gender',
-  [patientDetailsAgeCategoryColumnName]: 'Age category',
-};
-
 const download: PatientGridDownloadGet = {
   patientGrid: patientGrid,
   report: [
@@ -162,20 +153,13 @@ describe(getPatientGridDownloadReportData, () => {
       forms,
       formSchemas,
       columnNamesToInclude,
-      columnNameToHeaderLabelMap,
       patientDetailsGroupHeader,
     );
 
     expect(data).toEqual([
       [patientDetailsGroupHeader, '', '', '', ''],
       ['', '', '', '', ''],
-      [
-        columnNameToHeaderLabelMap[patientDetailsNameColumnName],
-        columnNameToHeaderLabelMap[patientDetailsCountryColumnName],
-        columnNameToHeaderLabelMap[patientDetailsStructureColumnName],
-        columnNameToHeaderLabelMap[patientDetailsGenderColumnName],
-        columnNameToHeaderLabelMap[patientDetailsAgeCategoryColumnName],
-      ],
+
       ['Patient 1', 'Country 1', 'Structure 1', 'O', '18'],
       ['Patient 2', 'Country 1', 'Structure 1', 'O', '18'],
       ['Patient 3', 'Country 1', 'Structure 1', 'O', '18'],

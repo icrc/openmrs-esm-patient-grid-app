@@ -22,7 +22,6 @@ export function DownloadModal({ patientGridId, isOpen, onClose }: DownloadModalP
     forms,
     formSchemas,
     columnNamesToInclude,
-    columnNameToHeaderLabelMap,
     patientDetailsGroupHeader,
   }: Omit<DownloadGridData, 'fileName'>) => {
     const fileName = t('patientGridExportFileName', 'export.{extension}', { extension: fileExtension });
@@ -32,7 +31,6 @@ export function DownloadModal({ patientGridId, isOpen, onClose }: DownloadModalP
       forms,
       formSchemas,
       columnNamesToInclude,
-      columnNameToHeaderLabelMap,
       patientDetailsGroupHeader,
     );
 

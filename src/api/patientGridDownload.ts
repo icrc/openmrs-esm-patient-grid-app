@@ -2,11 +2,7 @@ import { openmrsFetch, OpenmrsResource } from '@openmrs/esm-framework';
 import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSWR from 'swr';
-import {
-  ColumnNameToHeaderLabelMap,
-  useColumnNameToHeaderLabelMap,
-  InlinePatientGridEditingContext,
-} from '../grid-utils';
+import { InlinePatientGridEditingContext } from '../grid-utils';
 import { FormGet, useGetAllPrivilegeFilteredForms } from './form';
 import { FormSchema, useFormSchemasOfForms } from './formSchema';
 import { PatientGridGet, useGetPatientGrid } from './patientGrid';
@@ -72,7 +68,6 @@ export interface DownloadGridData {
   forms: Array<FormGet>;
   formSchemas: Record<string, FormSchema>;
   columnNamesToInclude: Array<string>;
-  columnNameToHeaderLabelMap: ColumnNameToHeaderLabelMap;
   patientDetailsGroupHeader: string;
   fileName: string;
 }
@@ -83,7 +78,6 @@ export function useDownloadGridData(patientGridId: string) {
   const patientGridSwr = useGetPatientGrid(patientGridId);
   const formsSwr = useGetAllPrivilegeFilteredForms();
   const formSchemasSwr = useFormSchemasOfForms(formsSwr.data);
-  const columnNameToHeaderLabelMapSwr = useColumnNameToHeaderLabelMap();
   const { columnHiddenStates } = useContext(InlinePatientGridEditingContext);
 
   return useMergedSwr<Omit<DownloadGridData, 'fileName'>>(
@@ -93,14 +87,13 @@ export function useDownloadGridData(patientGridId: string) {
         patientGrid: patientGridSwr.data,
         forms: formsSwr.data,
         formSchemas: formSchemasSwr.data,
-        columnNameToHeaderLabelMap: columnNameToHeaderLabelMapSwr.data,
         columnNamesToInclude: patientGridSwr.data.columns
           .map((column) => column.name)
           .filter((name) => !columnHiddenStates[name]),
         patientDetailsGroupHeader: t('patientDetailsDownloadGroupHeader', 'Healthcare user'),
       };
     },
-    [downloadSwr, patientGridSwr, formsSwr, formSchemasSwr, columnNameToHeaderLabelMapSwr],
+    [downloadSwr, patientGridSwr, formsSwr, formSchemasSwr],
     [t],
   );
 }

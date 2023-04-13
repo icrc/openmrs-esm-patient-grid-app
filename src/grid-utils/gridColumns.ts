@@ -1,7 +1,6 @@
 import { GroupColumnDef } from '@tanstack/react-table';
 import { FormGet, FormSchema } from '../api';
 import { getFormAgeColumnName, getFormDateColumnName, getFormSchemaQuestionColumnName } from './columnNames';
-import { ColumnNameToHeaderLabelMap } from './useColumnNameToHeaderLabelMap';
 
 /**
  * Creates the `react-table` {@link GroupColumnDef} which renders the columns of one single form.
@@ -23,7 +22,6 @@ import { ColumnNameToHeaderLabelMap } from './useColumnNameToHeaderLabelMap';
 export function getReactTableColumnDefForForm(
   form: FormGet,
   formSchema: FormSchema,
-  columnNameToHeaderLabelMap: ColumnNameToHeaderLabelMap,
   columnNamesToInclude: Array<string>,
 ): GroupColumnDef<Record<string, string>> {
   const formAgeColumnName = getFormAgeColumnName(form);
@@ -35,14 +33,14 @@ export function getReactTableColumnDefForForm(
 
   if (columnNamesToInclude.includes(formAgeColumnName)) {
     formColumn.columns.push({
-      header: columnNameToHeaderLabelMap[formAgeColumnName],
+      header: formAgeColumnName,
       accessorKey: formAgeColumnName,
     });
   }
 
   if (columnNamesToInclude.includes(formDateColumnName)) {
     formColumn.columns.push({
-      header: columnNameToHeaderLabelMap[formDateColumnName],
+      header: formDateColumnName,
       accessorKey: formDateColumnName,
     });
   }
@@ -62,7 +60,7 @@ export function getReactTableColumnDefForForm(
             // Questions may be localized via concept labels.
             // Those are already prefetched, but if they don't exist, fallback to values inside the schema itself
             // to display *something*.
-            header: columnNameToHeaderLabelMap[questionColumnName] ?? question.label ?? question.id,
+            header: questionColumnName ?? question.label ?? question.id,
             accessorKey: getFormSchemaQuestionColumnName(form, question),
           });
         }

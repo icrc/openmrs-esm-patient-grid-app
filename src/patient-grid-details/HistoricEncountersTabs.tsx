@@ -2,6 +2,7 @@ import React from 'react';
 import { DataTableSkeleton, Tabs, TabList, Tab, TabPanels, TabPanel, TabsSkeleton } from '@carbon/react';
 import styles from './HistoricEncountersTabs.scss';
 import {
+  PatientGridGet,
   PatientGridReportGet,
   PatientGridReportRowGet,
   useFormSchemasOfForms,
@@ -15,9 +16,10 @@ import { HistoricEncountersGrid } from './HistoricEncountersGrid';
 export interface HistoricEncountersTabsProps {
   report: PatientGridReportGet;
   reportRow: PatientGridReportRowGet;
+  patientGrid: PatientGridGet;
 }
 
-export function HistoricEncountersTabs({ report, reportRow }: HistoricEncountersTabsProps) {
+export function HistoricEncountersTabs({ report, reportRow, patientGrid }: HistoricEncountersTabsProps) {
   const { t } = useTranslation();
   const formsSwr = useGetAllPrivilegeFilteredForms();
   const formSchemasSwr = useFormSchemasOfForms(formsSwr.data);
@@ -48,6 +50,7 @@ export function HistoricEncountersTabs({ report, reportRow }: HistoricEncounters
                   formSchema={formSchemasSwr.data[getFormSchemaReferenceUuid(form)]}
                   patientId={reportRow.uuid}
                   report={report}
+                  patientGrid={patientGrid}
                 />
               </TabPanel>
             ))}
