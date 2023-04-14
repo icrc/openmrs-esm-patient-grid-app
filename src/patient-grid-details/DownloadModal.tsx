@@ -1,21 +1,23 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal, RadioButtonGroup, RadioButton } from '@carbon/react';
 import { DownloadGridData, useDownloadGridData } from '../api';
-import { getPatientGridDownloadReportData } from '../grid-utils';
+import { getPatientGridDownloadReportData, InlinePatientGridEditingContext } from '../grid-utils';
 import xlsx from 'xlsx';
+import { saveVisit } from '@openmrs/esm-framework';
 
 export interface DownloadModalProps {
   patientGridId: string;
   isOpen: boolean;
   onClose(): void;
+  refreshGrid?(): void;
 }
 
-export function DownloadModal({ patientGridId, isOpen, onClose }: DownloadModalProps) {
+export function DownloadModal({ patientGridId, isOpen, onClose, refreshGrid }: DownloadModalProps) {
   const { t } = useTranslation();
   const [fileExtension, setFileExtension] = useState<string | undefined>(undefined);
   const [hasDownloadStarted, setHasDownloadStarted] = useState(false);
-
+  const { saveChanges } = useContext(InlinePatientGridEditingContext);
   const handleDownloadPrepared = async ({
     download,
     patientGrid,
@@ -39,6 +41,11 @@ export function DownloadModal({ patientGridId, isOpen, onClose }: DownloadModalP
     xlsx.utils.book_append_sheet(wb, sheet, patientGrid.name);
     xlsx.writeFile(wb, fileName);
     onClose();
+  };
+  const saveHandler = async () => {
+    await saveChanges().then(() => {
+      refreshGrid();
+    });
   };
 
   const modalPropsForSteps = {
@@ -111,6 +118,7 @@ export function DownloadModal({ patientGridId, isOpen, onClose }: DownloadModalP
         : t('downloadModalChooseDownloadPrimaryButtonTextConvert', 'Convert & Download'),
       secondaryButtonText: t('downloadModalChooseDownloadSecondaryButtonTextCancel', 'Cancel'),
       onRequestSubmit() {
+        saveHandler();
         setHasDownloadStarted(true);
       },
       onSecondarySubmit() {
