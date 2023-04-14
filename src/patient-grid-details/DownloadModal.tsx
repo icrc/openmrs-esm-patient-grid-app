@@ -4,7 +4,6 @@ import { Modal, RadioButtonGroup, RadioButton } from '@carbon/react';
 import { DownloadGridData, useDownloadGridData } from '../api';
 import { getPatientGridDownloadReportData, InlinePatientGridEditingContext } from '../grid-utils';
 import xlsx from 'xlsx';
-import { saveVisit } from '@openmrs/esm-framework';
 
 export interface DownloadModalProps {
   patientGridId: string;
