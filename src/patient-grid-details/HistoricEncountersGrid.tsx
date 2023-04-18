@@ -23,15 +23,7 @@ import { useTranslation } from 'react-i18next';
 import { FormGet, FormSchema, PatientGridGet, PatientGridReportGet } from '../api';
 import { useHistoricEncountersGrid } from './useHistoricEncountersGrid';
 import styles from './HistoricEncountersGrid.scss';
-import {
-  patientDetailsAgeCategoryColumnName,
-  patientDetailsCountryColumnName,
-  patientDetailsGenderColumnName,
-  patientDetailsNameColumnName,
-  patientDetailsPeriodColumnName,
-  patientDetailsStructureColumnName,
-  useVisibleColumnsOnly,
-} from '../grid-utils';
+import { useVisibleColumnsOnly } from '../grid-utils';
 
 export interface HistoricEncountersGridProps {
   patientId: string;
