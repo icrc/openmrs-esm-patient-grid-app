@@ -2,16 +2,17 @@ import React, { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Stack, ButtonSkeleton, Tag, Modal } from '@carbon/react';
 import styles from './PatientGridFiltersHeader.scss';
-import { InlinePatientGridEditingContext, LocalFilter, useColumnNameToHeaderLabelMap } from '../grid-utils';
-import { MutateFn } from '../api';
+import { InlinePatientGridEditingContext, LocalFilter } from '../grid-utils';
+import { MutateFn, PatientGridGet } from '../api';
 
 export interface PatientGridFiltersHeaderProps {
   patientGridId: string;
+  patientGrid: PatientGridGet;
 }
 
-export function PatientGridFiltersHeader({ patientGridId }: PatientGridFiltersHeaderProps) {
+export function PatientGridFiltersHeader({ patientGridId, patientGrid }: PatientGridFiltersHeaderProps) {
   const { t } = useTranslation();
-  const { data: columnNameToHeaderLabelMap } = useColumnNameToHeaderLabelMap();
+  //  const { data: columnNameToHeaderLabelMap } = useColumnNameToHeaderLabelMap();
   const { filters, saveChanges } = useContext(InlinePatientGridEditingContext);
 
   // Every filter with a UUID must come from the backend.
@@ -23,14 +24,14 @@ export function PatientGridFiltersHeader({ patientGridId }: PatientGridFiltersHe
     <Stack as="section" orientation="horizontal" gap={4} className={styles.filtersContainer}>
       <span className={styles.filtersCaption}>{t('patientGridFiltersHeaderFilterCaption', 'Filters:')}</span>
 
-      {filters?.length && columnNameToHeaderLabelMap ? (
+      {filters?.length ? (
         <>
           {originalFilters.map((filter) => (
             <FilterTag
               key={filter.uuid}
               saveChanges={saveChanges}
               filter={filter}
-              columnNameToHeaderLabelMap={columnNameToHeaderLabelMap}
+              //columnNameToHeaderLabelMap={columnNameToHeaderLabelMap}
             />
           ))}
           {localFilters.map((filter) => (
@@ -38,11 +39,11 @@ export function PatientGridFiltersHeader({ patientGridId }: PatientGridFiltersHe
               key={`${filter.name}-${filter.operand}`}
               filter={filter}
               saveChanges={saveChanges}
-              columnNameToHeaderLabelMap={columnNameToHeaderLabelMap}
+              //columnNameToHeaderLabelMap={}
             />
           ))}
         </>
-      ) : filters && columnNameToHeaderLabelMap ? (
+      ) : filters ? (
         <span className={styles.filtersFallback}>{t('patientGridFiltersHeaderNoFiltersFallback', '--')}</span>
       ) : (
         <>
@@ -57,15 +58,13 @@ export function PatientGridFiltersHeader({ patientGridId }: PatientGridFiltersHe
 interface FilterTagProps {
   filter: LocalFilter;
   saveChanges: MutateFn<void, unknown, Error>;
-  columnNameToHeaderLabelMap: Record<string, string>;
+  //columnNameToHeaderLabelMap: Record<string, string>;
 }
 
-function FilterTag({ filter, saveChanges, columnNameToHeaderLabelMap }: FilterTagProps) {
+function FilterTag({ filter, saveChanges }: FilterTagProps) {
   const { t } = useTranslation();
   const isLocalFilter = !('uuid' in filter);
-  const filterName = `${columnNameToHeaderLabelMap[filter.columnName] ?? filter.columnName}: ${
-    filter.display ?? filter.operand
-  }`;
+  const filterName = `${filter.columnName ?? filter.columnName}: ${filter.display ?? filter.operand}`;
 
   const { filters } = useContext(InlinePatientGridEditingContext);
   const { push } = useContext(InlinePatientGridEditingContext);

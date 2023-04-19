@@ -20,7 +20,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { useTranslation } from 'react-i18next';
-import { FormGet, FormSchema, PatientGridReportGet } from '../api';
+import { FormGet, FormSchema, PatientGridGet, PatientGridReportGet } from '../api';
 import { useHistoricEncountersGrid } from './useHistoricEncountersGrid';
 import styles from './HistoricEncountersGrid.scss';
 import { useVisibleColumnsOnly } from '../grid-utils';
@@ -30,11 +30,18 @@ export interface HistoricEncountersGridProps {
   form: FormGet;
   formSchema: FormSchema;
   report: PatientGridReportGet;
+  patientGrid: PatientGridGet;
 }
 
 const stableEmptyArray = [];
 
-export function HistoricEncountersGrid({ patientId, form, formSchema, report }: HistoricEncountersGridProps) {
+export function HistoricEncountersGrid({
+  patientId,
+  form,
+  formSchema,
+  report,
+  patientGrid,
+}: HistoricEncountersGridProps) {
   const { t } = useTranslation();
   const { data } = useHistoricEncountersGrid(patientId, form, formSchema, report);
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -52,7 +59,18 @@ export function HistoricEncountersGrid({ patientId, form, formSchema, report }: 
     },
   });
   const headerGroups = table.getHeaderGroups();
-
+  for (let i = 0; i < headerGroups.length; i++) {
+    for (let j = 0; j < headerGroups[i].headers.length; j++) {
+      for (let k = 0; k < headerGroups[i].headers[j].column.columns.length; k++) {
+        for (let l = 0; l < patientGrid.columns.length; l++) {
+          if (headerGroups[i].headers[j].column.columns[k].id === patientGrid.columns[l].name) {
+            headerGroups[i].headers[j].column.columns[k].columnDef.header = patientGrid.columns[l].display;
+            break;
+          }
+        }
+      }
+    }
+  }
   if (!data) {
     <DataTableSkeleton showHeader={false} showToolbar={false} />;
   }

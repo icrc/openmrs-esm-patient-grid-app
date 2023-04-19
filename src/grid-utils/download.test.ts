@@ -7,7 +7,6 @@ import {
   patientDetailsStructureColumnName,
 } from './columnNames';
 import { getSectionRepetitionsRequiredPerForm, getPatientGridDownloadReportData } from './download';
-import { ColumnNameToHeaderLabelMap } from './useColumnNameToHeaderLabelMap';
 
 const patientGrid: PatientGridGet = {
   uuid: 'patient-grid',
@@ -91,7 +90,7 @@ const forms: Array<FormGet> = [
 
 const formSchemas: Record<string, FormSchema> = {};
 
-const columnNameToHeaderLabelMap: ColumnNameToHeaderLabelMap = {
+const columnNameToHeaderLabelMap = {
   [patientDetailsNameColumnName]: 'Patient name',
   [patientDetailsCountryColumnName]: 'Country',
   [patientDetailsStructureColumnName]: 'Structure',
@@ -162,7 +161,7 @@ describe(getPatientGridDownloadReportData, () => {
       forms,
       formSchemas,
       columnNamesToInclude,
-      columnNameToHeaderLabelMap,
+
       patientDetailsGroupHeader,
     );
 

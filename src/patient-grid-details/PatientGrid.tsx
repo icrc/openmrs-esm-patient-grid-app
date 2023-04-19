@@ -107,6 +107,20 @@ export function PatientGrid({
     },
   });
   const headerGroups = table.getHeaderGroups();
+  //getting the displayNames for each column correctly along with the static column names
+
+  for (let i = 0; i < headerGroups.length; i++) {
+    for (let j = 0; j < headerGroups[i].headers.length; j++) {
+      for (let k = 0; k < headerGroups[i].headers[j].column.columns.length; k++) {
+        for (let l = 0; l < patientGrid.columns.length; l++) {
+          if (headerGroups[i].headers[j].column.columns[k].id === patientGrid.columns[l].name) {
+            headerGroups[i].headers[j].column.columns[k].columnDef.header = patientGrid.columns[l].display;
+            break;
+          }
+        }
+      }
+    }
+  }
   const { columnHiddenStates } = useContext(InlinePatientGridEditingContext);
 
   const handleCellClick = (cell: Cell<PatientGridDataRow, unknown>, row: Row<PatientGridDataRow>) => {
@@ -314,6 +328,7 @@ export function PatientGrid({
                             <HistoricEncountersTabs
                               report={row.original.__report}
                               reportRow={row.original.__reportRow}
+                              patientGrid={patientGrid}
                             />
                           </div>
                         </TableExpandedRow>
@@ -355,6 +370,7 @@ export function PatientGrid({
         patientGridId={patientGridId}
         isOpen={isDownloadModalOpen}
         onClose={() => setIsDownloadModalOpen(false)}
+        refreshGrid={refreshPatientGrid}
       />
     </main>
   );

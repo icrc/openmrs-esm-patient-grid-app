@@ -9,7 +9,6 @@ import {
   patientDetailsNameColumnName,
   patientDetailsStructureColumnName,
 } from './columnNames';
-import { ColumnNameToHeaderLabelMap } from './useColumnNameToHeaderLabelMap';
 import { getFormSchemaReferenceUuid } from './formSchema';
 
 export function getPatientGridDownloadReportData(
@@ -18,19 +17,10 @@ export function getPatientGridDownloadReportData(
   forms: Array<FormGet>,
   formSchemas: Record<string, FormSchema>,
   columnNamesToInclude: Array<string>,
-  columnNameToHeaderLabelMap: ColumnNameToHeaderLabelMap,
   patientDetailsGroupHeader: string,
 ): Array<Array<string>> {
   const result: Array<Array<string>> = [...range(download.report.length + 3).map(() => [])];
-  const groups = getGroups(
-    download,
-    patientGrid,
-    forms,
-    formSchemas,
-    columnNamesToInclude,
-    columnNameToHeaderLabelMap,
-    patientDetailsGroupHeader,
-  );
+  const groups = getGroups(download, patientGrid, forms, formSchemas, columnNamesToInclude, patientDetailsGroupHeader);
 
   groups.forEach((group) => {
     group.sections.forEach((section, sectionIndex) => {
@@ -72,7 +62,6 @@ function getGroups(
   forms: Array<FormGet>,
   formSchemas: Record<string, FormSchema>,
   columnNamesToInclude: Array<string>,
-  columnNameToHeaderLabelMap: ColumnNameToHeaderLabelMap,
   patientDetailsGroupHeader: string,
 ) {
   const result: Array<{
@@ -99,39 +88,38 @@ function getGroups(
 
   if (columnNamesToInclude.includes(patientDetailsNameColumnName)) {
     patientDetailsGroup.sections[0].columns.push({
-      header: columnNameToHeaderLabelMap[patientDetailsNameColumnName],
+      header: 'Patient name',
       values: download.report.map((row) => row[patientDetailsNameColumnName]),
     });
   }
 
   if (columnNamesToInclude.includes(patientDetailsCountryColumnName)) {
     patientDetailsGroup.sections[0].columns.push({
-      header: columnNameToHeaderLabelMap[patientDetailsCountryColumnName],
+      header: 'Country',
       values: download.report.map((row) => row[patientDetailsCountryColumnName]),
     });
   }
 
   if (columnNamesToInclude.includes(patientDetailsStructureColumnName)) {
     patientDetailsGroup.sections[0].columns.push({
-      header: columnNameToHeaderLabelMap[patientDetailsStructureColumnName],
+      header: 'Structure',
       values: download.report.map((row) => row[patientDetailsStructureColumnName]),
     });
   }
 
   if (columnNamesToInclude.includes(patientDetailsGenderColumnName)) {
     patientDetailsGroup.sections[0].columns.push({
-      header: columnNameToHeaderLabelMap[patientDetailsGenderColumnName],
+      header: 'Gender',
       values: download.report.map((row) => row[patientDetailsGenderColumnName]),
     });
   }
 
   if (columnNamesToInclude.includes(patientDetailsAgeCategoryColumnName)) {
     patientDetailsGroup.sections[0].columns.push({
-      header: columnNameToHeaderLabelMap[patientDetailsAgeCategoryColumnName],
+      header: 'Age category',
       values: download.report.map((row) => row[patientDetailsAgeCategoryColumnName]),
     });
   }
-
   if (patientDetailsGroup.sections[0].columns.length) {
     result.push(patientDetailsGroup);
   }
@@ -162,7 +150,7 @@ function getGroups(
           };
 
           for (const question of formSchemaSection.questions ?? []) {
-            const questionColumnName = getFormSchemaQuestionColumnName(form, question);
+            let questionColumnName = getFormSchemaQuestionColumnName(form, question);
             const matchingPatientGridColumnUuid = patientGrid.columns.find(
               (column) => column.name === questionColumnName,
             )?.uuid;
@@ -170,9 +158,13 @@ function getGroups(
             if (!columnNamesToInclude.includes(questionColumnName) || !matchingPatientGridColumnUuid) {
               continue;
             }
-
+            for (let i = 0; i < patientGrid.columns.length; i++) {
+              if (patientGrid.columns[i].name === questionColumnName) {
+                questionColumnName = patientGrid.columns[i].display;
+              }
+            }
             const column = {
-              header: columnNameToHeaderLabelMap[questionColumnName],
+              header: questionColumnName,
               values: [],
             };
 

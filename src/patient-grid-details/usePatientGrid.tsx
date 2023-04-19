@@ -16,9 +16,7 @@ import {
   patientDetailsStructureColumnName,
   patientDetailsGenderColumnName,
   patientDetailsAgeCategoryColumnName,
-  useColumnNameToHeaderLabelMap,
   getReactTableColumnDefForForm,
-  ColumnNameToHeaderLabelMap,
   getAllReportColumnNames,
   LocalFilter,
 } from '../grid-utils';
@@ -41,20 +39,18 @@ export function usePatientGrid(id: string, filters: Array<LocalFilter>) {
   const reportSwr = useGetPatientGridReport(id);
   const formsSwr = useGetAllPrivilegeFilteredForms();
   const formSchemasSwr = useFormSchemasOfForms(formsSwr.data);
-  const columnNameToHeaderLabelMapSwr = useColumnNameToHeaderLabelMap();
 
   return useMergedSwr(
     () => {
       const { data: forms } = formsSwr;
       const { data: formSchemas } = formSchemasSwr;
-      const { data: columnNameToHeaderLabelMap } = columnNameToHeaderLabelMapSwr;
       const { data: report } = reportSwr;
       const locallyFilteredReportRows = getLocallyFilteredReportRows(report.report, filters);
-      const columns = getColumns(forms, formSchemas, columnNameToHeaderLabelMap, report, t);
+      const columns = getColumns(forms, formSchemas, report, t);
       const data = mapReportEntriesToGridData(report, locallyFilteredReportRows);
       return { columns, data };
     },
-    [formsSwr, formSchemasSwr, columnNameToHeaderLabelMapSwr, reportSwr],
+    [formsSwr, formSchemasSwr, reportSwr],
     [t, filters],
   );
 }
@@ -62,7 +58,7 @@ export function usePatientGrid(id: string, filters: Array<LocalFilter>) {
 function getColumns(
   forms: Array<FormGet>,
   formSchemas: Record<string, FormSchema>,
-  columnNameToHeaderLabelMap: ColumnNameToHeaderLabelMap,
+
   report: PatientGridReportGet,
   t: TFunction,
 ) {
@@ -85,35 +81,35 @@ function getColumns(
 
   if (columnNamesToInclude.includes(patientDetailsNameColumnName)) {
     patientDetailsColumn.columns.push({
-      header: columnNameToHeaderLabelMap[patientDetailsNameColumnName],
+      header: patientDetailsNameColumnName,
       accessorKey: patientDetailsNameColumnName,
     });
   }
 
   if (columnNamesToInclude.includes(patientDetailsNameColumnName)) {
     patientDetailsColumn.columns.push({
-      header: columnNameToHeaderLabelMap[patientDetailsCountryColumnName],
+      header: patientDetailsCountryColumnName,
       accessorKey: patientDetailsCountryColumnName,
     });
   }
 
   if (columnNamesToInclude.includes(patientDetailsNameColumnName)) {
     patientDetailsColumn.columns.push({
-      header: columnNameToHeaderLabelMap[patientDetailsStructureColumnName],
+      header: patientDetailsStructureColumnName,
       accessorKey: patientDetailsStructureColumnName,
     });
   }
 
   if (columnNamesToInclude.includes(patientDetailsNameColumnName)) {
     patientDetailsColumn.columns.push({
-      header: columnNameToHeaderLabelMap[patientDetailsGenderColumnName],
+      header: patientDetailsGenderColumnName,
       accessorKey: patientDetailsGenderColumnName,
     });
   }
 
   if (columnNamesToInclude.includes(patientDetailsNameColumnName)) {
     patientDetailsColumn.columns.push({
-      header: columnNameToHeaderLabelMap[patientDetailsAgeCategoryColumnName],
+      header: patientDetailsAgeCategoryColumnName,
       accessorKey: patientDetailsAgeCategoryColumnName,
     });
   }
@@ -131,12 +127,7 @@ function getColumns(
       continue;
     }
 
-    const formColumn = getReactTableColumnDefForForm(
-      form,
-      formSchema,
-      columnNameToHeaderLabelMap,
-      columnNamesToInclude,
-    );
+    const formColumn = getReactTableColumnDefForForm(form, formSchema, columnNamesToInclude);
 
     // Only add the entire form column if there is at least 1 section column.
     // Checking for length > 2 because there is *always* 2 columns (the "Age"/"Date" columns).

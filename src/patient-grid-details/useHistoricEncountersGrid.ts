@@ -13,7 +13,6 @@ import {
   getFormSchemaQuestionColumnName,
   getFormSchemaQuestionsMappableToColumns,
   getReactTableColumnDefForForm,
-  useColumnNameToHeaderLabelMap,
   getAllReportColumnNames,
 } from '../grid-utils';
 
@@ -24,19 +23,16 @@ export function useHistoricEncountersGrid(
   report: PatientGridReportGet,
 ) {
   const historicEncountersSwr = useGetAllPastEncounters(patientId, form.encounterType.uuid, report.patientGrid.uuid);
-  const columnNameToHeaderLabelMapSwr = useColumnNameToHeaderLabelMap();
   return useMergedSwr(
     () => {
       const { data: historicEncounters } = historicEncountersSwr;
-      const { data: columnNameToHeaderLabelMap } = columnNameToHeaderLabelMapSwr;
+      //const { data: columnNameToHeaderLabelMap } = columnNameToHeaderLabelMapSwr;
       const columnNamesToInclude = getAllReportColumnNames(report);
-      const columns = [
-        getReactTableColumnDefForForm(form, formSchema, columnNameToHeaderLabelMap, columnNamesToInclude),
-      ];
+      const columns = [getReactTableColumnDefForForm(form, formSchema, columnNamesToInclude)];
       const data = createDataFromHistoricEncounters(historicEncounters, form, formSchema);
       return { columns, data };
     },
-    [historicEncountersSwr, columnNameToHeaderLabelMapSwr],
+    [historicEncountersSwr],
     [patientId, form, formSchema, report],
   );
 }
