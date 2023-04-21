@@ -87,7 +87,9 @@ export function PatientGridDetailsPage() {
       });
     }
   }, [t, error]);
-
+  if (error !== undefined) {
+    return <ErrorState error={error.error} headerTitle={error.error.responseBody.error.message} />;
+  }
   if ((!data && !error) || refreshPatientGridMutation.isLoading) {
     return <PatientGridReportLoadingIndicator />;
   }
