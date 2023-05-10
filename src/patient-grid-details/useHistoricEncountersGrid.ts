@@ -55,7 +55,7 @@ function createDataFromHistoricEncounters(
 
     for (const { question } of relevantQuestions) {
       const conceptUuid = question.questionOptions.concept;
-      const matchingObs = conceptUuid ? encounter.obs.find((obs) => obs.concept.uuid === conceptUuid) : undefined;
+      const matchingObs = conceptUuid ? encounter.obs.filter((obs) => obs.concept.uuid === conceptUuid) : undefined;
       if (matchingObs) {
         encounterRow[getFormSchemaQuestionColumnName(form, question)] = obsToDisplayString(matchingObs);
       }
@@ -67,13 +67,10 @@ function createDataFromHistoricEncounters(
   return result;
 }
 
-function obsToDisplayString(obs: PastEncounterObsGet) {
-  // TODO: This is probably not exhaustive yet. Other things an obs could be here?
-  if (obs.value === null || obs.value === undefined) {
-    return '';
-  } else if (typeof obs.value === 'object') {
-    return obs.value.display ?? ''; // TODO: Is this localized? Should it be?
-  } else {
-    return `${obs.value}`;
-  }
+function obsToDisplayString(obs: PastEncounterObsGet[]) {
+  const valuesArray = obs.map((obs) => obs.value);
+  return valuesArray
+    .filter((value) => value !== null && value !== undefined)
+    .map((value) => (typeof value === 'object' ? value.display ?? '' : `${value}`))
+    .join(', ');
 }
