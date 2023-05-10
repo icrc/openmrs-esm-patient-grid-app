@@ -1,5 +1,5 @@
 import { ErrorState, ExtensionSlot, showToast, useSession } from '@openmrs/esm-framework';
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useCallback, useEffect, useState } from 'react';
 import { Hr, PageWithSidePanel, PageWithSidePanelProps } from '../components';
 import { PatientGridDetailsHeader } from './PatientGridDetailsHeader';
 import { Stack } from '@carbon/react';
@@ -55,7 +55,29 @@ export function PatientGridDetailsPage() {
     setSidePanelSize('lg');
   };
 
+  const getDisplayProperty = useCallback(
+    (name: string) => {
+      const column = patientGrid?.columns.find((column) => column.name === name);
+      return column ? column.display : name;
+    },
+    [patientGrid?.columns],
+  );
+
+  const extractHeadersFromPatientGrid = useCallback(
+    (columns) => {
+      columns.forEach((obj) => {
+        if (!obj.columns) {
+          obj.header = getDisplayProperty(obj.header);
+        } else {
+          extractHeadersFromPatientGrid(obj.columns);
+        }
+      });
+    },
+    [getDisplayProperty],
+  );
+
   const showToggleColumnsSidePanel = () => {
+    extractHeadersFromPatientGrid(data.columns);
     setSidePanel(<ToggleColumnsSidePanel columns={data.columns} onClose={() => setSidePanel(undefined)} />);
     setSidePanelSize('md');
   };
