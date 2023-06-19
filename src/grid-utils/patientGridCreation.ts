@@ -10,6 +10,7 @@ import {
   getFormDateColumnName,
 } from './columnNames';
 import { getFormSchemaReferenceUuid, getFormSchemaQuestionsMappableToColumns } from './formSchema';
+import { GridFormConfig } from '../config-schema';
 
 /**
  * Returns the {@link PatientGridColumnPost} resources for the hardcoded patient details grid sections.
@@ -65,6 +66,7 @@ export function getPatientGridColumnPostResourcesForForms(
   forms: Array<FormGet>,
   formSchemas: Record<string, FormSchema>,
   periodFilter?: Array<PatientGridFilterPost>,
+  gridFormConfig?: Array<GridFormConfig>,
 ): Array<PatientGridColumnPost> {
   return forms.flatMap((form) => {
     const schemaId = getFormSchemaReferenceUuid(form);
@@ -92,13 +94,17 @@ export function getPatientGridColumnPostResourcesForForms(
     ];
 
     const questionInfoMappableToColumns = getFormSchemaQuestionsMappableToColumns(form, formSchema);
-    const formQuestionColumns = questionInfoMappableToColumns.map<PatientGridColumnPost>(({ question, form }) => ({
-      name: getFormSchemaQuestionColumnName(form, question),
-      type: 'obscolumn',
-      datatype: 'OBS',
-      concept: question.questionOptions.concept,
-      encounterType: form.encounterType.uuid,
-    }));
+    const formQuestionColumns = questionInfoMappableToColumns.map<PatientGridColumnPost>(({ question, form }) => {
+      const formConfig = gridFormConfig.find((f) => f.formUuid === form.uuid);
+      return {
+        name: getFormSchemaQuestionColumnName(form, question),
+        type: 'obscolumn',
+        datatype: 'OBS',
+        concept: question.questionOptions.concept,
+        encounterType: form.encounterType.uuid,
+        hidden: new Set(formConfig.defaultHiddenQuestionIds).has(question.id),
+      };
+    });
 
     return formQuestionColumns.length ? [...specialColumns, ...formQuestionColumns] : [];
   });

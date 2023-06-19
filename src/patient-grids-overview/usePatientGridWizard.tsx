@@ -113,12 +113,13 @@ export function usePatientGridWizard(formSchemas: Record<string, FormSchema>) {
           state.selectedForms,
           formSchemas,
           state.periodFilter ? [state.periodFilter] : undefined,
+          config.gridFormConfig,
         ),
       ],
     };
 
     return body;
-  }, [state, formSchemas, config.ageRangeEncounterTypeUuid, session.user]);
+  }, [state, formSchemas, config.ageRangeEncounterTypeUuid, config.gridFormConfig, session.user]);
 
   return {
     currentPage,
