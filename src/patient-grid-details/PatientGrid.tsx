@@ -114,7 +114,9 @@ export function PatientGrid({
       for (let k = 0; k < headerGroups[i].headers[j].column.columns.length; k++) {
         for (let l = 0; l < patientGrid.columns.length; l++) {
           if (headerGroups[i].headers[j].column.columns[k].id === patientGrid.columns[l].name) {
-            headerGroups[i].headers[j].column.columns[k].columnDef.header = patientGrid.columns[l].display;
+            const columnDef = headerGroups[i].headers[j].column.columns[k].columnDef;
+            headerGroups[i].headers[j].column.columns[k].columnDef.header =
+              ((columnDef as any).headerPrefix ?? '') + patientGrid.columns[l].display;
             break;
           }
         }
