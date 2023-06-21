@@ -20,7 +20,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { useTranslation } from 'react-i18next';
-import { FormGet, FormSchema, PatientGridGet, PatientGridReportGet } from '../api';
+import { FormGet, FormSchema, PatientGridColumnDef, PatientGridGet, PatientGridReportGet } from '../api';
 import { useHistoricEncountersGrid } from './useHistoricEncountersGrid';
 import styles from './HistoricEncountersGrid.scss';
 import { useVisibleColumnsOnly } from '../grid-utils';
@@ -64,7 +64,9 @@ export function HistoricEncountersGrid({
       for (let k = 0; k < headerGroups[i].headers[j].column.columns.length; k++) {
         for (let l = 0; l < patientGrid.columns.length; l++) {
           if (headerGroups[i].headers[j].column.columns[k].id === patientGrid.columns[l].name) {
-            headerGroups[i].headers[j].column.columns[k].columnDef.header = patientGrid.columns[l].display;
+            const columnDef = headerGroups[i].headers[j].column.columns[k].columnDef;
+            headerGroups[i].headers[j].column.columns[k].columnDef.header =
+              ((columnDef as PatientGridColumnDef).headerPrefix ?? '') + patientGrid.columns[l].display;
             break;
           }
         }

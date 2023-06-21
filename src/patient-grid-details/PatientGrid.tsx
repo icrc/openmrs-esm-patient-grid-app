@@ -63,7 +63,7 @@ import {
   getDynamicOfflineDataEntries,
 } from '@openmrs/esm-framework';
 import { useVisibleColumnsOnly } from '../grid-utils/useVisibleColumnsOnly';
-import { useGetPatientGrid } from '../api';
+import { PatientGridColumnDef, useGetPatientGrid } from '../api';
 
 export interface PatientGridProps {
   patientGridId: string;
@@ -116,7 +116,7 @@ export function PatientGrid({
           if (headerGroups[i].headers[j].column.columns[k].id === patientGrid.columns[l].name) {
             const columnDef = headerGroups[i].headers[j].column.columns[k].columnDef;
             headerGroups[i].headers[j].column.columns[k].columnDef.header =
-              ((columnDef as any).headerPrefix ?? '') + patientGrid.columns[l].display;
+              ((columnDef as PatientGridColumnDef).headerPrefix ?? '') + patientGrid.columns[l].display;
             break;
           }
         }
