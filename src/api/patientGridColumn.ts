@@ -3,6 +3,7 @@ import { PatientGridFilterPost } from './patientGridFilter';
 
 export type PatientGridColumnDataType =
   | 'NAME'
+  | 'LEGACY_ID'
   | 'GENDER'
   | 'ENC_AGE'
   | 'ENC_DATE'

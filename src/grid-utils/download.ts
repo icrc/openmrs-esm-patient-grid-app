@@ -7,6 +7,7 @@ import {
   patientDetailsCountryColumnName,
   patientDetailsGenderColumnName,
   patientDetailsNameColumnName,
+  patientDetailsLegacyIdColumnName,
   patientDetailsStructureColumnName,
 } from './columnNames';
 import { getFormSchemaReferenceUuid } from './formSchema';
@@ -90,6 +91,13 @@ function getGroups(
     patientDetailsGroup.sections[0].columns.push({
       header: 'Patient name',
       values: download.report.map((row) => row[patientDetailsNameColumnName]),
+    });
+  }
+
+  if (columnNamesToInclude.includes(patientDetailsLegacyIdColumnName)) {
+    patientDetailsGroup.sections[0].columns.push({
+      header: 'Legacy Id',
+      values: download.report.map((row) => row[patientDetailsLegacyIdColumnName]),
     });
   }
 
