@@ -56,6 +56,7 @@ export function getReactTableColumnDefForForm(
       if (columnNamesToInclude.includes(questionColumnName)) {
         formColumn.columns.push({
           header: questionColumnName ?? question.label ?? question.id,
+          headerPrefix: question.prefix,
           accessorKey: getFormSchemaQuestionColumnName(form, question),
         });
       }

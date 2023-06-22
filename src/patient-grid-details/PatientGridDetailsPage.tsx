@@ -56,9 +56,9 @@ export function PatientGridDetailsPage() {
   };
 
   const getDisplayProperty = useCallback(
-    (name: string) => {
+    (name: string, prefix: string) => {
       const column = patientGrid?.columns.find((column) => column.name === name);
-      return column ? column.display : name;
+      return column ? (prefix ?? '') + column.display : name;
     },
     [patientGrid?.columns],
   );
@@ -67,7 +67,7 @@ export function PatientGridDetailsPage() {
     (columns) => {
       columns.forEach((obj) => {
         if (!obj.columns) {
-          obj.header = getDisplayProperty(obj.header);
+          obj.header = getDisplayProperty(obj.header, obj.headerPrefix);
         } else {
           extractHeadersFromPatientGrid(obj.columns);
         }
