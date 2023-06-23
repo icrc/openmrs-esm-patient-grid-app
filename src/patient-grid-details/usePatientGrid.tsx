@@ -19,7 +19,7 @@ import {
   getReactTableColumnDefForForm,
   getAllReportColumnNames,
   LocalFilter,
-  patientDetailsLegacyIdColumnName,
+  patientDetailsPatientIdColumnName,
 } from '../grid-utils';
 import { TFunction, useTranslation } from 'react-i18next';
 import { getLocallyFilteredReportRows } from '../grid-utils/localRowFiltering';
@@ -89,8 +89,8 @@ function getColumns(
 
   if (columnNamesToInclude.includes(patientDetailsNameColumnName)) {
     patientDetailsColumn.columns.push({
-      header: patientDetailsLegacyIdColumnName,
-      accessorKey: patientDetailsLegacyIdColumnName,
+      header: patientDetailsPatientIdColumnName,
+      accessorKey: patientDetailsPatientIdColumnName,
     });
   }
 

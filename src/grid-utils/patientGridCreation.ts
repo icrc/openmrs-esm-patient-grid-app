@@ -1,7 +1,7 @@
 import { PatientGridColumnPost, FormGet, FormSchema, PatientGridFilterPost } from '../api';
 import {
   patientDetailsNameColumnName,
-  patientDetailsLegacyIdColumnName,
+  patientDetailsPatientIdColumnName,
   patientDetailsCountryColumnName,
   patientDetailsStructureColumnName,
   patientDetailsGenderColumnName,
@@ -30,9 +30,9 @@ export function getPatientDetailsPatientGridColumnPostResources(
       datatype: 'NAME',
     },
     {
-      name: patientDetailsLegacyIdColumnName,
+      name: patientDetailsPatientIdColumnName,
       type: 'column',
-      datatype: 'LEGACY_ID',
+      datatype: 'PATIENT_ID',
     },
     {
       name: patientDetailsCountryColumnName,
