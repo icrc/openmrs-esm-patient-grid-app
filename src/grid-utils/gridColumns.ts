@@ -45,6 +45,24 @@ export function getReactTableColumnDefForForm(
     });
   }
 
+  function processQuestion(question, formColumn) {
+    if (question.questions && question.questions.length > 0) {
+      for (const subQuestion of question.questions) {
+        processQuestion(subQuestion, formColumn);
+      }
+    } else {
+      const questionColumnName = getFormSchemaQuestionColumnName(form, question);
+
+      if (columnNamesToInclude.includes(questionColumnName)) {
+        formColumn.columns.push({
+          header: questionColumnName ?? question.label ?? question.id,
+          headerPrefix: question.prefix,
+          accessorKey: getFormSchemaQuestionColumnName(form, question),
+        });
+      }
+    }
+  }
+
   for (const page of formSchema.pages ?? []) {
     for (const section of page.sections ?? []) {
       const sectionColumn: GroupColumnDef<Record<string, string>> = {
@@ -53,17 +71,7 @@ export function getReactTableColumnDefForForm(
       };
 
       for (const question of section.questions ?? []) {
-        const questionColumnName = getFormSchemaQuestionColumnName(form, question);
-
-        if (columnNamesToInclude.includes(questionColumnName)) {
-          sectionColumn.columns.push({
-            // Questions may be localized via concept labels.
-            // Those are already prefetched, but if they don't exist, fallback to values inside the schema itself
-            // to display *something*.
-            header: questionColumnName ?? question.label ?? question.id,
-            accessorKey: getFormSchemaQuestionColumnName(form, question),
-          });
-        }
+        processQuestion(question, sectionColumn);
       }
 
       // Only add the column for this specific section if there's at least 1 question column.

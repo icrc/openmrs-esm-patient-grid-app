@@ -1,5 +1,7 @@
 import { OpenmrsResource } from '@openmrs/esm-framework';
 import { PatientGridFilterPost } from './patientGridFilter';
+import { ColumnDef } from '@tanstack/react-table';
+import { PatientGridDataRow } from '../patient-grid-details/usePatientGrid';
 
 export type PatientGridColumnDataType =
   | 'NAME'
@@ -61,3 +63,7 @@ export interface PatientGridColumnPost {
   filters?: Array<PatientGridFilterPost>;
   hidden?: boolean;
 }
+
+export type PatientGridColumnDef = ColumnDef<PatientGridDataRow, unknown> & {
+  headerPrefix?: string;
+};

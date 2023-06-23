@@ -24,13 +24,19 @@ export function getFormSchemaQuestionsMappableToColumns(form: FormGet, formSchem
     question: FormSchemaQuestion;
   }> = [];
 
+  function extractQuestions(page, section, questions) {
+    for (const question of questions ?? []) {
+      if (question.type === 'obs' && question.questionOptions.concept) {
+        results.push({ form, formSchema, page, section, question });
+      } else if (question.questions) {
+        extractQuestions(page, section, question.questions);
+      }
+    }
+  }
+
   for (const page of formSchema.pages ?? []) {
     for (const section of page.sections ?? []) {
-      for (const question of section.questions ?? []) {
-        if (question.type === 'obs' && question.questionOptions.concept && form.encounterType?.uuid) {
-          results.push({ form, formSchema, page, section, question });
-        }
-      }
+      extractQuestions(page, section, section.questions);
     }
   }
 
@@ -45,7 +51,11 @@ export function getFormSchemaQuestionsMappableToColumns(form: FormGet, formSchem
 export function getUnlabeledConceptIdentifiersFromSchema(formSchema: FormSchema): Array<string> {
   const results = new Set<string>();
   const walkQuestions = (questions: Array<FormSchemaQuestion>) => {
-    for (const question of questions) {
+    for (const question of questions ?? []) {
+      if (question.questions) {
+        walkQuestions(question.questions);
+      }
+
       if (typeof question.questionOptions?.concept === 'string') {
         results.add(question.questionOptions.concept);
       }
@@ -55,10 +65,6 @@ export function getUnlabeledConceptIdentifiersFromSchema(formSchema: FormSchema)
           results.add(answer.concept);
         }
       }
-
-      if (Array.isArray(question.questions)) {
-        walkQuestions(question.questions);
-      }
     }
   };
 
@@ -67,6 +73,5 @@ export function getUnlabeledConceptIdentifiersFromSchema(formSchema: FormSchema)
       walkQuestions(section.questions ?? []);
     }
   }
-
   return [...results];
 }
