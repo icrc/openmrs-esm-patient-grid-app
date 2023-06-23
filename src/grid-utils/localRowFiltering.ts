@@ -2,7 +2,7 @@ import { PatientGridReportRowGet } from '../api';
 import { LocalFilter } from './useInlinePatientGridEditing';
 
 export function getLocallyFilteredReportRows(rows: Array<PatientGridReportRowGet>, filters: Array<LocalFilter>) {
-  const localFilters = filters.filter((filter) => !('uuid' in filter));
+  const localFilters = filters?.filter((filter) => !('uuid' in filter)) || [];
 
   if (!localFilters.length) {
     return rows;

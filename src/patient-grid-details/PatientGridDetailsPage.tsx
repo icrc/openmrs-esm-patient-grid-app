@@ -116,7 +116,7 @@ export function PatientGridDetailsPage() {
     return <PatientGridReportLoadingIndicator />;
   }
 
-  return (
+  return patientGrid ? (
     <InlinePatientGridEditingContext.Provider value={inlinePatientGridEditingState}>
       <PageWithSidePanel sidePanel={sidePanel} showSidePanel={!!sidePanel} sidePanelSize={sidePanelSize}>
         <ExtensionSlot extensionSlotName="breadcrumbs-slot" />
@@ -166,5 +166,5 @@ export function PatientGridDetailsPage() {
         />
       </PageWithSidePanel>
     </InlinePatientGridEditingContext.Provider>
-  );
+  ) : null;
 }
