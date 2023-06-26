@@ -12,14 +12,21 @@ import {
 import { getFormsReferencedInGridReport, getFormSchemaReferenceUuid } from '../grid-utils';
 import { useTranslation } from 'react-i18next';
 import { HistoricEncountersGrid } from './HistoricEncountersGrid';
+import { EditSidePanelValues } from './PatientGridDetailsPage';
 
 export interface HistoricEncountersTabsProps {
   report: PatientGridReportGet;
   reportRow: PatientGridReportRowGet;
   patientGrid: PatientGridGet;
+  showEditSidePanel(values: EditSidePanelValues): void;
 }
 
-export function HistoricEncountersTabs({ report, reportRow, patientGrid }: HistoricEncountersTabsProps) {
+export function HistoricEncountersTabs({
+  report,
+  reportRow,
+  patientGrid,
+  showEditSidePanel,
+}: HistoricEncountersTabsProps) {
   const { t } = useTranslation();
   const formsSwr = useGetAllPrivilegeFilteredForms();
   const formSchemasSwr = useFormSchemasOfForms(formsSwr.data);
@@ -51,6 +58,7 @@ export function HistoricEncountersTabs({ report, reportRow, patientGrid }: Histo
                   patientId={reportRow.uuid}
                   report={report}
                   patientGrid={patientGrid}
+                  showEditSidePanel={showEditSidePanel}
                 />
               </TabPanel>
             ))}

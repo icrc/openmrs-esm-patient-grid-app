@@ -11,11 +11,13 @@ import {
 } from '@carbon/react';
 import { ChevronSort, ArrowUp, ArrowDown } from '@carbon/react/icons';
 import {
+  Cell,
   flexRender,
   getCoreRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
   getSortedRowModel,
+  Row,
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
@@ -23,7 +25,13 @@ import { useTranslation } from 'react-i18next';
 import { FormGet, FormSchema, PatientGridColumnDef, PatientGridGet, PatientGridReportGet } from '../api';
 import { useHistoricEncountersGrid } from './useHistoricEncountersGrid';
 import styles from './HistoricEncountersGrid.scss';
-import { useVisibleColumnsOnly } from '../grid-utils';
+import { isFormSchemaQuestionColumnName, useVisibleColumnsOnly } from '../grid-utils';
+import { PatientGridDataRow } from './usePatientGrid';
+import { EditSidePanelValues } from './PatientGridDetailsPage';
+
+export interface HistoricEncountersGridDataRow extends Record<string, unknown> {
+  encounterUuid: string;
+}
 
 export interface HistoricEncountersGridProps {
   patientId: string;
@@ -31,6 +39,7 @@ export interface HistoricEncountersGridProps {
   formSchema: FormSchema;
   report: PatientGridReportGet;
   patientGrid: PatientGridGet;
+  showEditSidePanel(values: EditSidePanelValues): void;
 }
 
 const stableEmptyArray = [];
@@ -41,6 +50,7 @@ export function HistoricEncountersGrid({
   formSchema,
   report,
   patientGrid,
+  showEditSidePanel,
 }: HistoricEncountersGridProps) {
   const { t } = useTranslation();
   const { data } = useHistoricEncountersGrid(patientId, form, formSchema, report);
@@ -76,6 +86,14 @@ export function HistoricEncountersGrid({
   if (!data) {
     <DataTableSkeleton showHeader={false} showToolbar={false} />;
   }
+
+  const handleCellClick = (cell: Cell<PatientGridDataRow, unknown>, row: Row<HistoricEncountersGridDataRow>) => {
+    showEditSidePanel({
+      encounterId: row.original.encounterUuid,
+      formId: form.uuid,
+      patientId: patientId,
+    });
+  };
 
   return (
     <Table className={styles.table} useZebraStyles>
@@ -122,7 +140,12 @@ export function HistoricEncountersGrid({
         {table.getRowModel().rows.map((row) => (
           <TableRow key={row.id}>
             {row.getVisibleCells().map((cell) => (
-              <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+              <TableCell
+                key={cell.id}
+                onClick={() => handleCellClick(cell, row)}
+                className={isFormSchemaQuestionColumnName(cell.column.id) ? styles.clickableCell : undefined}>
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </TableCell>
             ))}
           </TableRow>
         ))}
