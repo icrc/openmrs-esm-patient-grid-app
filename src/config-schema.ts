@@ -9,6 +9,7 @@ export const configSchema = {
   gridFormConfig: {
     _type: Type.Array,
     _description: 'List of forms for this category.',
+    _default: [],
     _elements: {
       formUuid: {
         _type: Type.UUID,
