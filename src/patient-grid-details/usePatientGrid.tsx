@@ -16,10 +16,11 @@ import {
   patientDetailsStructureColumnName,
   patientDetailsGenderColumnName,
   patientDetailsAgeCategoryColumnName,
+  patientDetailsPatientId01ColumnName,
+  patientDetailsPatientId02ColumnName,
   getReactTableColumnDefForForm,
   getAllReportColumnNames,
   LocalFilter,
-  patientDetailsPatientIdColumnName,
 } from '../grid-utils';
 import { TFunction, useTranslation } from 'react-i18next';
 import { getLocallyFilteredReportRows } from '../grid-utils/localRowFiltering';
@@ -89,8 +90,15 @@ function getColumns(
 
   if (columnNamesToInclude.includes(patientDetailsNameColumnName)) {
     patientDetailsColumn.columns.push({
-      header: patientDetailsPatientIdColumnName,
-      accessorKey: patientDetailsPatientIdColumnName,
+      header: patientDetailsPatientId01ColumnName,
+      accessorKey: patientDetailsPatientId01ColumnName,
+    });
+  }
+
+  if (columnNamesToInclude.includes(patientDetailsNameColumnName)) {
+    patientDetailsColumn.columns.push({
+      header: patientDetailsPatientId02ColumnName,
+      accessorKey: patientDetailsPatientId02ColumnName,
     });
   }
 
