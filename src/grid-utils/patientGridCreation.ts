@@ -114,7 +114,7 @@ export function getPatientGridColumnPostResourcesForForms(
         datatype: 'OBS',
         concept: question.questionOptions.concept,
         encounterType: form.encounterType.uuid,
-        hidden: new Set(formConfig.defaultHiddenQuestionIds).has(question.id),
+        hidden: new Set(formConfig?.defaultHiddenQuestionIds).has(question.id),
       };
     });
 

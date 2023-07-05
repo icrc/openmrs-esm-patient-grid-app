@@ -331,6 +331,7 @@ export function PatientGrid({
                               report={row.original.__report}
                               reportRow={row.original.__reportRow}
                               patientGrid={patientGrid}
+                              showEditSidePanel={showEditSidePanel}
                             />
                           </div>
                         </TableExpandedRow>

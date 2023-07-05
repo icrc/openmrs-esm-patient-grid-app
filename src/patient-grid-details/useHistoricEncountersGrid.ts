@@ -61,6 +61,8 @@ function createDataFromHistoricEncounters(
       }
     }
 
+    encounterRow.encounterUuid = encounter.uuid;
+
     result.push(encounterRow);
   }
 
