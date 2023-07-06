@@ -24,7 +24,8 @@ import {
 } from '../grid-utils';
 import { TFunction, useTranslation } from 'react-i18next';
 import { getLocallyFilteredReportRows } from '../grid-utils/localRowFiltering';
-import { formatDate } from '@openmrs/esm-framework';
+import { formatDate, useConfig } from '@openmrs/esm-framework';
+import { Config } from '../config-schema';
 
 export interface PatientGridDataRow extends Record<string, unknown> {
   __report: PatientGridReportGet;
@@ -38,6 +39,7 @@ export interface PatientGridDataRow extends Record<string, unknown> {
  */
 export function usePatientGrid(id: string, filters: Array<LocalFilter>) {
   const { t } = useTranslation();
+  const config = useConfig() as Config;
   const reportSwr = useGetPatientGridReport(id);
   const formsSwr = useGetAllPrivilegeFilteredForms();
   const formSchemasSwr = useFormSchemasOfForms(formsSwr.data);
@@ -48,7 +50,7 @@ export function usePatientGrid(id: string, filters: Array<LocalFilter>) {
       const { data: formSchemas } = formSchemasSwr;
       const { data: report } = reportSwr;
       const locallyFilteredReportRows = getLocallyFilteredReportRows(report.report, filters);
-      const columns = getColumns(forms, formSchemas, report, t);
+      const columns = getColumns(forms, formSchemas, report, t, config.gridPatientConfig);
       const data = mapReportEntriesToGridData(report, locallyFilteredReportRows);
       return { columns, data };
     },
@@ -60,9 +62,9 @@ export function usePatientGrid(id: string, filters: Array<LocalFilter>) {
 function getColumns(
   forms: Array<FormGet>,
   formSchemas: Record<string, FormSchema>,
-
   report: PatientGridReportGet,
   t: TFunction,
+  patientColumnsConfig: Array<string>,
 ) {
   // The task of this memo is to filter out the columns that should actually be rendered in the grid.
   // This is done by comparing all *possibly renderable* columns to the patient grid report.
@@ -81,49 +83,49 @@ function getColumns(
     columns: [],
   };
 
-  if (columnNamesToInclude.includes(patientDetailsNameColumnName)) {
+  if (columnNamesToInclude.includes(patientDetailsNameColumnName) && patientColumnsConfig.includes('NAME')) {
     patientDetailsColumn.columns.push({
       header: patientDetailsNameColumnName,
       accessorKey: patientDetailsNameColumnName,
     });
   }
 
-  if (columnNamesToInclude.includes(patientDetailsNameColumnName)) {
+  if (columnNamesToInclude.includes(patientDetailsNameColumnName) && patientColumnsConfig.includes('PATIENT_ID_01')) {
     patientDetailsColumn.columns.push({
       header: patientDetailsPatientId01ColumnName,
       accessorKey: patientDetailsPatientId01ColumnName,
     });
   }
 
-  if (columnNamesToInclude.includes(patientDetailsNameColumnName)) {
+  if (columnNamesToInclude.includes(patientDetailsNameColumnName) && patientColumnsConfig.includes('PATIENT_ID_02')) {
     patientDetailsColumn.columns.push({
       header: patientDetailsPatientId02ColumnName,
       accessorKey: patientDetailsPatientId02ColumnName,
     });
   }
 
-  if (columnNamesToInclude.includes(patientDetailsNameColumnName)) {
+  if (columnNamesToInclude.includes(patientDetailsNameColumnName) && patientColumnsConfig.includes('ENC_COUNTRY')) {
     patientDetailsColumn.columns.push({
       header: patientDetailsCountryColumnName,
       accessorKey: patientDetailsCountryColumnName,
     });
   }
 
-  if (columnNamesToInclude.includes(patientDetailsNameColumnName)) {
+  if (columnNamesToInclude.includes(patientDetailsNameColumnName) && patientColumnsConfig.includes('ENC_LOCATION')) {
     patientDetailsColumn.columns.push({
       header: patientDetailsStructureColumnName,
       accessorKey: patientDetailsStructureColumnName,
     });
   }
 
-  if (columnNamesToInclude.includes(patientDetailsNameColumnName)) {
+  if (columnNamesToInclude.includes(patientDetailsNameColumnName) && patientColumnsConfig.includes('GENDER')) {
     patientDetailsColumn.columns.push({
       header: patientDetailsGenderColumnName,
       accessorKey: patientDetailsGenderColumnName,
     });
   }
 
-  if (columnNamesToInclude.includes(patientDetailsNameColumnName)) {
+  if (columnNamesToInclude.includes(patientDetailsNameColumnName) && patientColumnsConfig.includes('ENC_AGE')) {
     patientDetailsColumn.columns.push({
       header: patientDetailsAgeCategoryColumnName,
       accessorKey: patientDetailsAgeCategoryColumnName,
