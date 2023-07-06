@@ -7,7 +7,8 @@ import {
   patientDetailsCountryColumnName,
   patientDetailsGenderColumnName,
   patientDetailsNameColumnName,
-  patientDetailsPatientIdColumnName,
+  patientDetailsPatientId01ColumnName,
+  patientDetailsPatientId02ColumnName,
   patientDetailsStructureColumnName,
 } from './columnNames';
 import { getFormSchemaReferenceUuid } from './formSchema';
@@ -94,10 +95,17 @@ function getGroups(
     });
   }
 
-  if (columnNamesToInclude.includes(patientDetailsPatientIdColumnName)) {
+  if (columnNamesToInclude.includes(patientDetailsPatientId01ColumnName)) {
     patientDetailsGroup.sections[0].columns.push({
       header: 'Patient Id',
-      values: download.report.map((row) => row[patientDetailsPatientIdColumnName]),
+      values: download.report.map((row) => row[patientDetailsPatientId01ColumnName]),
+    });
+  }
+
+  if (columnNamesToInclude.includes(patientDetailsPatientId02ColumnName)) {
+    patientDetailsGroup.sections[0].columns.push({
+      header: 'Patient Id',
+      values: download.report.map((row) => row[patientDetailsPatientId02ColumnName]),
     });
   }
 

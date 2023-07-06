@@ -3,7 +3,8 @@ import { FormGet, FormSchemaQuestion } from '../api';
 // Column names which are hardcoded. Those do not come from any dynamic data source (e.g. forms),
 // but are always "manually" created by this module.
 export const patientDetailsNameColumnName = 'patientDetails--name';
-export const patientDetailsPatientIdColumnName = 'patientDetails--patientId';
+export const patientDetailsPatientId01ColumnName = 'patientDetails--patientId01';
+export const patientDetailsPatientId02ColumnName = 'patientDetails--patientId02';
 export const patientDetailsCountryColumnName = 'patientDetails--country';
 export const patientDetailsStructureColumnName = 'patientDetails--structure';
 export const patientDetailsGenderColumnName = 'patientDetails--Gender';

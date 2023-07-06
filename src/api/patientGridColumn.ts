@@ -5,7 +5,8 @@ import { PatientGridDataRow } from '../patient-grid-details/usePatientGrid';
 
 export type PatientGridColumnDataType =
   | 'NAME'
-  | 'PATIENT_ID'
+  | 'PATIENT_ID_01'
+  | 'PATIENT_ID_02'
   | 'GENDER'
   | 'ENC_AGE'
   | 'ENC_DATE'
