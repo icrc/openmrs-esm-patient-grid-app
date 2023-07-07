@@ -36,9 +36,10 @@ export function usePossiblePatientGridFiltersForColumn(
             } else {
               return {
                 name: `${columnValue.value}`,
-                display: isValidDate(new Date(columnValue.value as string))
-                  ? formatDate(new Date(columnValue.value as string), { time: true })
-                  : `${columnValue}`,
+                display:
+                  typeof columnValue.value === 'string' && isValidDate(new Date(columnValue.value))
+                    ? formatDate(new Date(columnValue.value), { time: true })
+                    : `${columnValue.value}`,
                 operand: `${columnValue.value}`,
                 columnName,
               };
@@ -46,9 +47,10 @@ export function usePossiblePatientGridFiltersForColumn(
           } else if (columnValue !== null && columnValue !== undefined) {
             return {
               name: `${columnValue}`,
-              display: isValidDate(new Date(columnValue as string))
-                ? formatDate(new Date(columnValue as string), { time: true })
-                : `${columnValue}`,
+              display:
+                typeof columnValue === 'string' && isValidDate(new Date(columnValue))
+                  ? formatDate(new Date(columnValue), { time: true })
+                  : `${columnValue}`,
               operand: `${columnValue}`,
               columnName,
             };
