@@ -251,6 +251,7 @@ export function PatientGrid({
                                 onClick={header.column.getToggleSortingHandler()}
                               />
                               {(header.column.id.includes('formQuestion') ||
+                                header.column.id.includes('formDate') ||
                                 header.column.id === patientDetailsGenderColumnName ||
                                 header.column.id === patientDetailsAgeCategoryColumnName) && (
                                 <PatientGridColumnFiltersButton

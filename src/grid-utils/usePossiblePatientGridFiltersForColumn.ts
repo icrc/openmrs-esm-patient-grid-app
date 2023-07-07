@@ -3,6 +3,7 @@ import { useGetPatientGrid, useGetPatientGridReport, useMergedSwr } from '../api
 import { LocalFilter } from './useInlinePatientGridEditing';
 import uniqBy from 'lodash-es/uniqBy';
 import sortBy from 'lodash-es/sortBy';
+import { formatDate } from '@openmrs/esm-framework';
 
 export function usePossiblePatientGridFiltersForColumn(
   patientGridId: string,
@@ -10,6 +11,10 @@ export function usePossiblePatientGridFiltersForColumn(
 ): SWRResponse<Array<LocalFilter>> {
   const patientGridSwr = useGetPatientGrid(patientGridId);
   const reportSwr = useGetPatientGridReport(patientGridId);
+
+  function isValidDate(date) {
+    return date instanceof Date && !isNaN(date.getTime());
+  }
 
   return useMergedSwr(
     () => {
@@ -31,7 +36,9 @@ export function usePossiblePatientGridFiltersForColumn(
             } else {
               return {
                 name: `${columnValue.value}`,
-                display: `${columnValue.value}`,
+                display: isValidDate(new Date(columnValue.value as string))
+                  ? formatDate(new Date(columnValue.value as string), { time: true })
+                  : `${columnValue}`,
                 operand: `${columnValue.value}`,
                 columnName,
               };
@@ -39,7 +46,9 @@ export function usePossiblePatientGridFiltersForColumn(
           } else if (columnValue !== null && columnValue !== undefined) {
             return {
               name: `${columnValue}`,
-              display: `${columnValue}`,
+              display: isValidDate(new Date(columnValue as string))
+                ? formatDate(new Date(columnValue as string), { time: true })
+                : `${columnValue}`,
               operand: `${columnValue}`,
               columnName,
             };
