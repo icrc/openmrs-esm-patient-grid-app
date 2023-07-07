@@ -168,6 +168,10 @@ function mapReportEntriesToGridData(report: PatientGridReportGet, reportRows: Ar
       __reportRow: reportRow,
     };
 
+    function isValidDate(date) {
+      return date instanceof Date && !isNaN(date.getTime());
+    }
+
     for (const [key, reportRowCell] of Object.entries(reportRow)) {
       if (typeof reportRowCell === 'string') {
         // The cell is already a raw string.
@@ -178,6 +182,13 @@ function mapReportEntriesToGridData(report: PatientGridReportGet, reportRows: Ar
       } else if (typeof reportRowCell === 'object') {
         // The cell is an obs.
         result[key] = `${typeof reportRowCell.value === 'object' ? reportRowCell.value.display : reportRowCell.value}`;
+        if (typeof reportRowCell.value === 'string') {
+          if (isValidDate(new Date(reportRowCell.value))) {
+            result[key] = formatDate(new Date(reportRowCell.value), {
+              time: true,
+            });
+          }
+        }
       } else {
         // Anything else (e.g. numbers) is just optimistically converted to a string.
         result[key] = `${reportRowCell}`;
