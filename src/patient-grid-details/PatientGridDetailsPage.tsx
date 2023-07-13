@@ -135,7 +135,11 @@ export function PatientGridDetailsPage() {
           <Hr />
 
           <div className={styles.headerContainer}>
-            <PatientGridFiltersHeader patientGridId={patientGridId} patientGrid={patientGrid} />
+            <PatientGridFiltersHeader
+              patientGridId={patientGridId}
+              patientGrid={patientGrid}
+              refreshGrid={refreshGrid}
+            />
           </div>
 
           <div className={styles.gridContainer}>
