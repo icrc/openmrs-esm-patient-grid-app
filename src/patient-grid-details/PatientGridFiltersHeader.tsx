@@ -28,7 +28,7 @@ export function PatientGridFiltersHeader({ patientGridId, patientGrid, refreshGr
         refreshGrid();
       });
     }
-  }, [gridHasPendingChanges]);
+  }, [gridHasPendingChanges, refreshGrid, saveChanges]);
 
   return (
     <Stack as="section" orientation="horizontal" gap={4} className={styles.filtersContainer}>
