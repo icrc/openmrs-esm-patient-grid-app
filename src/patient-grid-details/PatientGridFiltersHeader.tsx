@@ -86,7 +86,7 @@ function FilterTag({ filter, saveChanges }: FilterTagProps) {
   const handleDelete = async () => {
     await push((state) => ({
       ...state,
-      filters: filters.filter((x) => x.columnName !== filter.columnName && x.operand !== filter.operand),
+      filters: filters.filter((x) => x.columnName !== filter.columnName || x.operand !== filter.operand),
     }));
     push((state) => ({
       ...state,
