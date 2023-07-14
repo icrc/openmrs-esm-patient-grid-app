@@ -1,24 +1,34 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Stack, ButtonSkeleton, Tag, Modal } from '@carbon/react';
 import styles from './PatientGridFiltersHeader.scss';
 import { InlinePatientGridEditingContext, LocalFilter } from '../grid-utils';
-import { MutateFn, PatientGridGet } from '../api';
+import { PatientGridGet } from '../api';
 
 export interface PatientGridFiltersHeaderProps {
   patientGridId: string;
   patientGrid: PatientGridGet;
+  refreshGrid(): void;
 }
 
-export function PatientGridFiltersHeader({ patientGridId, patientGrid }: PatientGridFiltersHeaderProps) {
+export function PatientGridFiltersHeader({ patientGridId, patientGrid, refreshGrid }: PatientGridFiltersHeaderProps) {
   const { t } = useTranslation();
   //  const { data: columnNameToHeaderLabelMap } = useColumnNameToHeaderLabelMap();
   const { filters, saveChanges } = useContext(InlinePatientGridEditingContext);
+  const [gridHasPendingChanges, setGridHasPendingChanges] = useState(false);
 
   // Every filter with a UUID must come from the backend.
   // Those should appear before the local ones.
   const originalFilters = filters.filter((x) => 'uuid' in x);
   const localFilters = filters.filter((x) => !('uuid' in x));
+
+  useEffect(() => {
+    if (gridHasPendingChanges) {
+      saveChanges().then(() => {
+        refreshGrid();
+      });
+    }
+  }, [gridHasPendingChanges, refreshGrid, saveChanges]);
 
   return (
     <Stack as="section" orientation="horizontal" gap={4} className={styles.filtersContainer}>
@@ -29,7 +39,9 @@ export function PatientGridFiltersHeader({ patientGridId, patientGrid }: Patient
           {originalFilters.map((filter) => (
             <FilterTag
               key={filter.uuid}
-              saveChanges={saveChanges}
+              saveChanges={() => {
+                setGridHasPendingChanges(true);
+              }}
               filter={filter}
               //columnNameToHeaderLabelMap={columnNameToHeaderLabelMap}
             />
@@ -38,7 +50,9 @@ export function PatientGridFiltersHeader({ patientGridId, patientGrid }: Patient
             <FilterTag
               key={`${filter.name}-${filter.operand}`}
               filter={filter}
-              saveChanges={saveChanges}
+              saveChanges={() => {
+                setGridHasPendingChanges(true);
+              }}
               //columnNameToHeaderLabelMap={}
             />
           ))}
@@ -57,8 +71,7 @@ export function PatientGridFiltersHeader({ patientGridId, patientGrid }: Patient
 
 interface FilterTagProps {
   filter: LocalFilter;
-  saveChanges: MutateFn<void, unknown, Error>;
-  //columnNameToHeaderLabelMap: Record<string, string>;
+  saveChanges(): void;
 }
 
 function FilterTag({ filter, saveChanges }: FilterTagProps) {
@@ -75,7 +88,11 @@ function FilterTag({ filter, saveChanges }: FilterTagProps) {
       ...state,
       filters: filters.filter((x) => x.columnName !== filter.columnName && x.operand !== filter.operand),
     }));
-    await saveChanges();
+    push((state) => ({
+      ...state,
+      isDirty: true,
+    }));
+    saveChanges();
   };
 
   const handleModal = () => {
