@@ -9,7 +9,7 @@ import {
 } from '../api';
 import { ColumnNameToHiddenStateMap, useColumnHiddenStates } from '.';
 import { UndoRedo, useUndoRedo } from './useUndoRedo';
-import { openmrsFetch } from '@openmrs/esm-framework';
+import { formatDate, openmrsFetch } from '@openmrs/esm-framework';
 
 export interface LocalFilter {
   uuid?: string;
@@ -48,6 +48,10 @@ export interface InlinePatientGridEditingContextState extends UndoRedo<InlinePat
 
 export const InlinePatientGridEditingContext = createContext<InlinePatientGridEditingContextState>(null);
 
+function isValidDate(date) {
+  return date instanceof Date && !isNaN(date.getTime());
+}
+
 export function useInlinePatientGridEditingContextState(patientGridId: string): InlinePatientGridEditingContextState {
   const originalColumnHiddenStatesSwr = useColumnHiddenStates(patientGridId);
   const originalFiltersSwr = useGetAllPatientGridFilters(patientGridId);
@@ -60,7 +64,11 @@ export function useInlinePatientGridEditingContextState(patientGridId: string): 
         uuid: filter.uuid,
         name: filter.name,
         operand: filter.operand,
-        display: filter.display,
+        display: isValidDate(new Date(filter.display))
+          ? formatDate(new Date(filter.display), {
+              time: true,
+            })
+          : filter.display,
         // In the filter representation, "display" holds the column name.
         // May be brittle. Should perhaps be improved eventually.
         columnName: filter.column.display,
