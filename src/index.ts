@@ -11,6 +11,7 @@ const options = {
   moduleName,
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function startupApp() {
   defineConfigSchema(moduleName, configSchema);
 
