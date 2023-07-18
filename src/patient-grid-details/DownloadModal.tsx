@@ -39,6 +39,7 @@ export function DownloadModal({ patientGridId, isOpen, onClose, refreshGrid }: D
     const wb = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(wb, sheet, patientGrid.name);
     xlsx.writeFile(wb, fileName);
+    await saveHandler();
     onClose();
   };
   const saveHandler = async () => {
@@ -117,7 +118,6 @@ export function DownloadModal({ patientGridId, isOpen, onClose, refreshGrid }: D
         : t('downloadModalChooseDownloadPrimaryButtonTextConvert', 'Convert & Download'),
       secondaryButtonText: t('downloadModalChooseDownloadSecondaryButtonTextCancel', 'Cancel'),
       onRequestSubmit() {
-        saveHandler();
         setHasDownloadStarted(true);
       },
       onSecondarySubmit() {
