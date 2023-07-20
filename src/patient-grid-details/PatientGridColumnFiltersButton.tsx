@@ -60,15 +60,9 @@ function FiltersPopoverContent({ patientGridId, column, columnDisplayName, close
 
   const handleFilterClick = (filter: LocalFilter, checked: boolean) => {
     if (checked) {
-      setLocalFilters([
-        // Only allow one filter per column. Having multiple filters for the same column will require a review on the filtering mechanism.
-        ...localFilters.filter(function (localFilter) {
-          return localFilter.columnName !== filter.columnName;
-        }),
-        filter,
-      ]);
+      setLocalFilters([...localFilters, filter]);
     } else {
-      setLocalFilters(localFilters.filter((x) => x.columnName !== filter.columnName && x.operand !== filter.operand));
+      setLocalFilters(localFilters.filter((x) => x.columnName !== filter.columnName || x.operand !== filter.operand));
     }
   };
 
