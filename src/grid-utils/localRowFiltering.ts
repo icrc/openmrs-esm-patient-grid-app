@@ -3,13 +3,13 @@ import { LocalFilter } from './useInlinePatientGridEditing';
 
 export function getLocallyFilteredReportRows(rows: Array<PatientGridReportRowGet>, filters: Array<LocalFilter>) {
   const localFilters = filters?.filter((filter) => !('uuid' in filter)) || [];
-  let filteredRows = [];
+  const filteredRows = [];
   if (!localFilters.length) {
     return rows;
   }
 
   localFilters.forEach((filter) => {
-    let _rows = rows.filter((row) => {
+    const _rows = rows.filter((row) => {
       const rowValue = row[filter.columnName];
       if (!rowValue) {
         return false;

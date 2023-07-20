@@ -48,8 +48,8 @@ export interface InlinePatientGridEditingContextState extends UndoRedo<InlinePat
 
 export const InlinePatientGridEditingContext = createContext<InlinePatientGridEditingContextState>(null);
 
-function isValidDate(date) {
-  return date instanceof Date && !isNaN(date.getTime());
+function isValidDate(str) {
+  return isNaN(str) && !isNaN(new Date(str).getTime());
 }
 
 export function useInlinePatientGridEditingContextState(patientGridId: string): InlinePatientGridEditingContextState {
@@ -64,7 +64,7 @@ export function useInlinePatientGridEditingContextState(patientGridId: string): 
         uuid: filter.uuid,
         name: filter.name,
         operand: filter.operand,
-        display: isValidDate(new Date(filter.display))
+        display: isValidDate(filter.display)
           ? formatDate(new Date(filter.display), {
               time: true,
             })

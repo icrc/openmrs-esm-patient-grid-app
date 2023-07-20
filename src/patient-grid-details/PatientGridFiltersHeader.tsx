@@ -92,19 +92,17 @@ function FilterTag({ filter, saveChanges }: FilterTagProps) {
       ...state,
       isDirty: true,
     }));
-    //If local filter don't need to be saved when deleted
-    //if(!isLocalFilter)
-    saveChanges();
+    if (!isLocalFilter) {
+      saveChanges();
+    }
   };
 
   const handleModal = () => {
-    /*      If local filter don't need to be saved when deleted
-    if(isLocalFilter){
+    if (isLocalFilter) {
       handleDelete();
+    } else {
+      setShowModal(true);
     }
-    else
-     setShowModal(true);*/
-    setShowModal(true);
   };
 
   const handleClose = () => setShowModal(false);
