@@ -160,15 +160,15 @@ interface PrepareDownloadProps {
 
 function PrepareDownload({ patientGridId, onDownloadPrepared }: PrepareDownloadProps) {
   const { t } = useTranslation();
-  const { data, error } = useDownloadGridData(patientGridId);
+  const { data, error, isValidating } = useDownloadGridData(patientGridId);
   const triggered = useRef(false);
 
   useEffect(() => {
-    if (data && !triggered.current) {
+    if (data && !triggered.current && !isValidating) {
       triggered.current = true;
       onDownloadPrepared(data);
     }
-  }, [data, error, onDownloadPrepared]);
+  }, [data, error, isValidating, onDownloadPrepared]);
 
   return (
     <p>
