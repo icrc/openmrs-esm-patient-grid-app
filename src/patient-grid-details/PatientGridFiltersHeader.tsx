@@ -92,11 +92,17 @@ function FilterTag({ filter, saveChanges }: FilterTagProps) {
       ...state,
       isDirty: true,
     }));
-    saveChanges();
+    if (!isLocalFilter) {
+      saveChanges();
+    }
   };
 
   const handleModal = () => {
-    setShowModal(true);
+    if (isLocalFilter) {
+      handleDelete();
+    } else {
+      setShowModal(true);
+    }
   };
 
   const handleClose = () => setShowModal(false);

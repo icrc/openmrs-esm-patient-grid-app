@@ -106,6 +106,7 @@ export function PatientGrid({
       globalFilter,
     },
   });
+
   const headerGroups = table.getHeaderGroups();
   //getting the displayNames for each column correctly along with the static column names
 
