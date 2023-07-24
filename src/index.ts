@@ -1,18 +1,29 @@
 import { defineConfigSchema, getAsyncLifecycle, openmrsFetch, registerBreadcrumbs } from '@openmrs/esm-framework';
-import { configSchema } from './config-schema';
 import { PatientGridGet } from './api';
+import { configSchema } from './config-schema';
 
-export const importTranslation = require.context('../translations', false, /.json$/, 'lazy');
+declare let __VERSION__: string;
+const version = __VERSION__;
+/**
+ * This tells the app shell how to obtain translation files: that they
+ * are JSON files in the directory `../translations` (which you should
+ * see in the directory structure).
+ */
+const importTranslation = require.context('../translations', false, /.json$/, 'lazy');
 
-const basePath = `${window.spaBase}/patient-grids`;
-const moduleName = '@icrc/esm-patient-grid-app';
-const options = {
-  featureName: 'patientgrid-app',
-  moduleName,
+const backendDependencies = {
+  fhir2: '^1.2.0',
+  'webservices.rest': '^2.2.0',
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function startupApp() {
+function setupOpenMRS() {
+  const basePath = `${window.spaBase}/patient-grids`;
+  const moduleName = '@icrc/esm-patient-grid-app';
+  const options = {
+    featureName: 'patientgrid-app',
+    moduleName,
+  };
+
   defineConfigSchema(moduleName, configSchema);
 
   registerBreadcrumbs([
@@ -30,7 +41,26 @@ function startupApp() {
       parent: basePath,
     },
   ]);
+
+  return {
+    pages: [
+      {
+        load: getAsyncLifecycle(() => import('./Root'), options),
+        route: 'patient-grids',
+        online: true,
+        offline: true,
+      },
+    ],
+    extensions: [
+      {
+        id: 'patient-grids-link',
+        slot: 'app-menu-slot',
+        load: getAsyncLifecycle(() => import('./AppMenuLink'), options),
+        online: true,
+        offline: true,
+      },
+    ],
+  };
 }
 
-export const patientGridsLink = getAsyncLifecycle(() => import('./AppMenuLink'), options);
-export const root = getAsyncLifecycle(() => import('./Root'), options);
+export { backendDependencies, importTranslation, setupOpenMRS, version };
