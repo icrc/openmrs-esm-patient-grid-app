@@ -60,7 +60,17 @@ function FiltersPopoverContent({ patientGridId, column, columnDisplayName, close
 
   const handleFilterClick = (filter: LocalFilter, checked: boolean) => {
     if (checked) {
-      setLocalFilters([...localFilters, filter]);
+      if (column.id.includes('formDate')) {
+        setLocalFilters([
+          // When dealing with the encounter date, only allow one filter per column. Having multiple filters would require a review on the filtering mechanism.
+          ...localFilters.filter(function (localFilter) {
+            return localFilter.columnName !== filter.columnName;
+          }),
+          filter,
+        ]);
+      } else {
+        setLocalFilters([...localFilters, filter]);
+      }
     } else {
       setLocalFilters(localFilters.filter((x) => x.columnName !== filter.columnName || x.operand !== filter.operand));
     }

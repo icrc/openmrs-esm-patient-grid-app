@@ -183,6 +183,10 @@ export function PatientGrid({
     );
   }
 
+  function isMultipleEncounterGrid() {
+    return headerGroups[0].headers.length > 2;
+  }
+
   return (
     <main>
       <section className={styles.tableHeaderContainer}>
@@ -251,8 +255,8 @@ export function PatientGrid({
                                 iconDescription={t('patientGridSortColumnDescription', 'Sort')}
                                 onClick={header.column.getToggleSortingHandler()}
                               />
-                              {(header.column.id.includes('formQuestion') ||
-                                header.column.id.includes('formDate') ||
+                              {((header.column.id.includes('formDate') && !isMultipleEncounterGrid()) ||
+                                header.column.id.includes('formQuestion') ||
                                 header.column.id === patientDetailsGenderColumnName ||
                                 header.column.id === patientDetailsAgeCategoryColumnName) && (
                                 <PatientGridColumnFiltersButton
