@@ -92,17 +92,21 @@ function FilterTag({ filter, saveChanges }: FilterTagProps) {
       ...state,
       isDirty: true,
     }));
-    if (!isLocalFilter) {
-      saveChanges();
-    }
+    // TODO: Consider whether we should save changes to the server when removing a local filter
+    // if (!isLocalFilter) {
+    //   saveChanges();
+    // }
+    saveChanges();
   };
 
   const handleModal = () => {
-    if (isLocalFilter) {
-      handleDelete();
-    } else {
-      setShowModal(true);
-    }
+    // TODO: Consider whether we should save changes to the server when removing a local filter
+    // if (isLocalFilter) {
+    //   handleDelete();
+    // } else {
+    //   setShowModal(true);
+    // }
+    setShowModal(true);
   };
 
   const handleClose = () => setShowModal(false);
