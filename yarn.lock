@@ -1934,7 +1934,7 @@ __metadata:
     jest-environment-jsdom: ^29.4.0
     lodash-es: ^4.17.21
     openmrs: next
-    prettier: ^2.3.0
+    prettier: ^3.0.0
     pretty-quick: ^3.1.0
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -13840,12 +13840,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^2.3.0":
-  version: 2.7.1
-  resolution: "prettier@npm:2.7.1"
+"prettier@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "prettier@npm:3.0.0"
   bin:
-    prettier: bin-prettier.js
-  checksum: 55a4409182260866ab31284d929b3cb961e5fdb91fe0d2e099dac92eaecec890f36e524b4c19e6ceae839c99c6d7195817579cdffc8e2c80da0cb794463a748b
+    prettier: bin/prettier.cjs
+  checksum: 6a832876a1552dc58330d2467874e5a0b46b9ccbfc5d3531eb69d15684743e7f83dc9fbd202db6270446deba9c82b79d24383d09924c462b457136a759425e33
   languageName: node
   linkType: hard
 
