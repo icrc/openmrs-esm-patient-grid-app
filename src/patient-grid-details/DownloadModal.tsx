@@ -2,7 +2,11 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal, RadioButtonGroup, RadioButton } from '@carbon/react';
 import { DownloadGridData, useDownloadGridData } from '../api';
-import { getPatientGridDownloadReportData, InlinePatientGridEditingContext } from '../grid-utils';
+import {
+  getPatientGridDownloadReportData,
+  getFormPatientGridDownloadReportData,
+  InlinePatientGridEditingContext,
+} from '../grid-utils';
 import xlsx from 'xlsx';
 
 export interface DownloadModalProps {
@@ -35,9 +39,25 @@ export function DownloadModal({ patientGridId, isOpen, onClose, refreshGrid }: D
       patientDetailsGroupHeader,
     );
 
-    const sheet = xlsx.utils.json_to_sheet(spreadsheetData, { skipHeader: true });
+    const nbrForms = Object.values(download.report[0]).filter(Array.isArray).length;
     const wb = xlsx.utils.book_new();
-    xlsx.utils.book_append_sheet(wb, sheet, patientGrid.name);
+    // const sheet = xlsx.utils.json_to_sheet(spreadsheetData, { skipHeader: true });
+    // xlsx.utils.book_append_sheet(wb, sheet, patientGrid.name);
+
+    for (let formIdx = 0; formIdx < nbrForms; formIdx++) {
+      const data = getFormPatientGridDownloadReportData(
+        download,
+        patientGrid,
+        forms,
+        formSchemas,
+        columnNamesToInclude,
+        patientDetailsGroupHeader,
+        formIdx,
+      );
+      const s = xlsx.utils.json_to_sheet(data.data, { skipHeader: true });
+      xlsx.utils.book_append_sheet(wb, s, data.name);
+    }
+
     xlsx.writeFile(wb, fileName);
     await saveHandler();
     onClose();

@@ -41,6 +41,42 @@ export function getPatientGridDownloadReportData(
   return result;
 }
 
+export function getFormPatientGridDownloadReportData(
+  download: PatientGridDownloadGet,
+  patientGrid: PatientGridGet,
+  forms: Array<FormGet>,
+  formSchemas: Record<string, FormSchema>,
+  columnNamesToInclude: Array<string>,
+  patientDetailsGroupHeader: string,
+  formIdx: number,
+): { name: string; data: Array<Array<string>> } {
+  const result: Array<Array<string>> = [...range(download.report.length + 3).map(() => [])];
+  const groups = getGroups(download, patientGrid, forms, formSchemas, columnNamesToInclude, patientDetailsGroupHeader);
+  const patientDataGroup = groups[0];
+  const formGroup = groups[formIdx + 1];
+
+  appendGroupToResult(result, patientDataGroup);
+  appendGroupToResult(result, formGroup);
+
+  return { name: formGroup.header, data: result };
+}
+
+function appendGroupToResult(result: Array<Array<string>>, group: any): Array<Array<string>> {
+  group.sections.forEach((section, sectionIndex) => {
+    section.columns.forEach((column, columnIndex) => {
+      result[0].push(sectionIndex === 0 && columnIndex === 0 ? group.header : '');
+      result[1].push(columnIndex === 0 ? section.header : '');
+      result[2].push(column.header);
+
+      column.values.forEach((columnValue, columnValueIndex) => {
+        result[3 + columnValueIndex].push(`${columnValue}`);
+      });
+    });
+  });
+
+  return result;
+}
+
 export function getSectionRepetitionsRequiredPerForm(
   download: PatientGridDownloadGet,
   forms: Array<FormGet>,
