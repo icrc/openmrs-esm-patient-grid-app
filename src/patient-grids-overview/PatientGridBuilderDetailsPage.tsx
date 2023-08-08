@@ -25,6 +25,7 @@ export function PatientGridBuilderDetailsPage({
         goToPrevious={goToPrevious}
         title={t('patientGridDetails', 'Grid details')}
       />
+
       {/* <Select
           id="gridToDuplicate"
           defaultValue="placeholder"
@@ -41,7 +42,9 @@ export function PatientGridBuilderDetailsPage({
 
       <TextInput
         id="gridName"
-        labelText={t('patientGridDetailsNameInputLabel', 'Grid name')}
+        labelText={'* ' + t('patientGridDetailsNameInputLabel', 'Grid name')}
+        invalidText={t('requiredField', 'This field is required!')}
+        invalid={!canContinue}
         value={state.name ?? ''}
         onChange={(e) => setState((state) => ({ ...state, name: e.target.value }))}
       />
