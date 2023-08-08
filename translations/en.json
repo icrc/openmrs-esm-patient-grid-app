@@ -165,5 +165,6 @@
   "patientGridFiltersHeaderModalHeading":"Save Grid",
   "patientGridFiltersHeaderPrimaryButton":"Save",
   "patientGridFiltersHeaderSecButton":"Cancel",
-  "patientGridFiltersHeaderModalBody":"You removed some filters. Please save the grid to retrieve all data."
+  "patientGridFiltersHeaderModalBody":"You removed some filters. Please save the grid to retrieve all data.",
+  "requiredField": "This field is required!"
 }

@@ -28,7 +28,7 @@ export function PatientGridBuilderSectionsPage({
         goToPrevious={goToPrevious}
         title={t('patientGridSections', 'Grid sections')}
       />
-      <FormGroup legendText={t('patientGridSectionsLabel', 'Enable/Disable list sections')}>
+      <FormGroup legendText={'* ' + t('patientGridSectionsLabel', 'Enable/Disable list sections')}>
         {sortedForms ? (
           sortedForms.map((form) => (
             <Checkbox

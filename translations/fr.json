@@ -161,5 +161,6 @@
   "patientGridPaginationOfOnePage": "sur 1 page",
   "patientGridPaginationPages": "pages",
   "patientGridPaginationItemRangeText": "{min}–{max} sur {total} ligne",
-  "patientGridPaginationItemRangesText": "{min}–{max} sur {total} lignes"
+  "patientGridPaginationItemRangesText": "{min}–{max} sur {total} lignes",
+  "requiredField": "Ce champ est obligatoire!"
 }

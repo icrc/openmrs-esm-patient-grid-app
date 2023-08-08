@@ -80,7 +80,9 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
         <Select
           id="country"
           defaultValue={state.countryFilter ?? ''}
-          labelText={t('patientGridDetailsCountryLabel', 'Country')}
+          invalidText={t('requiredField', 'This field is required!')}
+          invalid={!state.countryFilter}
+          labelText={'* ' + t('patientGridDetailsCountryLabel', 'Country')}
           onChange={(e) =>
             setState((state) => ({
               ...state,
@@ -201,7 +203,7 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
 
       {state.periodFilterType === 'relative' && (
         <RadioButtonGroup
-          legendText={t('filterRelativePeriod', 'Relative Period')}
+          legendText={'* ' + t('filterRelativePeriod', 'Relative Period')}
           name="relative-period-options"
           orientation="vertical"
           defaultSelected="lastThirtyDays"
