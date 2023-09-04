@@ -31,6 +31,10 @@ export interface PatientGridDataRow extends Record<string, unknown> {
   __report: PatientGridReportGet;
   __reportRow: PatientGridReportRowGet;
 }
+//^(\d{4}).(0[1-9]|1[0-2]).(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]).([0-5][0-9]).([0-5][0-9])\.(\d{4})$
+const regexDateValidatorString =
+  '^(d{4}).(0[1-9]|1[0-2]).(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]).([0-5][0-9]).([0-5][0-9])$';
+const regexDateValidator = new RegExp(regexDateValidatorString);
 
 /**
  * The central hook fetching and manipulating the data that is required for rendering a patient grid.
@@ -183,10 +187,14 @@ function mapReportEntriesToGridData(report: PatientGridReportGet, reportRows: Ar
         // The cell is an obs.
         result[key] = `${typeof reportRowCell.value === 'object' ? reportRowCell.value.display : reportRowCell.value}`;
         if (typeof reportRowCell.value === 'string') {
-          if (isValidDate(new Date(reportRowCell.value))) {
-            result[key] = formatDate(new Date(reportRowCell.value), {
-              time: true,
-            });
+          if (regexDateValidator.test(reportRowCell.value)) {
+            if (isValidDate(new Date(reportRowCell.value))) {
+              result[key] = formatDate(new Date(reportRowCell.value), {
+                time: true,
+              });
+            }
+          } else {
+            result[key] = reportRowCell.value;
           }
         }
       } else {
