@@ -12,6 +12,10 @@ export function usePossiblePatientGridFiltersForColumn(
   const patientGridSwr = useGetPatientGrid(patientGridId);
   const reportSwr = useGetPatientGridReport(patientGridId);
 
+  const regexDateValidatorString =
+    '^(d{4}).(0[1-9]|1[0-2]).(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]).([0-5][0-9]).([0-5][0-9])$';
+  const regexDateValidator = new RegExp(regexDateValidatorString);
+
   function isValidDate(date) {
     return date instanceof Date && !isNaN(date.getTime());
   }
@@ -37,7 +41,9 @@ export function usePossiblePatientGridFiltersForColumn(
               return {
                 name: `${columnValue.value}`,
                 display:
-                  typeof columnValue.value === 'string' && isValidDate(new Date(columnValue.value))
+                  typeof columnValue.value === 'string' &&
+                  regexDateValidator.test(columnValue.value) &&
+                  isValidDate(new Date(columnValue.value))
                     ? formatDate(new Date(columnValue.value), { time: true })
                     : `${columnValue.value}`,
                 operand: `${columnValue.value}`,

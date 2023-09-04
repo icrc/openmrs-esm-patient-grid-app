@@ -31,7 +31,7 @@ export interface PatientGridDataRow extends Record<string, unknown> {
   __report: PatientGridReportGet;
   __reportRow: PatientGridReportRowGet;
 }
-//^(\d{4}).(0[1-9]|1[0-2]).(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]).([0-5][0-9]).([0-5][0-9])\.(\d{4})$
+
 const regexDateValidatorString =
   '^(d{4}).(0[1-9]|1[0-2]).(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]).([0-5][0-9]).([0-5][0-9])$';
 const regexDateValidator = new RegExp(regexDateValidatorString);
