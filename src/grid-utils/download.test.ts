@@ -154,6 +154,7 @@ describe(getPatientGridDownloadReportData, () => {
       patientDetailsGenderColumnName,
       patientDetailsAgeCategoryColumnName,
     ];
+    const filters = [];
 
     const data = getPatientGridDownloadReportData(
       download,
@@ -161,8 +162,8 @@ describe(getPatientGridDownloadReportData, () => {
       forms,
       formSchemas,
       columnNamesToInclude,
-
       patientDetailsGroupHeader,
+      filters,
     );
 
     expect(data).toEqual([

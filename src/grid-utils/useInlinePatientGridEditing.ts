@@ -16,6 +16,7 @@ export interface LocalFilter {
   name: string;
   display: string;
   operand: string;
+  columnUuid?: string;
   columnName: string;
 }
 
@@ -69,6 +70,7 @@ export function useInlinePatientGridEditingContextState(patientGridId: string): 
               time: true,
             })
           : filter.display,
+        columnUuid: filter.column.uuid,
         // In the filter representation, "display" holds the column name.
         // May be brittle. Should perhaps be improved eventually.
         columnName: filter.column.display,

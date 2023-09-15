@@ -12,6 +12,7 @@ import {
   patientDetailsStructureColumnName,
 } from './columnNames';
 import { getFormSchemaReferenceUuid } from './formSchema';
+import { LocalFilter } from './useInlinePatientGridEditing';
 
 export function getPatientGridDownloadReportData(
   download: PatientGridDownloadGet,
@@ -20,19 +21,32 @@ export function getPatientGridDownloadReportData(
   formSchemas: Record<string, FormSchema>,
   columnNamesToInclude: Array<string>,
   patientDetailsGroupHeader: string,
-): Array<Array<string>> {
-  const result: Array<Array<string>> = [...range(download.report.length + 3).map(() => [])];
-  const groups = getGroups(download, patientGrid, forms, formSchemas, columnNamesToInclude, patientDetailsGroupHeader);
+  filters: Array<any>,
+) {
+  const groups = getGroups(
+    download,
+    patientGrid,
+    forms,
+    formSchemas,
+    columnNamesToInclude,
+    patientDetailsGroupHeader,
+    filters,
+  );
+  const result = [];
 
   groups.forEach((group) => {
+    const encountersData: Array<Array<string>> = [];
+    result.push({ header: group.header, data: encountersData });
     group.sections.forEach((section, sectionIndex) => {
       section.columns.forEach((column, columnIndex) => {
-        result[0].push(sectionIndex === 0 && columnIndex === 0 ? group.header : '');
-        result[1].push(columnIndex === 0 ? section.header : '');
-        result[2].push(column.header);
+        encountersData[0] = encountersData[0] || [];
+        encountersData[0].push(columnIndex === 0 ? section.header : '');
+        encountersData[1] = encountersData[1] || [];
+        encountersData[1].push(column.header);
 
         column.values.forEach((columnValue, columnValueIndex) => {
-          result[3 + columnValueIndex].push(`${columnValue}`);
+          encountersData[2 + columnValueIndex] = encountersData[2 + columnValueIndex] || [];
+          encountersData[2 + columnValueIndex].push(`${columnValue}`);
         });
       });
     });
@@ -65,6 +79,7 @@ function getGroups(
   formSchemas: Record<string, FormSchema>,
   columnNamesToInclude: Array<string>,
   patientDetailsGroupHeader: string,
+  filters: Array<LocalFilter>,
 ) {
   const result: Array<{
     header: string;
@@ -77,93 +92,132 @@ function getGroups(
     }>;
   }> = [];
 
-  // Step 1: Convert patient details to a hardcoded group.
-  const patientDetailsGroup = {
-    header: patientDetailsGroupHeader,
-    sections: [
-      {
-        header: '',
-        columns: [],
-      },
-    ],
-  };
-
-  if (columnNamesToInclude.includes(patientDetailsNameColumnName)) {
-    patientDetailsGroup.sections[0].columns.push({
-      header: 'Patient name',
-      values: download.report.map((row) => row[patientDetailsNameColumnName]),
-    });
-  }
-
-  if (columnNamesToInclude.includes(patientDetailsPatientId01ColumnName)) {
-    patientDetailsGroup.sections[0].columns.push({
-      header: 'Patient Id',
-      values: download.report.map((row) => row[patientDetailsPatientId01ColumnName]),
-    });
-  }
-
-  if (columnNamesToInclude.includes(patientDetailsPatientId02ColumnName)) {
-    patientDetailsGroup.sections[0].columns.push({
-      header: 'Patient Id',
-      values: download.report.map((row) => row[patientDetailsPatientId02ColumnName]),
-    });
-  }
-
-  if (columnNamesToInclude.includes(patientDetailsCountryColumnName)) {
-    patientDetailsGroup.sections[0].columns.push({
-      header: 'Country',
-      values: download.report.map((row) => row[patientDetailsCountryColumnName]),
-    });
-  }
-
-  if (columnNamesToInclude.includes(patientDetailsStructureColumnName)) {
-    patientDetailsGroup.sections[0].columns.push({
-      header: 'Structure',
-      values: download.report.map((row) => row[patientDetailsStructureColumnName]),
-    });
-  }
-
-  if (columnNamesToInclude.includes(patientDetailsGenderColumnName)) {
-    patientDetailsGroup.sections[0].columns.push({
-      header: 'Gender',
-      values: download.report.map((row) => row[patientDetailsGenderColumnName]),
-    });
-  }
-
-  if (columnNamesToInclude.includes(patientDetailsAgeCategoryColumnName)) {
-    patientDetailsGroup.sections[0].columns.push({
-      header: 'Age category',
-      values: download.report.map((row) => row[patientDetailsAgeCategoryColumnName]),
-    });
-  }
-  if (patientDetailsGroup.sections[0].columns.length) {
-    result.push(patientDetailsGroup);
-  }
-
-  //
-  // Step 2: Convert forms to groups.
-  //
-  const requiredFormRepetitions = getSectionRepetitionsRequiredPerForm(download, forms);
-  for (const form of forms) {
-    const formSchema = formSchemas[getFormSchemaReferenceUuid(form)];
-
-    if (!formSchema) {
-      continue;
-    }
-
-    // Form columns must be generated multiple times if there are multiple past encounters.
-    for (let repetition = 0; repetition < requiredFormRepetitions[form.uuid]; repetition++) {
-      const group = {
-        header: form.display,
-        sections: [],
+  function addValueToColumn(columns, header, value) {
+    let column = columns.find((c) => c.header === header);
+    if (!column) {
+      column = {
+        header: header,
+        values: [],
       };
+      columns.push(column);
+    }
+    column.values.push(value);
+  }
+
+  function getDisplayFromColumnName(columnName) {
+    return patientGrid.columns.find((c) => c.name === columnName).display;
+  }
+
+  download.report.forEach((row) => {
+    for (const form of forms) {
+      const formSchema = formSchemas[getFormSchemaReferenceUuid(form)];
+
+      if (!formSchema) {
+        continue;
+      }
+
+      let isExistingGroup = false;
+      let group = result.find((s) => s.header === form.display);
+      if (!group) {
+        group = {
+          header: form.display,
+          sections: [],
+        };
+      } else {
+        isExistingGroup = true;
+      }
+
+      const allEncounters = row[form.encounterType.uuid] as [any];
+      const filteredEncounters = [];
+
+      if (allEncounters?.length > 0) {
+        // Add to filtered encounters the ones affected by filters
+        allEncounters.forEach((e) => {
+          const encounterNeedsFiltering = filters.find((f) => {
+            return e[f.columnUuid] !== undefined;
+          });
+          if (!encounterNeedsFiltering) {
+            filteredEncounters.push(e);
+          }
+        });
+
+        // Apply filtering to encounters
+        filters.forEach((filter) => {
+          const rows = allEncounters.filter((row) => {
+            const rowValue = row[filter.columnUuid];
+            if (!rowValue) {
+              return false;
+            }
+            if (typeof rowValue === 'object') {
+              if (rowValue.value && typeof rowValue.value === 'object') {
+                return rowValue.value.uuid === filter.operand;
+              } else {
+                return `${rowValue.value}` === filter.operand;
+              }
+            }
+            return `${rowValue}` === filter.operand;
+          });
+          filteredEncounters.push(...rows);
+        });
+
+        let patientDetailsSection = group.sections.find((s) => s.header === patientDetailsGroupHeader);
+        if (!patientDetailsSection) {
+          patientDetailsSection = {
+            header: patientDetailsGroupHeader,
+            columns: [],
+          };
+          group.sections.push(patientDetailsSection);
+        }
+
+        for (let i = 0; i < filteredEncounters.length; i++) {
+          addValueToColumn(
+            patientDetailsSection.columns,
+            getDisplayFromColumnName(patientDetailsNameColumnName),
+            row[patientDetailsNameColumnName],
+          );
+          addValueToColumn(
+            patientDetailsSection.columns,
+            getDisplayFromColumnName(patientDetailsPatientId01ColumnName),
+            row[patientDetailsPatientId01ColumnName],
+          );
+          addValueToColumn(
+            patientDetailsSection.columns,
+            getDisplayFromColumnName(patientDetailsPatientId02ColumnName),
+            row[patientDetailsPatientId02ColumnName],
+          );
+          addValueToColumn(
+            patientDetailsSection.columns,
+            getDisplayFromColumnName(patientDetailsCountryColumnName),
+            row[patientDetailsCountryColumnName],
+          );
+          addValueToColumn(
+            patientDetailsSection.columns,
+            getDisplayFromColumnName(patientDetailsStructureColumnName),
+            row[patientDetailsStructureColumnName],
+          );
+          addValueToColumn(
+            patientDetailsSection.columns,
+            getDisplayFromColumnName(patientDetailsGenderColumnName),
+            row[patientDetailsGenderColumnName],
+          );
+          addValueToColumn(
+            patientDetailsSection.columns,
+            getDisplayFromColumnName(patientDetailsAgeCategoryColumnName),
+            row[patientDetailsAgeCategoryColumnName],
+          );
+        }
+      }
 
       for (const formSchemaPage of formSchema.pages ?? []) {
         for (const formSchemaSection of formSchemaPage.sections ?? []) {
-          const section = {
-            header: formSchemaSection.label,
-            columns: [],
-          };
+          let section = group.sections.find((s) => s.header === formSchemaSection.label);
+          const isExistingSection = !!section;
+          if (!section) {
+            section = {
+              header: formSchemaSection.label,
+              columns: [],
+            };
+          }
 
           for (const question of formSchemaSection.questions ?? []) {
             let questionColumnName = getFormSchemaQuestionColumnName(form, question);
@@ -179,32 +233,33 @@ function getGroups(
                 questionColumnName = patientGrid.columns[i].display;
               }
             }
-            const column = {
-              header: questionColumnName,
-              values: [],
-            };
 
-            for (const row of download.report) {
-              const rowEncounters = row[form.encounterType.uuid];
-              const thisColumnEncounter = Array.isArray(rowEncounters) ? rowEncounters[repetition] : undefined;
-              const obs = thisColumnEncounter?.[matchingPatientGridColumnUuid];
-              column.values.push(typeof obs?.value === 'object' ? `${obs.value.display}` : `${obs?.value ?? ''}`);
+            let column = section.columns.find((c) => c.header === questionColumnName);
+            if (!column) {
+              column = {
+                header: questionColumnName,
+                values: [],
+              };
+              section.columns.push(column);
             }
 
-            section.columns.push(column);
+            filteredEncounters.forEach((thisColumnEncounter, index) => {
+              const obs = thisColumnEncounter?.[matchingPatientGridColumnUuid];
+              column.values.push(typeof obs?.value === 'object' ? `${obs.value.display}` : `${obs?.value ?? ''}`);
+            });
           }
 
-          if (section.columns.length) {
+          if (section.columns.length && !isExistingSection) {
             group.sections.push(section);
           }
         }
       }
 
-      if (group.sections.length) {
+      if (group.sections.length && !isExistingGroup) {
         result.push(group);
       }
     }
-  }
+  });
 
   return result;
 }
