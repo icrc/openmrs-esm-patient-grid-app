@@ -1,6 +1,5 @@
-import { FormGet, FormSchema, PatientGridDownloadGet, PatientGridGet } from '../api';
+import { EncounterGet, FormGet, FormSchema, PatientGridDownloadGet, PatientGridGet } from '../api';
 import max from 'lodash-es/max';
-import range from 'lodash-es/range';
 import {
   getFormSchemaQuestionColumnName,
   patientDetailsAgeCategoryColumnName,
@@ -21,7 +20,7 @@ export function getPatientGridDownloadReportData(
   formSchemas: Record<string, FormSchema>,
   columnNamesToInclude: Array<string>,
   patientDetailsGroupHeader: string,
-  filters: Array<any>,
+  filters: Array<LocalFilter>,
 ) {
   const groups = getGroups(
     download,
@@ -127,7 +126,7 @@ function getGroups(
         isExistingGroup = true;
       }
 
-      const allEncounters = row[form.encounterType.uuid] as [any];
+      const allEncounters = row[form.encounterType.uuid] as [EncounterGet];
       const filteredEncounters = [];
 
       if (allEncounters?.length > 0) {

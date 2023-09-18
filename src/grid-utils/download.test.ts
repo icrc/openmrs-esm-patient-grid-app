@@ -369,7 +369,7 @@ describe(getPatientGridDownloadReportData, () => {
       patientDetailsAgeCategoryColumnName,
       'formQuestion--f1--q1',
     ];
-    const filters = [{}];
+    const filters = [];
 
     const data = getPatientGridDownloadReportData(
       download,
