@@ -55,6 +55,7 @@ import {
   InlinePatientGridEditingContext,
   patientDetailsGenderColumnName,
   patientDetailsAgeCategoryColumnName,
+  useInlinePatientGridEditingContextState,
 } from '../grid-utils';
 import {
   interpolateUrl,
@@ -125,6 +126,8 @@ export function PatientGrid({
     }
   }
   const { columnHiddenStates } = useContext(InlinePatientGridEditingContext);
+
+  const inlinePatientGridEditingState = useInlinePatientGridEditingContextState(patientGridId);
 
   const handleCellClick = (cell: Cell<PatientGridDataRow, unknown>, row: Row<PatientGridDataRow>) => {
     const columnName = cell.column.id;
@@ -380,6 +383,7 @@ export function PatientGrid({
         isOpen={isDownloadModalOpen}
         onClose={() => setIsDownloadModalOpen(false)}
         refreshGrid={refreshPatientGrid}
+        filters={inlinePatientGridEditingState.filters}
       />
     </main>
   );
