@@ -1,6 +1,8 @@
 import { EncounterGet, FormGet, FormSchema, PatientGridDownloadGet, PatientGridGet } from '../api';
 import max from 'lodash-es/max';
 import {
+  getFormAgeColumnName,
+  getFormDateColumnName,
   getFormSchemaQuestionColumnName,
   patientDetailsAgeCategoryColumnName,
   patientDetailsCountryColumnName,
@@ -12,6 +14,7 @@ import {
 } from './columnNames';
 import { getFormSchemaReferenceUuid } from './formSchema';
 import { LocalFilter } from './useInlinePatientGridEditing';
+import { formatDate } from '../grid-utils/formatDate';
 
 export function getPatientGridDownloadReportData(
   download: PatientGridDownloadGet,
@@ -91,16 +94,18 @@ function getGroups(
     }>;
   }> = [];
 
-  function addValueToColumn(columns, header, value) {
-    let column = columns.find((c) => c.header === header);
-    if (!column) {
-      column = {
-        header: header,
-        values: [],
-      };
-      columns.push(column);
+  function addValueToColumn(columns, columnName, value) {
+    if (columnNamesToInclude.includes(columnName)) {
+      let column = columns.find((c) => c.header === getDisplayFromColumnName(columnName));
+      if (!column) {
+        column = {
+          header: getDisplayFromColumnName(columnName),
+          values: [],
+        };
+        columns.push(column);
+      }
+      column.values.push(value);
     }
-    column.values.push(value);
   }
 
   function getDisplayFromColumnName(columnName) {
@@ -171,39 +176,40 @@ function getGroups(
         for (let i = 0; i < filteredEncounters.length; i++) {
           addValueToColumn(
             patientDetailsSection.columns,
-            getDisplayFromColumnName(patientDetailsNameColumnName),
+            patientDetailsNameColumnName,
             row[patientDetailsNameColumnName],
           );
           addValueToColumn(
             patientDetailsSection.columns,
-            getDisplayFromColumnName(patientDetailsPatientId01ColumnName),
+            patientDetailsPatientId01ColumnName,
             row[patientDetailsPatientId01ColumnName],
           );
           addValueToColumn(
             patientDetailsSection.columns,
-            getDisplayFromColumnName(patientDetailsPatientId02ColumnName),
+            patientDetailsPatientId02ColumnName,
             row[patientDetailsPatientId02ColumnName],
           );
           addValueToColumn(
             patientDetailsSection.columns,
-            getDisplayFromColumnName(patientDetailsCountryColumnName),
+            patientDetailsCountryColumnName,
             row[patientDetailsCountryColumnName],
           );
           addValueToColumn(
             patientDetailsSection.columns,
-            getDisplayFromColumnName(patientDetailsStructureColumnName),
+            patientDetailsStructureColumnName,
             row[patientDetailsStructureColumnName],
           );
           addValueToColumn(
             patientDetailsSection.columns,
-            getDisplayFromColumnName(patientDetailsGenderColumnName),
+            patientDetailsGenderColumnName,
             row[patientDetailsGenderColumnName],
           );
           addValueToColumn(
             patientDetailsSection.columns,
-            getDisplayFromColumnName(patientDetailsAgeCategoryColumnName),
+            patientDetailsAgeCategoryColumnName,
             row[patientDetailsAgeCategoryColumnName],
           );
+          addValueToColumn(patientDetailsSection.columns, getFormAgeColumnName(form), row[getFormAgeColumnName(form)]);
         }
       }
 
@@ -219,7 +225,12 @@ function getGroups(
           }
 
           for (const question of formSchemaSection.questions ?? []) {
-            let questionColumnName = getFormSchemaQuestionColumnName(form, question);
+            let questionColumnName: string;
+            if (question.type === 'encounterDatetime') {
+              questionColumnName = getFormDateColumnName(form);
+            } else {
+              questionColumnName = getFormSchemaQuestionColumnName(form, question);
+            }
             const matchingPatientGridColumnUuid = patientGrid.columns.find(
               (column) => column.name === questionColumnName,
             )?.uuid;
@@ -243,8 +254,13 @@ function getGroups(
             }
 
             filteredEncounters.forEach((thisColumnEncounter, index) => {
-              const obs = thisColumnEncounter?.[matchingPatientGridColumnUuid];
-              column.values.push(typeof obs?.value === 'object' ? `${obs.value.display}` : `${obs?.value ?? ''}`);
+              if (question.type === 'encounterDatetime') {
+                const date = thisColumnEncounter[getFormDateColumnName(form)];
+                column.values.push(formatDate(new Date(date)));
+              } else {
+                const obs = thisColumnEncounter?.[matchingPatientGridColumnUuid];
+                column.values.push(typeof obs?.value === 'object' ? `${obs.value.display}` : `${obs?.value ?? ''}`);
+              }
             });
           }
 
