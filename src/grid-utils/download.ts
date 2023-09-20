@@ -14,7 +14,7 @@ import {
 } from './columnNames';
 import { getFormSchemaReferenceUuid } from './formSchema';
 import { LocalFilter } from './useInlinePatientGridEditing';
-import { formatDate } from '@openmrs/esm-framework';
+import { formatDate } from '../grid-utils/formatDate';
 
 export function getPatientGridDownloadReportData(
   download: PatientGridDownloadGet,
