@@ -113,7 +113,7 @@ function getGroups(
   }
 
   download.report.forEach((row) => {
-    for (const form of forms) {
+    for (const form of forms.filter((f) => f.retired === false)) {
       const formSchema = formSchemas[getFormSchemaReferenceUuid(form)];
 
       if (!formSchema) {
