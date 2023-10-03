@@ -161,5 +161,10 @@
   "patientGridPaginationOfOnePage": "sur 1 page",
   "patientGridPaginationPages": "pages",
   "patientGridPaginationItemRangeText": "{min}–{max} sur {total} ligne",
-  "patientGridPaginationItemRangesText": "{min}–{max} sur {total} lignes"
+  "patientGridPaginationItemRangesText": "{min}–{max} sur {total} lignes",
+  "patientGridMandatoryFieldMessage": "Veuillez sélectionner soit le pays, soit la structure pour créer une grille.",
+  "patientGridFiltersHeaderModalHeading": "Enregistrer la grille",
+  "patientGridFiltersHeaderPrimaryButton": "Enregistrer",
+  "patientGridFiltersHeaderSecButton": "Annuler",
+  "patientGridFiltersHeaderModalBody": "Vous avez supprimé certains filtres. Veuillez enregistrer la grille pour récupérer toutes les données."
 }
