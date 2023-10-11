@@ -12,7 +12,7 @@ const options = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function startupApp() {
+export function startupApp() {
   defineConfigSchema(moduleName, configSchema);
 
   registerBreadcrumbs([
