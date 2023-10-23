@@ -80,7 +80,8 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
         <Select
           id="country"
           defaultValue={state.countryFilter ?? ''}
-          labelText={t('patientGridDetailsCountryLabel', 'Country')}
+          labelText={`${t('patientGridDetailsCountryLabel', 'Country')}*`}
+          invalid={'countryFilter' in state && state.countryFilter === undefined}
           onChange={(e) =>
             setState((state) => ({
               ...state,

@@ -41,8 +41,9 @@ export function PatientGridBuilderDetailsPage({
 
       <TextInput
         id="gridName"
-        labelText={t('patientGridDetailsNameInputLabel', 'Grid name')}
+        labelText={`${t('patientGridDetailsNameInputLabel', 'Grid name')}*`}
         value={state.name ?? ''}
+        invalid={state.name !== undefined && !canContinue}
         onChange={(e) => setState((state) => ({ ...state, name: e.target.value }))}
       />
 
