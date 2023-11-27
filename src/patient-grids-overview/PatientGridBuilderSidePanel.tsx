@@ -26,7 +26,7 @@ export function PatientGridBuilderSidePanel({ onClose }: PatientGridBuilderSideP
           showToast({
             kind: 'success',
             title: t('patientGridSidePanelSuccessToastTitle', 'Grid created successfully'),
-            description: t('patientGridSidePanelSuccessToastDescription', 'Successfully created the grid "{name}".', {
+            description: t('patientGridSidePanelSuccessToastDescription', 'Successfully created the grid "{{name}}".', {
               name: state.name,
             }),
           });
@@ -38,7 +38,7 @@ export function PatientGridBuilderSidePanel({ onClose }: PatientGridBuilderSideP
           showToast({
             kind: 'error',
             title: t('patientGridSidePanelErrorToastTitle', 'Grid creation failed'),
-            description: t('patientGridSidePanelErrorToastDescription', 'Creating the grid "{name}" failed.', {
+            description: t('patientGridSidePanelErrorToastDescription', 'Creating the grid "{{name}}" failed.', {
               name: state.name,
             }),
           });

@@ -28,7 +28,7 @@ export function PatientGridBuilderHeader({ page, pages, title, goToPrevious }: P
       )}
 
       <span className={styles.stepHeader}>
-        {t('patientGridBuilderHeaderCurrentStep', 'Step {page} of {pages}: {title}', {
+        {t('patientGridBuilderHeaderCurrentStep', 'Step {{page}} of {{pages}}: {{title}}', {
           page: page + 1,
           pages,
           title,

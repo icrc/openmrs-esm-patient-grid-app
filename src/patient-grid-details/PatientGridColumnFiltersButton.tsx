@@ -94,7 +94,7 @@ function FiltersPopoverContent({ patientGridId, column, columnDisplayName, close
   return (
     <aside className={styles.popoverContentAligner}>
       <p className={styles.popoverTitle}>
-        {t('patientGridColumnFiltersTitle', '"{columnName}" Filter', {
+        {t('patientGridColumnFiltersTitle', '"{{columnName}}" Filter', {
           columnName: columnDisplayName,
         })}
       </p>

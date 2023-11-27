@@ -212,7 +212,7 @@ export function PatientGrid({
             {t('patientGridDownloadButton', 'Download')}
           </Button>
           <Button size="sm" kind="ghost" renderIcon={OpenPanelRight} onClick={showToggleColumnsSidePanel}>
-            {t('patientGridColumnsButton', 'Columns ({actual}/{total})', {
+            {t('patientGridColumnsButton', 'Columns ({{actual}}/{{total}})', {
               actual: Object.values(columnHiddenStates).filter((x) => !x).length,
               total: patientGrid?.columns.length,
             })}
@@ -359,14 +359,14 @@ export function PatientGrid({
             itemsPerPageText={t('patientGridPaginationItemsPerPage', 'Items per page:')}
             pageNumberText={t('patientGridPaginationPageNumber', 'Page Number')}
             pageRangeText={(_current, total) =>
-              t(total === 1 ? 'patientGridPaginationOfOnePage' : 'patientGridPaginationOf', 'of {total} pages', {
+              t(total === 1 ? 'patientGridPaginationOfOnePage' : 'patientGridPaginationOf', 'of {{total}} pages', {
                 total: total,
               })
             }
             itemRangeText={(min, max, total) =>
               t(
                 total === 1 ? 'patientGridPaginationItemRangeText' : 'patientGridPaginationItemRangesText',
-                '{min}–{max} of {total} items',
+                '{{min}}–{{max}} of {{total}} items',
                 {
                   min: min,
                   max: max,
