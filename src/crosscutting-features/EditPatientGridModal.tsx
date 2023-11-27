@@ -24,7 +24,7 @@ export function EditPatientGridModal({ patientGridToEdit, setPatientGridToEdit }
           showToast({
             kind: 'success',
             title: t('editPatientGridSuccessToastTitle', 'Grid edited successfully'),
-            description: t('editPatientGridSuccessToastDescription', 'Successfully edited the grid "{name}".', {
+            description: t('editPatientGridSuccessToastDescription', 'Successfully edited the grid "{{name}}".', {
               name: patientGridToEdit?.name,
             }),
           });
@@ -35,7 +35,7 @@ export function EditPatientGridModal({ patientGridToEdit, setPatientGridToEdit }
           showToast({
             kind: 'error',
             title: t('editPatientGridErrorToastTitle', 'Grid editing failed'),
-            description: t('editPatientGridErrorToastDescription', 'Editing the grid "{name}" failed.', {
+            description: t('editPatientGridErrorToastDescription', 'Editing the grid "{{name}}" failed.', {
               name: patientGridToEdit?.name,
             }),
           }),

@@ -25,7 +25,7 @@ export function DeletePatientGridModal({
           showToast({
             kind: 'success',
             title: t('deletePatientGridSuccessToastTitle', 'Grid deleted successfully'),
-            description: t('deletePatientGridSuccessToastDescription', 'Successfully deleted the grid "{name}".', {
+            description: t('deletePatientGridSuccessToastDescription', 'Successfully deleted the grid "{{name}}".', {
               name: patientGridToDelete?.name,
             }),
           });
@@ -37,7 +37,7 @@ export function DeletePatientGridModal({
           showToast({
             kind: 'error',
             title: t('deletePatientGridErrorToastTitle', 'Grid deletion failed'),
-            description: t('deletePatientGridErrorToastDescription', 'Deleting the grid "{name}" failed.', {
+            description: t('deletePatientGridErrorToastDescription', 'Deleting the grid "{{name}}" failed.', {
               name: patientGridToDelete?.name,
             }),
           }),

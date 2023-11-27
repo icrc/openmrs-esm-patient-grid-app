@@ -26,7 +26,7 @@ export function DownloadModal({ patientGridId, isOpen, onClose, refreshGrid, fil
     columnNamesToInclude,
     patientDetailsGroupHeader,
   }: Omit<DownloadGridData, 'fileName'>) => {
-    const fileName = t('patientGridExportFileName', 'export.{extension}', { extension: fileExtension });
+    const fileName = t('patientGridExportFileName', 'export.{{extension}}', { extension: fileExtension });
     const spreadsheetData = getPatientGridDownloadReportData(
       download,
       patientGrid,
