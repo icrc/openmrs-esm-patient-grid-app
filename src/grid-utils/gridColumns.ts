@@ -66,7 +66,7 @@ export function getReactTableColumnDefForForm(
   for (const page of formSchema.pages ?? []) {
     for (const section of page.sections ?? []) {
       const sectionColumn: GroupColumnDef<Record<string, string>> = {
-        header: section.label,
+        header: section.label || page.label,
         columns: [],
       };
 
