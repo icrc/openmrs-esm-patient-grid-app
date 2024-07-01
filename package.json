@@ -21,7 +21,8 @@
     "extract-translations": "i18next 'src/**/*.tsx' --config ./tools/i18next-parser.config.js"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   },
   "browserslist": [
     "extends browserslist-config-openmrs"
