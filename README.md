@@ -2,6 +2,11 @@
 
 The microfrontend module providing the patient grid feature.
 
+# Artifacts
+https://www.npmjs.com/package/@icrc/esm-patient-grid-app?activeTab=versions
+
+# CI / CD
+
 
 ## Getting Started
 
