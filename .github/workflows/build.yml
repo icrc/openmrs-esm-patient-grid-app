@@ -62,7 +62,7 @@ jobs:
 
 
       - name: Pre-release
-        run: yarn run ci:prepublish
+        run: yarn npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
           YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
