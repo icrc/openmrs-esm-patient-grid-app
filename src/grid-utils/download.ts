@@ -228,40 +228,13 @@ function getGroups(
             let questionColumnName: string;
             if (question.type === 'encounterDatetime') {
               questionColumnName = getFormDateColumnName(form);
+            } else if (question.type === 'obsGroup' && !!question.questions) {
+              for (const obsNestedQuestion of question.questions ?? []) {
+                processQuestion(form, obsNestedQuestion, section, filteredEncounters);
+              }
             } else {
-              questionColumnName = getFormSchemaQuestionColumnName(form, question);
+              processQuestion(form, question, section, filteredEncounters);
             }
-            const matchingPatientGridColumnUuid = patientGrid.columns.find(
-              (column) => column.name === questionColumnName,
-            )?.uuid;
-
-            if (!columnNamesToInclude.includes(questionColumnName) || !matchingPatientGridColumnUuid) {
-              continue;
-            }
-            for (let i = 0; i < patientGrid.columns.length; i++) {
-              if (patientGrid.columns[i].name === questionColumnName) {
-                questionColumnName = patientGrid.columns[i].display;
-              }
-            }
-
-            let column = section.columns.find((c) => c.header === questionColumnName);
-            if (!column) {
-              column = {
-                header: questionColumnName,
-                values: [],
-              };
-              section.columns.push(column);
-            }
-
-            filteredEncounters.forEach((thisColumnEncounter, index) => {
-              if (question.type === 'encounterDatetime') {
-                const date = thisColumnEncounter[getFormDateColumnName(form)];
-                column.values.push(formatDate(new Date(date)));
-              } else {
-                const obs = thisColumnEncounter?.[matchingPatientGridColumnUuid];
-                column.values.push(typeof obs?.value === 'object' ? `${obs.value.display}` : `${obs?.value ?? ''}`);
-              }
-            });
           }
 
           if (section.columns.length && !isExistingSection) {
@@ -275,6 +248,42 @@ function getGroups(
       }
     }
   });
+
+  function processQuestion(form, question, section, filteredEncounters) {
+    let questionColumnName = getFormSchemaQuestionColumnName(form, question);
+
+    const matchingPatientGridColumnUuid = patientGrid.columns.find(
+      (column) => column.name === questionColumnName,
+    )?.uuid;
+
+    if (!columnNamesToInclude.includes(questionColumnName) || !matchingPatientGridColumnUuid) {
+      return;
+    }
+    for (let i = 0; i < patientGrid.columns.length; i++) {
+      if (patientGrid.columns[i].name === questionColumnName) {
+        questionColumnName = patientGrid.columns[i].display;
+      }
+    }
+
+    let column = section.columns.find((c) => c.header === questionColumnName);
+    if (!column) {
+      column = {
+        header: questionColumnName,
+        values: [],
+      };
+      section.columns.push(column);
+    }
+
+    filteredEncounters.forEach((thisColumnEncounter, index) => {
+      if (question.type === 'encounterDatetime') {
+        const date = thisColumnEncounter[getFormDateColumnName(form)];
+        column.values.push(formatDate(new Date(date)));
+      } else {
+        const obs = thisColumnEncounter?.[matchingPatientGridColumnUuid];
+        column.values.push(typeof obs?.value === 'object' ? `${obs.value.display}` : `${obs?.value ?? ''}`);
+      }
+    });
+  }
 
   return result;
 }
