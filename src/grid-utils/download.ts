@@ -225,10 +225,7 @@ function getGroups(
           }
 
           for (const question of formSchemaSection.questions ?? []) {
-            let questionColumnName: string;
-            if (question.type === 'encounterDatetime') {
-              questionColumnName = getFormDateColumnName(form);
-            } else if (question.type === 'obsGroup' && !!question.questions) {
+            if (question.type === 'obsGroup' && !!question.questions) {
               for (const obsNestedQuestion of question.questions ?? []) {
                 processQuestion(form, obsNestedQuestion, section, filteredEncounters);
               }
