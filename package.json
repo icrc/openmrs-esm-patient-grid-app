@@ -41,7 +41,8 @@
   },
   "resolutions": {
     "ejs": "^3.1.7",
-    "jpeg-js": "^0.4.4"
+    "jpeg-js": "^0.4.4",
+    "path-to-regexp": "6.3.0"
   },
   "peerDependencies": {
     "@carbon/react": "^1.9.0",
