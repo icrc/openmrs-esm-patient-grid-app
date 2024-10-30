@@ -73,6 +73,6 @@ function obsToDisplayString(obs: PastEncounterObsGet[]) {
   const valuesArray = obs.map((obs) => obs.value);
   return valuesArray
     .filter((value) => value !== null && value !== undefined)
-    .map((value) => (typeof value === 'object' ? value.display ?? '' : `${value}`))
+    .map((value) => (typeof value === 'object' ? (value.display ?? '') : `${value}`))
     .join(', ');
 }

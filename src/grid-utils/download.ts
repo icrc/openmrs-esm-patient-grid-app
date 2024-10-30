@@ -39,7 +39,7 @@ export function getPatientGridDownloadReportData(
   groups.forEach((group) => {
     const encountersData: Array<Array<string>> = [];
     result.push({ header: group.header, data: encountersData });
-    group.sections.forEach((section, sectionIndex) => {
+    group.sections.forEach((section) => {
       section.columns.forEach((column, columnIndex) => {
         encountersData[0] = encountersData[0] || [];
         encountersData[0].push(columnIndex === 0 ? section.header : '');
@@ -271,7 +271,7 @@ function getGroups(
       section.columns.push(column);
     }
 
-    filteredEncounters.forEach((thisColumnEncounter, index) => {
+    filteredEncounters.forEach((thisColumnEncounter) => {
       if (question.type === 'encounterDatetime') {
         const date = thisColumnEncounter[getFormDateColumnName(form)];
         column.values.push(formatDate(new Date(date)));

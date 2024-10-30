@@ -11,7 +11,7 @@ export interface PatientGridFiltersHeaderProps {
   refreshGrid(): void;
 }
 
-export function PatientGridFiltersHeader({ patientGridId, patientGrid, refreshGrid }: PatientGridFiltersHeaderProps) {
+export function PatientGridFiltersHeader({ refreshGrid }: PatientGridFiltersHeaderProps) {
   const { t } = useTranslation();
   //  const { data: columnNameToHeaderLabelMap } = useColumnNameToHeaderLabelMap();
   const { filters, saveChanges } = useContext(InlinePatientGridEditingContext);

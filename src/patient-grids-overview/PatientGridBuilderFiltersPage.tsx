@@ -95,9 +95,7 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
             }))
           }>
           <SelectItem value="" text={t('patientGridDetailsCountryPlaceholder', 'Country')} />
-          {countryLocations?.map(({ id, name }) => (
-            <SelectItem key={id} value={id} text={name} />
-          ))}
+          {countryLocations?.map(({ id, name }) => <SelectItem key={id} value={id} text={name} />)}
         </Select>
       ) : (
         <SelectSkeleton />
@@ -120,9 +118,7 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
             }))
           }>
           <SelectItem value="" text={t('patientGridDetailsStructurePlaceholder', 'Structure')} />
-          {structureLocations?.map(({ id, name }) => (
-            <SelectItem key={id} value={id} text={name} />
-          ))}
+          {structureLocations?.map(({ id, name }) => <SelectItem key={id} value={id} text={name} />)}
         </Select>
       ) : (
         <SelectSkeleton />

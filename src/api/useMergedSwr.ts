@@ -45,12 +45,13 @@ export function useMergedSwr<T>(
     const error = swrResponses.find((res) => res.error);
     const mutate = () => Promise.all(swrResponses.map((res) => res.mutate())).then(mergeRef.current);
     const isValidating = swrResponses.some((res) => res.isValidating);
-
+    const isLoading = isValidating;
     return {
       data,
       error,
       mutate,
       isValidating,
+      isLoading,
     };
   }, [mergeRef, ...swrResponses.flatMap((res) => [res.data, res.error, res.isValidating]), ...deps]);
 }
