@@ -105,7 +105,7 @@
     "webpack-dev-server": "^5.1.0",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.18.12/xlsx-0.18.12.tgz"
   },
-  "packageManager": "yarn@4.2.2",
+  "packageManager": "yarn@4.5.1",
   "dependencies": {
     "i18next": "^23.16.4",
     "i18next-parser": "^9.0.2"
