@@ -46,7 +46,7 @@ export function PatientGridDetailsHeader({
       title={
         <h1 className={styles.title}>
           {patientGrid ? (
-            patientGrid?.description ?? patientGrid?.name ?? t('patientGridDetailsHeaderTitleFallback', '--')
+            (patientGrid?.description ?? patientGrid?.name ?? t('patientGridDetailsHeaderTitleFallback', '--'))
           ) : (
             <SkeletonText width="30%" />
           )}

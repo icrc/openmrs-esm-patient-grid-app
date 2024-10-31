@@ -22,7 +22,8 @@ import {
   getAllReportColumnNames,
   LocalFilter,
 } from '../grid-utils';
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { getLocallyFilteredReportRows } from '../grid-utils/localRowFiltering';
 import { formatDate, useConfig } from '@openmrs/esm-framework';
 import { Config } from '../config-schema';

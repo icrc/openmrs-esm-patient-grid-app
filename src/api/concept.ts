@@ -2,7 +2,7 @@ import { openmrsFetch, OpenmrsResource } from '@openmrs/esm-framework';
 import useSWRImmutable from 'swr/immutable';
 import { FetchAllResponse } from './shared';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface ConceptGet extends OpenmrsResource {}
 
 /**
