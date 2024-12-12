@@ -8449,14 +8449,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-spawn@npm:^7.0.0, cross-spawn@npm:^7.0.2, cross-spawn@npm:^7.0.3":
-  version: 7.0.3
-  resolution: "cross-spawn@npm:7.0.3"
+"cross-spawn@npm:^7.0.5":
+  version: 7.0.6
+  resolution: "cross-spawn@npm:7.0.6"
   dependencies:
     path-key: "npm:^3.1.0"
     shebang-command: "npm:^2.0.0"
     which: "npm:^2.0.1"
-  checksum: 10c0/5738c312387081c98d69c98e105b6327b069197f864a60593245d64c8089c8a0a744e16349281210d56835bb9274130d825a78b2ad6853ca13cfbeffc0c31750
+  checksum: 10c0/053ea8b2135caff68a9e81470e845613e374e7309a47731e81639de3eaeb90c3d01af0e0b44d2ab9d50b43467223b88567dfeb3262db942dc063b9976718ffc1
   languageName: node
   linkType: hard
 
@@ -10294,10 +10294,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"extend@npm:~1.2.1":
-  version: 1.2.1
-  resolution: "extend@npm:1.2.1"
-  checksum: 10c0/820d1c6b6ca76e1c65a706757923eb836b40c72039177e0460f196ef52d3a1baa32e25ee5ba6bd175c54323178c85c512dead19958e1b416bec3c4342ca177dd
+"extend@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "extend@npm:2.0.2"
+  checksum: 10c0/5d14709b28a5fd3eddd177ec4238603ff8f951d7883d7f37240476bfd758807e37cab3fdb8adf4e2cafbf2d9acaa0182428aaaec4561c81d9fedf689124e01b8
   languageName: node
   linkType: hard
 
@@ -13759,12 +13759,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanoid@npm:^3.3.7":
-  version: 3.3.7
-  resolution: "nanoid@npm:3.3.7"
+"nanoid@npm:^3.3.8":
+  version: 3.3.8
+  resolution: "nanoid@npm:3.3.8"
   bin:
     nanoid: bin/nanoid.cjs
-  checksum: 10c0/e3fb661aa083454f40500473bb69eedb85dc160e763150b9a2c567c7e9ff560ce028a9f833123b618a6ea742e311138b591910e795614a629029e86e180660f3
+  checksum: 10c0/4b1bb29f6cfebf3be3bc4ad1f1296fb0a10a3043a79f34fbffe75d1621b4318319211cd420549459018ea3592f0d2f159247a6f874911d6d26eaaadda2478120
   languageName: node
   linkType: hard
 
