@@ -210,6 +210,13 @@ function getGroups(
             row[patientDetailsAgeCategoryColumnName],
           );
           addValueToColumn(patientDetailsSection.columns, getFormAgeColumnName(form), row[getFormAgeColumnName(form)]);
+          addValueToColumn(
+            patientDetailsSection.columns,
+            getFormDateColumnName(form),
+            filteredEncounters[i]?.[getFormDateColumnName(form)]
+              ? formatDate(new Date(filteredEncounters[i][getFormDateColumnName(form)] as string))
+              : '',
+          );
         }
       }
 
