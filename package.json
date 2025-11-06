@@ -43,13 +43,13 @@
     "ejs": "^3.1.10",
     "jpeg-js": "^0.4.4",
     "path-to-regexp": "6.3.0",
-    "http-proxy-middleware": "2.0.7",
+    "http-proxy-middleware": "2.0.9",
     "rollup": "2.79.2",
     "ws": "^8.18.0",
     "semver": "^7.6.0",
     "express": "^4.20.0",
     "phin": "^3.7.1",
-    "axios": "^1.8.2",
+    "axios": "^1.12.0",
     "cookie": "^0.7.1",
     "extend": "^2.0.2",
     "cross-spawn": "^7.0.5",
@@ -57,7 +57,8 @@
     "undici": "^7.3.0",
     "undici-types": "^7.3.0",
     "dompurify": "^3.2.4",
-    "esbuild": "^0.25.0"
+    "esbuild": "^0.25.0",
+    "form-data": "^4.0.4"
   },
   "peerDependencies": {
     "@carbon/react": "^1.9.0",
@@ -109,7 +110,7 @@
     "typescript": "^4.8.2",
     "webpack": "^5.95.0",
     "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^5.1.0",
+    "webpack-dev-server": "^5.2.1",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.18.12/xlsx-0.18.12.tgz"
   },
   "packageManager": "yarn@4.5.1",
