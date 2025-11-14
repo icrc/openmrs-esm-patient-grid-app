@@ -59,7 +59,8 @@
     "dompurify": "^3.2.4",
     "esbuild": "^0.25.0",
     "form-data": "^4.0.4",
-    "webpack-dev-server": "^5.2.2"
+    "webpack-dev-server": "^5.2.2",
+    "glob": "^9.3.5"
   },
   "peerDependencies": {
     "@carbon/react": "^1.9.0",
