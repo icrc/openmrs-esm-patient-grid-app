@@ -66,7 +66,8 @@
     "min-document": "^2.19.1",
     "tmp": "^0.2.4",
     "brace-expansion": "^1.1.12",
-    "js-yaml": "^3.14.2"
+    "js-yaml": "^3.14.2",
+    "qs": "^6.14.1"
   },
   "peerDependencies": {
     "@carbon/react": "^1.9.0",
