@@ -44,7 +44,7 @@
     "jpeg-js": "^0.4.4",
     "path-to-regexp": "6.3.0",
     "http-proxy-middleware": "2.0.9",
-    "rollup": "2.79.2",
+    "rollup": "^2.80.0",
     "ws": "^8.18.0",
     "semver": "^7.6.0",
     "express": "^4.20.0",
@@ -54,8 +54,8 @@
     "extend": "^2.0.2",
     "cross-spawn": "^7.0.5",
     "nanoid": "^3.3.8",
-    "undici": "^7.5.0",
-    "undici-types": "^7.5.0",
+    "undici": "^7.18.2",
+    "undici-types": "^7.18.2",
     "dompurify": "^3.2.4",
     "esbuild": "^0.25.0",
     "form-data": "^4.0.4",
@@ -67,7 +67,11 @@
     "tmp": "^0.2.4",
     "brace-expansion": "^1.1.12",
     "js-yaml": "^3.14.2",
-    "qs": "^6.14.1"
+    "qs": "^6.14.1",
+    "tar": "^7.5.10",
+    "minimatch": "^9.0.7",
+    "immutable": "^4.3.8",
+    "serialize-javascript": "^7.0.3"
   },
   "peerDependencies": {
     "@carbon/react": "^1.9.0",
