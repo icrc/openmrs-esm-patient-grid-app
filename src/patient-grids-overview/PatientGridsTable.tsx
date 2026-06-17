@@ -62,7 +62,7 @@ export function PatientGridsTable({ type }: PatientGridsTableProps) {
                   size="sm"
                   placeholder={t('patientGridsFilterLabelAndPlaceholder', 'Search these grids')}
                   labelText={t('patientGridsFilterLabelAndPlaceholder', 'Search these grids')}
-                  onChange={onInputChange}
+                  onChange={(e) => onInputChange(e)}
                 />
               </Layer>
             </div>

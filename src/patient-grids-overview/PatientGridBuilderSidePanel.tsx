@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { SidePanel, SidePanelProps } from '../components';
-import { ModalFooter, SkeletonText } from '@carbon/react';
+import { ModalFooter, SkeletonText, Button } from '@carbon/react';
 import styles from './PatientGridBuilderSidePanel.scss';
 import { usePatientGridWizard } from './usePatientGridWizard';
 import { useCreatePatientGridMutation, useFormSchemasOfForms, useGetAllPublishedPrivilegeFilteredForms } from '../api';
@@ -51,15 +51,17 @@ export function PatientGridBuilderSidePanel({ onClose }: PatientGridBuilderSideP
     <SidePanel
       title={t('newPatientGridSidePanelTitle', 'New patient grid')}
       footer={
-        <ModalFooter
-          primaryButtonText={t('patientGridSidePanelCreate', 'Create grid')}
-          secondaryButtonText={
-            isSubmitting ? t('patientGridSidePanelClose', 'Close') : t('patientGridSidePanelCancel', 'Cancel')
-          }
-          onRequestClose={onClose}
-          onRequestSubmit={submit}
-          primaryButtonDisabled={!isAtLastPage || !isStateValidForSubmission || isSubmitting}
-        />
+        <ModalFooter>
+          <Button kind="secondary" onClick={onClose}>
+            {isSubmitting ? t('patientGridSidePanelClose', 'Close') : t('patientGridSidePanelCancel', 'Cancel')}
+          </Button>
+          <Button
+            kind="primary"
+            onClick={submit}
+            disabled={!isAtLastPage || !isStateValidForSubmission || isSubmitting}>
+            {t('patientGridSidePanelCreate', 'Create grid')}
+          </Button>
+        </ModalFooter>
       }
       onClose={onClose}>
       <section className={styles.contentContainer}>{formSchemas ? currentPage : <SkeletonText paragraph />}</section>

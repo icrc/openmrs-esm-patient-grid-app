@@ -1,7 +1,7 @@
 @use '@carbon/layout';
 @use '@carbon/type';
 @use '../styles/table.scss';
-@import "~@openmrs/esm-styleguide/src/vars";
+@use "~@openmrs/esm-styleguide/src/vars" as *;
 
 .tableHeaderContainer {
   display: flex;

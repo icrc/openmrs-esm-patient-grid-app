@@ -13,7 +13,7 @@ export function PatientGridsOverviewPage() {
     <PageWithSidePanel
       sidePanel={<PatientGridBuilderSidePanel onClose={() => setShowSidePanel(false)} />}
       showSidePanel={showSidePanel}>
-      <ExtensionSlot extensionSlotName="breadcrumbs-slot" />
+      <ExtensionSlot name="breadcrumbs-slot" />
       <div className={styles.headerContainer}>
         <PatientGridsOverviewHeader onNewGridClick={() => setShowSidePanel(true)} />
       </div>

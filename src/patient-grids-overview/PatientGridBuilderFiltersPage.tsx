@@ -79,7 +79,7 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
       {countryLocations ? (
         <Select
           id="country"
-          defaultValue={state.countryFilter ?? ''}
+          defaultValue={(state.countryFilter?.operand as string) ?? ''}
           labelText={`${t('patientGridDetailsCountryLabel', 'Country')}*`}
           invalid={'countryFilter' in state && state.countryFilter === undefined}
           onChange={(e) =>
@@ -95,7 +95,9 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
             }))
           }>
           <SelectItem value="" text={t('patientGridDetailsCountryPlaceholder', 'Country')} />
-          {countryLocations?.map(({ id, name }) => <SelectItem key={id} value={id} text={name} />)}
+          {countryLocations?.map(({ id, name }) => (
+            <SelectItem key={id} value={id} text={name} />
+          ))}
         </Select>
       ) : (
         <SelectSkeleton />
@@ -104,7 +106,7 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
       {structureLocations ? (
         <Select
           id="structure"
-          defaultValue={state.structureFilter?.operand ?? ''}
+          defaultValue={(state.structureFilter?.operand as string) ?? ''}
           labelText={t('patientGridDetailsStructureLabel', 'Structure')}
           onChange={(e) =>
             setState((state) => ({
@@ -118,7 +120,9 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
             }))
           }>
           <SelectItem value="" text={t('patientGridDetailsStructurePlaceholder', 'Structure')} />
-          {structureLocations?.map(({ id, name }) => <SelectItem key={id} value={id} text={name} />)}
+          {structureLocations?.map(({ id, name }) => (
+            <SelectItem key={id} value={id} text={name} />
+          ))}
         </Select>
       ) : (
         <SelectSkeleton />
@@ -126,7 +130,7 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
 
       <Select
         id="gender"
-        defaultValue={state.genderFilter?.operand ?? ''}
+        defaultValue={(state.genderFilter?.operand as string) ?? ''}
         labelText={t('patientGridDetailsGenderLabel', 'Gender')}
         onChange={(e) =>
           setState((state) => ({
@@ -206,7 +210,7 @@ export function PatientGridBuilderFiltersPage({ page, pages, goToPrevious, state
           onChange={(value) =>
             setState((state) => ({
               ...state,
-              periodFilter: value ? setLastPeriodFilter(value) : undefined,
+              periodFilter: value ? setLastPeriodFilter(String(value)) : undefined,
             }))
           }>
           <RadioButton id="today" labelText={t('filterToday', 'Today')} value="today" />
