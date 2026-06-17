@@ -106,7 +106,7 @@ export function DownloadModal({ patientGridId, isOpen, onClose, refreshGrid, fil
           name="file-extension-group"
           defaultSelected={fileExtension}
           orientation="vertical"
-          onChange={(value) => setFileExtension(value)}>
+          onChange={(value) => setFileExtension(value as string)}>
           <RadioButton
             labelText={t('downloadModalChooseDownloadCsvOption', 'CSV (Comma-Separated Values)')}
             value="csv"

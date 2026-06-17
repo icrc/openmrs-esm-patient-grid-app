@@ -1,5 +1,5 @@
 import { GroupColumnDef } from '@tanstack/react-table';
-import { Checkbox, ModalFooter } from '@carbon/react';
+import { Checkbox, ModalFooter, Button } from '@carbon/react';
 import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SidePanel } from '../components';
@@ -44,12 +44,14 @@ export function ToggleColumnsSidePanel({ columns, onClose }: ToggleColumnsSidePa
     <SidePanel
       title={t('toggleColumnsSidePanelTitle', 'Grid columns')}
       footer={
-        <ModalFooter
-          primaryButtonText={t('toggleColumnsSidePanelSubmit', 'Accept')}
-          secondaryButtonText={t('toggleColumnsSidePanelCancel', 'Cancel')}
-          onRequestClose={onClose}
-          onRequestSubmit={submit}
-        />
+        <ModalFooter>
+          <Button kind="secondary" onClick={onClose}>
+            {t('toggleColumnsSidePanelCancel', 'Cancel')}
+          </Button>
+          <Button kind="primary" onClick={submit}>
+            {t('toggleColumnsSidePanelSubmit', 'Accept')}
+          </Button>
+        </ModalFooter>
       }
       onClose={onClose}>
       <aside className={styles.contentContainer}>
@@ -94,11 +96,13 @@ function ColumnCheckboxGroup({ columnHiddenStates, groupColumnDef, setColumnHidd
     impl(groupColumnDef);
   };
 
+  const groupHeaderString = typeof groupColumnDef.header === 'string' ? groupColumnDef.header : '';
+
   return (
     <>
       <Checkbox
-        id={groupColumnDef.header}
-        labelText={groupColumnDef.header}
+        id={groupHeaderString}
+        labelText={groupHeaderString}
         checked={areAllChildrenVisible}
         indeterminate={!areAllChildrenVisible && !areAllChildrenHidden}
         onChange={(_, { checked }) => handleGroupChecked(checked)}
@@ -109,7 +113,7 @@ function ColumnCheckboxGroup({ columnHiddenStates, groupColumnDef, setColumnHidd
             <Checkbox
               key={column.accessorKey}
               id={column.accessorKey}
-              labelText={column.header}
+              labelText={typeof column.header === 'string' ? column.header : ''}
               checked={!columnHiddenStates[column.accessorKey]}
               onChange={(_, { checked }) => setColumnHiddenState(column.accessorKey, !checked)}
             />

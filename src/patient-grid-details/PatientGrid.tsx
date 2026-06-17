@@ -229,7 +229,7 @@ export function PatientGrid({
       </section>
       <div style={{ height: windowSize.height - 400 }} className={styles.relativeTablePositioner}>
         <section className={styles.rawTableContainer}>
-          <Table height={windowSize.height - 380} className={styles.table} useZebraStyles>
+          <Table className={styles.table} useZebraStyles>
             <TableHead>
               {headerGroups.map((headerGroup, headerGroupIndex) => (
                 <TableRow key={headerGroup.id}>
@@ -334,7 +334,7 @@ export function PatientGrid({
                       // outer zebra style appears in continuous colors.
                       <>
                         {index % 2 === 0 && <tr className={styles.hiddenTableRowForContinuousZebra} />}
-                        <TableExpandedRow className={styles.expandRow} colSpan="100%">
+                        <TableExpandedRow className={styles.expandRow} colSpan={100}>
                           <div className={styles.expandRowBackdrop}>
                             <HistoricEncountersTabs
                               report={row.original.__report}

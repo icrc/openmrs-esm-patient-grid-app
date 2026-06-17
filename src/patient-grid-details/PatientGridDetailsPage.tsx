@@ -119,7 +119,7 @@ export function PatientGridDetailsPage() {
   return patientGrid ? (
     <InlinePatientGridEditingContext.Provider value={inlinePatientGridEditingState}>
       <PageWithSidePanel sidePanel={sidePanel} showSidePanel={!!sidePanel} sidePanelSize={sidePanelSize}>
-        <ExtensionSlot extensionSlotName="breadcrumbs-slot" />
+        <ExtensionSlot name="breadcrumbs-slot" />
         <Hr />
 
         <Stack gap={4}>

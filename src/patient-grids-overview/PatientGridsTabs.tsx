@@ -8,7 +8,7 @@ export function PatientGridTabs() {
   const { t } = useTranslation();
 
   return (
-    <Tabs activation="manual">
+    <Tabs>
       <TabList contained className={styles.tabList} aria-label={t('patientGridTabsLabel', 'Patient grid tabs')}>
         <Tab>{t('myGridsTabLabel', 'My grids')}</Tab>
         <Tab>{t('sharedGridsTabLabel', 'Shared grids')}</Tab>
