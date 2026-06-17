@@ -63,7 +63,11 @@
     "qs": "^6.15.1",
     "uuid": "^11.1.1",
     "ip-address": "^10.1.1",
-    "path-to-regexp": "^8.3.0"
+    "path-to-regexp": "^8.3.0",
+    "shell-quote": "^1.8.4",
+    "serialize-javascript": "^7.0.5",
+    "webpack-dev-server": "^5.2.4",
+    "js-yaml": "^4.2.0"
   },
   "peerDependencies": {
     "@carbon/react": "^1.83.0",
