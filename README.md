@@ -13,6 +13,12 @@ https://www.npmjs.com/package/@icrc/esm-patient-grid-app?activeTab=versions
 - the next release version is defined in [package.json](./package.json) and will be deploy by the Do Release Action
 - for each push to main branch the version `<next-release-version>-pre.<number>` will be deployed.
 
+## npm Publishing (Trusted Publishers)
+
+This project uses [npm Trusted Publishers](https://docs.npmjs.com/trusted-publishers) to authenticate GitHub Actions workflows with npmjs.org, removing the need for long-lived access tokens. The release workflow publishes packages directly via OpenID Connect (OIDC).
+
+ICRC Maintainers need to contact **ICRC Software Engineering Teams** to get access to the `icrc` account on [npmjs.org](https://www.npmjs.com) and to configure trusted publisher settings for this repository.
+
 ## Getting Started
 
 To run the microfrontend locally:

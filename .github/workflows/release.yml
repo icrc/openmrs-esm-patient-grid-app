@@ -59,6 +59,7 @@ jobs:
         run: |
           CURRENT_PROJECT_VERSION=$(node -e "console.log(require('./package.json').version)")
           BRANCH_NAME="move-to-$CURRENT_PROJECT_VERSION"
+          git push origin --delete "$BRANCH_NAME" 2>/dev/null || true
           git checkout -b "$BRANCH_NAME"
           git commit -a -m "[skip ci] change version to new snapshot $CURRENT_PROJECT_VERSION"
           git push origin "$BRANCH_NAME"
