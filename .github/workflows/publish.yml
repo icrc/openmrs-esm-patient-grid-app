@@ -68,6 +68,8 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         run: npm version --no-git-tag-version "$(node -e "console.log(require('semver').inc(require('./package.json').version, 'minor'))")"
 
+      # This step creates a PR to bump the version to the next minor snapshot.
+      # The PR must be accepted and merged to prepare main for the next release cycle.
       - name: Create Branch and PR for next Version preparation
         if: github.event_name == 'workflow_dispatch'
         env:
