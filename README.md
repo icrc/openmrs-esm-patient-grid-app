@@ -7,7 +7,7 @@ https://www.npmjs.com/package/@icrc/esm-patient-grid-app?activeTab=versions
 
 # CI / CD
 - [Build/Deploy CI](https://github.com/icrc/openmrs-esm-patient-grid-app/actions/workflows/build.yml) will test, build packages. npm packages are published for every push to `main` bramch. The version is prefixed with `-pre.<run.id>`
-- [Do Release](https://github.com/icrc/openmrs-esm-patient-grid-app/actions/workflows/release.yml) will and publish a released version, do a GitHub and move the version to the next minor one. **A PR will be created to move to the next version: you should review and accept it**
+- [Do Release](https://github.com/icrc/openmrs-esm-patient-grid-app/actions/workflows/publish.yml) will publish a released version, create a GitHub release tag and move the version to the next minor one. **A PR will be created to bump the version for the next release cycle: you should review and accept it.**
 
 # Versions
 - the next release version is defined in [package.json](./package.json) and will be deploy by the Do Release Action
