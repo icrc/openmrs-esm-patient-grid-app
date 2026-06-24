@@ -20,8 +20,10 @@ export interface PatientGridDownloadGet {
  * * a unique column name (e.g. for patient details values).
  * * the UUID of an encounter type. That value contains the list of historical encounters and their observations.
  */
-export interface PatientGridDownloadRowGet
-  extends Record<string, undefined | null | string | number | boolean | PatientGridDownloadHistoricalEncounterTypeGet> {
+export interface PatientGridDownloadRowGet extends Record<
+  string,
+  undefined | null | string | number | boolean | PatientGridDownloadHistoricalEncounterTypeGet
+> {
   uuid: string;
 }
 

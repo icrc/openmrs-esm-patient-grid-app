@@ -39,7 +39,7 @@ export function useGetAllPublishedPrivilegeFilteredForms() {
         !/component/i.test(form.name) &&
         Boolean(
           userHasAccess(form.encounterType?.editPrivilege?.display, session?.user) ||
-            userHasAccess(form.encounterType?.viewPrivilege?.display, session?.user),
+          userHasAccess(form.encounterType?.viewPrivilege?.display, session?.user),
         ),
     );
   }, [getAllFormsSwr.data, session]);
@@ -59,7 +59,7 @@ export function useGetAllPrivilegeFilteredForms() {
         !/component/i.test(form.name) &&
         Boolean(
           userHasAccess(form.encounterType?.editPrivilege?.display, session?.user) ||
-            userHasAccess(form.encounterType?.viewPrivilege?.display, session?.user),
+          userHasAccess(form.encounterType?.viewPrivilege?.display, session?.user),
         ),
     );
   }, [getAllFormsSwr.data, session]);

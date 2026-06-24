@@ -9,8 +9,10 @@ export interface PatientGridReportGet {
   reportMetadata: PatientGridReportMetaData;
 }
 
-export interface PatientGridReportRowGet
-  extends Record<string, undefined | null | string | number | boolean | PatientGridReportObsGet> {
+export interface PatientGridReportRowGet extends Record<
+  string,
+  undefined | null | string | number | boolean | PatientGridReportObsGet
+> {
   uuid: string;
 }
 export interface PatientGridReportMetaData {
