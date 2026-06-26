@@ -97,7 +97,7 @@
     "babel-preset-minify": "^0.5.2",
     "concurrently": "^9.0.1",
     "css-loader": "^7.1.2",
-    "eslint": "8.57.1",
+    "eslint": "10.5.0",
     "eslint-config-prettier": "^8.10.2",
     "eslint-config-ts-react-important-stuff": "^3.0.0",
     "eslint-plugin-prettier": "^5.5.4",
