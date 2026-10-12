@@ -15167,17 +15167,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici-types@npm:^7.29.0":
-  version: 7.29.0
-  resolution: "undici-types@npm:7.29.0"
-  checksum: 10c0/1faf3a2a92f198a8d916cdd7f159e4fa8f74ca8eb391b43410e395c66217fb8769c9d74d84fefe88bdced822dba63533fb0d260adc76776fec07fb8c71d96b4a
+"undici-types@npm:^7.30.0":
+  version: 7.30.0
+  resolution: "undici-types@npm:7.30.0"
+  checksum: 10c0/35bec79996d10f228d206bd9afb5413ed3ca377d16bb647eeec9084ccbef8b51e9915e27d74bf659f885648c3073bee24186c19ae39bc5ecb91a404fcc99c4ef
   languageName: node
   linkType: hard
 
-"undici@npm:^7.29.0":
-  version: 7.29.0
-  resolution: "undici@npm:7.29.0"
-  checksum: 10c0/85ea96e91e7f3de24de678cbbc54230fdd641a3b0643005f2aef044af1f1a2db8fbecb88b28e6fa78bb41ffeafda4479b57075b6b6ab92beac4b7b5ab53f9b10
+"undici@npm:^7.30.0":
+  version: 7.30.0
+  resolution: "undici@npm:7.30.0"
+  checksum: 10c0/011a321a9198532b0f0504740faa43b9ab8fcc0e4f60104e5c9cb808a61faeb03e4be4aec4f0c65f47913d7c7d9d91591793a6cb9ab843f98ca2c3d711c4a34c
   languageName: node
   linkType: hard
 
